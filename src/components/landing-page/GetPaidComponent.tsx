@@ -1,4 +1,3 @@
-import React from 'react';
 import LottiePlayer from '@/components/LottiePlayer';
 import Image from 'next/image';
 
@@ -8,17 +7,6 @@ import iconCurrencySvg from 'public/images/icon-currency.svg';
 import iconWalletSvg from 'public/images/icon-wallet.svg';
 
 export default function GetPaidComponent() {
-
-  const trackConversion = () => {
-    if (window.gtag) {
-      window.gtag('event', 'conversion', {
-        send_to: 'AW-16819203227/ubhlCKfY44oaEJvZgtQ-', // Your conversion ID
-        value: 1.0,
-        currency: 'GBP', // Your desired currency
-      });
-    }
-  };
-
   return (
     <>
       <section className="getpaid">

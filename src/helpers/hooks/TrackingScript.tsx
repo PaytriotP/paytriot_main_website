@@ -28,8 +28,12 @@ const TrackingScript: React.FC = () => {
       window.gtag('js', new Date());
       window.gtag('config', 'AW-16819203227'); // Google Tag ID
 
-      // If you want to send an initial conversion event after the script loads, you can do it here
-      // Example: You can trigger the conversion event in your component using window.gtag('event', 'conversion', {...})
+      // Track page visit as conversion (footfall tracking)
+      window.gtag('event', 'conversion', {
+        send_to: 'AW-16819203227/ubhlCKfY44oaEJvZgtQ-',  // Conversion ID from Google Ads
+        value: 1.0,  // Set conversion value (optional)
+        currency: 'GBP',  // Currency (adjust if needed)
+         });
     };
 
     // Clean up the scripts on unmount

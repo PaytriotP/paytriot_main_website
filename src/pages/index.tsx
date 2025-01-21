@@ -18,6 +18,9 @@ export default function Home() {
 
         <title>Paytriot Payments</title>
       </Head>
+      
+       <TrackingScript />
+      
       <main>
         <LandingHero />
         <WhatWeDoComponent />

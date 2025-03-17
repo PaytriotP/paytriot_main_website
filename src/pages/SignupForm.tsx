@@ -16,7 +16,6 @@ const SignupForm: React.FC = () => {
       try {
         const response = await fetch('https://script.google.com/a/macros/paytriot.co.uk/s/AKfycbw_AQeP-B5V1bzouImJoYbxuw2bVeCkI_tpZivqXCipeKzRPy7PSVE2gR5LjgAKmjdp/exec', {
           method: 'POST',
-          mode: 'no-cors',
           headers: {
             'Content-Type': 'application/json',
           },

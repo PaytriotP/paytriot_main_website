@@ -42,9 +42,9 @@ export default function HeroComponent() {
                 </Button> }
 
               </Link> */}
-                  <PopupButton id="uJkBAIlB" size={60} style={buttonStyle} className="my-button">
+{/*                   <PopupButton id="uJkBAIlB" size={60} style={buttonStyle} className="my-button">
                     Start Now
-                  </PopupButton>
+                  </PopupButton> */}
             </div>
           </div>
           <div className="col-lg-6 d-flex justify-content-center">

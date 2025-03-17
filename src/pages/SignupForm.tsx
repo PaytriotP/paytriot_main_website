@@ -1,22 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
 import { Input, Button, Loading } from '@nextui-org/react';
 
-const schema = yup.object().shape({
-  fullName: yup.string().required('Full Name is required'),
-  email: yup.string().email('Invalid email').required('Email is required'),
-  website: yup.string().url('Invalid URL').required('Website is required'),
-  password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
-  repeatPassword: yup.string().oneOf([yup.ref('password'), null], 'Passwords must match').required('Repeat Password is required'),
-  phoneNumber: yup.string().required('Phone Number is required'),
-});
-
 const SignupForm: React.FC = () => {
-  const { register, handleSubmit, control, formState: { errors, isSubmitting, isSubmitSuccessful } } = useForm({
-    resolver: yupResolver(schema),
-  });
+  const { 
+    register, 
+    handleSubmit, 
+    formState: { errors, isSubmitting, isSubmitSuccessful }, 
+    watch,
+    reset
+  } = useForm();
+
   const [submissionError, setSubmissionError] = useState<string | null>(null);
 
   const onSubmit = async (data: any) => {
@@ -33,7 +27,8 @@ const SignupForm: React.FC = () => {
       if (!response.ok) {
         throw new Error('Form submission failed');
       }
-    } catch (error) {
+      reset(); // Reset form after success
+    } catch (error: any) {
       setSubmissionError(error.message);
     }
   };
@@ -42,24 +37,27 @@ const SignupForm: React.FC = () => {
     if (isSubmitSuccessful) {
       const timer = setTimeout(() => {
         window.location.href = '/';
-      }, 10000); // Redirect after 10 seconds
+      }, 10000);
 
-      return () => clearTimeout(timer); // Cleanup the timer
+      return () => clearTimeout(timer);
     }
   }, [isSubmitSuccessful]);
+
+  const password = watch('password');
 
   return (
     <section className="signup py-5">
       <div className="container d-flex flex-column align-items-center">
         <h3 className="text-center mb-5">Create Your Paytriot Account</h3>
         <form className="w-100" onSubmit={handleSubmit(onSubmit)}>
+          
           <Input
             rounded
             className="my-2"
             size="lg"
             type="text"
             label="Full Name"
-            {...register('fullName')}
+            {...register('fullName', { required: 'Full Name is required' })}
             status={errors.fullName ? 'error' : undefined}
             fullWidth
           />
@@ -71,7 +69,10 @@ const SignupForm: React.FC = () => {
             size="lg"
             type="email"
             label="Email"
-            {...register('email')}
+            {...register('email', { 
+              required: 'Email is required',
+              pattern: { value: /^\S+@\S+$/i, message: 'Invalid email' } 
+            })}
             status={errors.email ? 'error' : undefined}
             fullWidth
           />
@@ -83,7 +84,10 @@ const SignupForm: React.FC = () => {
             size="lg"
             type="url"
             label="Website"
-            {...register('website')}
+            {...register('website', { 
+              required: 'Website is required', 
+              pattern: { value: /^(https?:\/\/)?([\w\d\-_]+\.+\S+)+\/?$/, message: 'Invalid URL' } 
+            })}
             status={errors.website ? 'error' : undefined}
             fullWidth
           />
@@ -95,7 +99,10 @@ const SignupForm: React.FC = () => {
             size="lg"
             type="password"
             label="Password"
-            {...register('password')}
+            {...register('password', { 
+              required: 'Password is required', 
+              minLength: { value: 6, message: 'Password must be at least 6 characters' } 
+            })}
             status={errors.password ? 'error' : undefined}
             fullWidth
           />
@@ -107,7 +114,10 @@ const SignupForm: React.FC = () => {
             size="lg"
             type="password"
             label="Repeat Password"
-            {...register('repeatPassword')}
+            {...register('repeatPassword', { 
+              required: 'Repeat Password is required',
+              validate: (value) => value === password || 'Passwords must match'
+            })}
             status={errors.repeatPassword ? 'error' : undefined}
             fullWidth
           />
@@ -119,7 +129,7 @@ const SignupForm: React.FC = () => {
             size="lg"
             type="tel"
             label="Phone Number"
-            {...register('phoneNumber')}
+            {...register('phoneNumber', { required: 'Phone Number is required' })}
             status={errors.phoneNumber ? 'error' : undefined}
             fullWidth
           />

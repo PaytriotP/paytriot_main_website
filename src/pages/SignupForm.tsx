@@ -3,19 +3,23 @@ import { useForm } from 'react-hook-form';
 import { Input, Button, Loading } from '@nextui-org/react';
 
 const SignupForm: React.FC = () => {
-  const { 
-    register, 
-    handleSubmit, 
-    formState: { errors, isSubmitting, isSubmitSuccessful }, 
-    watch,
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting, isSubmitSuccessful },
     reset
   } = useForm();
-
   const [submissionError, setSubmissionError] = useState<string | null>(null);
 
   const onSubmit = async (data: any) => {
     setSubmissionError(null);
     try {
+      // Basic validation manually
+      if (data.password !== data.repeatPassword) {
+        setSubmissionError("Passwords do not match");
+        return;
+      }
+
       const response = await fetch('https://hooks.zapier.com/hooks/catch/15891653/2lq4i5f/', {
         method: 'POST',
         headers: {
@@ -27,7 +31,7 @@ const SignupForm: React.FC = () => {
       if (!response.ok) {
         throw new Error('Form submission failed');
       }
-      reset(); // Reset form after success
+      reset();
     } catch (error: any) {
       setSubmissionError(error.message);
     }
@@ -38,19 +42,15 @@ const SignupForm: React.FC = () => {
       const timer = setTimeout(() => {
         window.location.href = '/';
       }, 10000);
-
       return () => clearTimeout(timer);
     }
   }, [isSubmitSuccessful]);
-
-  const password = watch('password');
 
   return (
     <section className="signup py-5">
       <div className="container d-flex flex-column align-items-center">
         <h3 className="text-center mb-5">Create Your Paytriot Account</h3>
         <form className="w-100" onSubmit={handleSubmit(onSubmit)}>
-          
           <Input
             rounded
             className="my-2"
@@ -61,7 +61,9 @@ const SignupForm: React.FC = () => {
             status={errors.fullName ? 'error' : undefined}
             fullWidth
           />
-          {errors.fullName && <div className="invalid-feedback">{errors.fullName.message}</div>}
+          {errors.fullName?.message && (
+            <div className="invalid-feedback">{errors.fullName.message as string}</div>
+          )}
 
           <Input
             rounded
@@ -69,14 +71,13 @@ const SignupForm: React.FC = () => {
             size="lg"
             type="email"
             label="Email"
-            {...register('email', { 
-              required: 'Email is required',
-              pattern: { value: /^\S+@\S+$/i, message: 'Invalid email' } 
-            })}
+            {...register('email', { required: 'Email is required' })}
             status={errors.email ? 'error' : undefined}
             fullWidth
           />
-          {errors.email && <div className="invalid-feedback">{errors.email.message}</div>}
+          {errors.email?.message && (
+            <div className="invalid-feedback">{errors.email.message as string}</div>
+          )}
 
           <Input
             rounded
@@ -84,14 +85,13 @@ const SignupForm: React.FC = () => {
             size="lg"
             type="url"
             label="Website"
-            {...register('website', { 
-              required: 'Website is required', 
-              pattern: { value: /^(https?:\/\/)?([\w\d\-_]+\.+\S+)+\/?$/, message: 'Invalid URL' } 
-            })}
+            {...register('website', { required: 'Website is required' })}
             status={errors.website ? 'error' : undefined}
             fullWidth
           />
-          {errors.website && <div className="invalid-feedback">{errors.website.message}</div>}
+          {errors.website?.message && (
+            <div className="invalid-feedback">{errors.website.message as string}</div>
+          )}
 
           <Input
             rounded
@@ -99,14 +99,13 @@ const SignupForm: React.FC = () => {
             size="lg"
             type="password"
             label="Password"
-            {...register('password', { 
-              required: 'Password is required', 
-              minLength: { value: 6, message: 'Password must be at least 6 characters' } 
-            })}
+            {...register('password', { required: 'Password is required', minLength: { value: 6, message: 'Password must be at least 6 characters' } })}
             status={errors.password ? 'error' : undefined}
             fullWidth
           />
-          {errors.password && <div className="invalid-feedback">{errors.password.message}</div>}
+          {errors.password?.message && (
+            <div className="invalid-feedback">{errors.password.message as string}</div>
+          )}
 
           <Input
             rounded
@@ -114,14 +113,13 @@ const SignupForm: React.FC = () => {
             size="lg"
             type="password"
             label="Repeat Password"
-            {...register('repeatPassword', { 
-              required: 'Repeat Password is required',
-              validate: (value) => value === password || 'Passwords must match'
-            })}
+            {...register('repeatPassword', { required: 'Repeat Password is required' })}
             status={errors.repeatPassword ? 'error' : undefined}
             fullWidth
           />
-          {errors.repeatPassword && <div className="invalid-feedback">{errors.repeatPassword.message}</div>}
+          {errors.repeatPassword?.message && (
+            <div className="invalid-feedback">{errors.repeatPassword.message as string}</div>
+          )}
 
           <Input
             rounded
@@ -133,7 +131,9 @@ const SignupForm: React.FC = () => {
             status={errors.phoneNumber ? 'error' : undefined}
             fullWidth
           />
-          {errors.phoneNumber && <div className="invalid-feedback">{errors.phoneNumber.message}</div>}
+          {errors.phoneNumber?.message && (
+            <div className="invalid-feedback">{errors.phoneNumber.message as string}</div>
+          )}
 
           {submissionError && (
             <div className="alert alert-danger" role="alert">
@@ -143,7 +143,7 @@ const SignupForm: React.FC = () => {
 
           {isSubmitSuccessful && (
             <div className="alert alert-success" role="alert">
-              Thank you for signing up! We will get back to you shortly. You will be redirected to the homepage in 10 seconds.
+              Thank you for signing up! You will be redirected to the homepage in 10 seconds.
             </div>
           )}
 

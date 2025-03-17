@@ -28,23 +28,23 @@ export default function HeroComponent() {
               <p className="p-18 mb-5 text-center text-lg-start">
               Paytriot now offers a monthly fee for businesses looking to start processing or switching. 
               </p>
-              <Link
+{/*               <Link
                 href="signup"
                 className="btn btn-primary"
                 role="button"
                 data-bs-toggle="button"
               >
                 Start Now
-              </Link>
+              </Link> */}
               {/* <Link href="/contact-us" style={{ textDecoration: 'none' }}>
                 <Button rounded size="xl" color="warning">
                   Start Now
                 </Button> }
 
               </Link> */}
-{/*                   <PopupButton id="uJkBAIlB" size={60} style={buttonStyle} className="my-button">
+                  <PopupButton id="uJkBAIlB" size={60} style={buttonStyle} className="my-button">
                     Start Now
-                  </PopupButton> */}
+                  </PopupButton>
             </div>
           </div>
           <div className="col-lg-6 d-flex justify-content-center">

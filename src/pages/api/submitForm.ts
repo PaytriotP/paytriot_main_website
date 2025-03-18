@@ -1,33 +1,32 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*'); // You can replace '*' with your specific domain
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  // Handle preflight OPTIONS request
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
   if (req.method === 'POST') {
     try {
-      const data = req.body;
+      const response = await fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(req.body),
+      });
 
-      // Do something with the data
-      // Example: Log the data
-      console.log('Received form data:', data);
+      if (!response.ok) {
+        throw new Error('Failed to submit data to Google Sheets');
+      }
 
-      // You can now call Google Apps Script webhook or Google Sheets API here
-      // Alternatively, send email using nodemailer or any service
-
-      return res.status(200).json({ message: 'Form submitted successfully' });
-    } catch (error) {
-      console.error('Error processing form:', error);
-      return res.status(500).json({ message: 'Internal Server Error' });
+      const result = await response.json();
+      res.status(200).json({ message: 'Form submitted successfully', result });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
     }
+  } else if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.status(200).end();
   } else {
-    return res.status(405).json({ message: 'Method Not Allowed' });
+    res.setHeader('Allow', ['POST', 'OPTIONS']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

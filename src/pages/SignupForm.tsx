@@ -75,7 +75,7 @@ const onSubmit = async (data: FormValues) => {
       return;
     }
 
-    const response = await fetch("https://script.google.com/macros/s/AKfycby3D5ERQNs0v9t2UYF9jMxYq8UPVLo15oXT2PSjvzSwvtCCVIVQzwbhg-I6U2uYNtct/exec", {
+    const response = await fetch("https://script.google.com/macros/s/AKfycbzrqOA-Cf8DlneR7TVfu18SATTT0IaFRIFp_1Jelr0/dev", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

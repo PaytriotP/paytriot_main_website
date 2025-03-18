@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { Input, Button, Loading } from "@nextui-org/react"
+import { GoogleAnalytics } from '@next/third-parties/google';
+
 
 // Form field type
 type FormValues = {
@@ -97,6 +99,14 @@ const onSubmit = async (data: FormValues) => {
 
     setIsSuccess(true);
     reset();
+
+    // Send event to Google Analytics
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'form_submission', {
+          event_category: 'Signup',
+          event_label: 'Signup Form Submission',
+        });
+      }
 
     // Redirect after successful submission
     setTimeout(() => {

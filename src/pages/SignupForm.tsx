@@ -91,10 +91,6 @@ const onSubmit = async (data: FormValues) => {
       }),
     });
 
-    if (!response.ok) {
-      throw new Error("Form submission failed");
-    }
-
     setIsSuccess(true);
     reset();
 

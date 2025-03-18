@@ -75,7 +75,7 @@ const onSubmit = async (data: FormValues) => {
       return;
     }
 
-    const response = await fetch("https://script.google.com/macros/s/AKfycbwGszRHnke5oeYhbulemJtRnZ8A2HsinNt4hXBSl6z9S6uags2ScCZFJmhgPGr9o1WQ/exec", {
+    const response = await fetch("https://hooks.zapier.com/hooks/catch/15891653/2lq4i5f/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -77,6 +77,7 @@ const onSubmit = async (data: FormValues) => {
 
     const response = await fetch("https://script.google.com/macros/s/AKfycbwGszRHnke5oeYhbulemJtRnZ8A2HsinNt4hXBSl6z9S6uags2ScCZFJmhgPGr9o1WQ/exec", {
       method: "POST",
+      mode: "no-cors",
       headers: {
         "Content-Type": "application/json",
       },

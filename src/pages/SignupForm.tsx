@@ -123,7 +123,7 @@ const onSubmit = async (data: FormValues) => {
               </span>
             </div>
             <h4 className="text-success mb-3">Account Created Successfully!</h4>
-            <p>Thank you for signing up with Paytriot. Thank you for signing up! We will reach out to you soon.</p>
+            <p> Thank you for signing up! We will reach out to you soon.</p>
           </div>
         ) : (
           <form className="w-100" onSubmit={handleSubmit(onSubmit)}>

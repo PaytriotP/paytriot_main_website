@@ -75,20 +75,25 @@ const onSubmit = async (data: FormValues) => {
       return;
     }
 
-    const response = await fetch("https://hooks.zapier.com/hooks/catch/15891653/2lq4i5f/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        fullName: data.fullName,
-        phoneNumber: data.phoneNumber,
-        email: data.email,
-        website: data.website,
-        password: data.password,
-        repeatPassword: data.repeatPassword,
-      }),
-    });
+       const response = await fetch("/api/submitForm", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName: data.fullName,
+          phoneNumber: data.phoneNumber,
+          email: data.email,
+          website: data.website,
+          password: data.password,
+          repeatPassword: data.repeatPassword,
+        }),
+      })
+
+      if (!response.ok) {
+        const resData = await response.json()
+        throw new Error(resData.message || 'Failed to submit form')
+      }
 
     setIsSuccess(true);
     reset();

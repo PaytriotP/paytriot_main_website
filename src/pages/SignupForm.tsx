@@ -1,9 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -13,20 +11,15 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { CheckCircle, Info, Loader2 } from "lucide-react"
 
-// Form validation schema
-const formSchema = z
-  .object({
-    fullName: z.string().min(2, { message: "Full name must be at least 2 characters" }),
-    email: z.string().email({ message: "Please enter a valid email address" }),
-    website: z.string().url({ message: "Please enter a valid website URL" }),
-    password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-    repeatPassword: z.string(),
-    phoneNumber: z.string().min(5, { message: "Please enter a valid phone number" }),
-  })
-  .refine((data) => data.password === data.repeatPassword, {
-    message: "Passwords don't match",
-    path: ["repeatPassword"],
-  })
+// Form field type
+type FormValues = {
+  fullName: string
+  email: string
+  website: string
+  password: string
+  repeatPassword: string
+  phoneNumber: string
+}
 
 export default function SignupForm() {
   const router = useRouter()
@@ -35,8 +28,7 @@ export default function SignupForm() {
   const [error, setError] = useState<string | null>(null)
   const [passwordStrength, setPasswordStrength] = useState(0)
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<FormValues>({
     defaultValues: {
       fullName: "",
       email: "",
@@ -47,6 +39,22 @@ export default function SignupForm() {
     },
   })
 
+  const { watch } = form
+  const password = watch("password")
+  const repeatPassword = watch("repeatPassword")
+
+  // Check if passwords match
+  useEffect(() => {
+    if (repeatPassword && password !== repeatPassword) {
+      form.setError("repeatPassword", {
+        type: "manual",
+        message: "Passwords don't match",
+      })
+    } else if (repeatPassword) {
+      form.clearErrors("repeatPassword")
+    }
+  }, [password, repeatPassword, form])
+
   const checkPasswordStrength = (password: string) => {
     let strength = 0
     if (password.length >= 8) strength += 1
@@ -56,7 +64,7 @@ export default function SignupForm() {
     setPasswordStrength(strength)
   }
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+  const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true)
     setError(null)
 
@@ -110,6 +118,13 @@ export default function SignupForm() {
                   <FormField
                     control={form.control}
                     name="fullName"
+                    rules={{
+                      required: "Full name is required",
+                      minLength: {
+                        value: 2,
+                        message: "Full name must be at least 2 characters",
+                      },
+                    }}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Full Name</FormLabel>
@@ -124,6 +139,13 @@ export default function SignupForm() {
                   <FormField
                     control={form.control}
                     name="email"
+                    rules={{
+                      required: "Email is required",
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: "Please enter a valid email address",
+                      },
+                    }}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Email</FormLabel>
@@ -137,7 +159,36 @@ export default function SignupForm() {
 
                   <FormField
                     control={form.control}
+                    name="phoneNumber"
+                    rules={{
+                      required: "Phone number is required",
+                      minLength: {
+                        value: 5,
+                        message: "Please enter a valid phone number",
+                      },
+                    }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Phone Number</FormLabel>
+                        <FormControl>
+                          <Input type="tel" placeholder="+44(555)1234567" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
                     name="website"
+                    rules={{
+                      required: "Website is required",
+                      pattern: {
+                        value:
+                          /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/,
+                        message: "Please enter a valid website URL",
+                      },
+                    }}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Website</FormLabel>
@@ -152,6 +203,13 @@ export default function SignupForm() {
                   <FormField
                     control={form.control}
                     name="password"
+                    rules={{
+                      required: "Password is required",
+                      minLength: {
+                        value: 6,
+                        message: "Password must be at least 6 characters",
+                      },
+                    }}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Password</FormLabel>
@@ -214,25 +272,15 @@ export default function SignupForm() {
                   <FormField
                     control={form.control}
                     name="repeatPassword"
+                    rules={{
+                      required: "Please confirm your password",
+                      validate: (value) => value === password || "Passwords don't match",
+                    }}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Repeat Password</FormLabel>
                         <FormControl>
                           <Input type="password" placeholder="••••••••" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="phoneNumber"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Phone Number</FormLabel>
-                        <FormControl>
-                          <Input type="tel" placeholder="+1 (555) 123-4567" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

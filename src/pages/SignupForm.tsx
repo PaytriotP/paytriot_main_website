@@ -63,43 +63,51 @@ export default function SignupForm() {
     setPasswordStrength(strength)
   }
 
-  const onSubmit = async (data: FormValues) => {
-    setIsSubmitting(true)
-    setSubmissionError(null)
+const onSubmit = async (data: FormValues) => {
+  setIsSubmitting(true);
+  setSubmissionError(null);
 
-    try {
-      // Basic validation manually
-      if (data.password !== data.repeatPassword) {
-        setSubmissionError("Passwords do not match")
-        setIsSubmitting(false)
-        return
-      }
-
-      const response = await fetch("https://hooks.zapier.com/hooks/catch/15891653/2lq4i5f/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-
-      if (!response.ok) {
-        throw new Error("Form submission failed")
-      }
-
-      setIsSuccess(true)
-      reset()
-
-      // Redirect after successful submission
-      setTimeout(() => {
-        window.location.href = "/"
-      }, 5000)
-    } catch (error: any) {
-      setSubmissionError(error.message)
-    } finally {
-      setIsSubmitting(false)
+  try {
+    // Basic validation manually
+    if (data.password !== data.repeatPassword) {
+      setSubmissionError("Passwords do not match");
+      setIsSubmitting(false);
+      return;
     }
+
+    const response = await fetch("https://script.google.com/macros/s/AKfycby3D5ERQNs0v9t2UYF9jMxYq8UPVLo15oXT2PSjvzSwvtCCVIVQzwbhg-I6U2uYNtct/exec", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        fullName: data.fullName,
+        phoneNumber: data.phoneNumber,
+        email: data.email,
+        website: data.website,
+        password: data.password,
+        repeatPassword: data.repeatPassword,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Form submission failed");
+    }
+
+    setIsSuccess(true);
+    reset();
+
+    // Redirect after successful submission
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 5000);
+  } catch (error: any) {
+    setSubmissionError(error.message);
+  } finally {
+    setIsSubmitting(false);
   }
+};
+
 
   return (
     <section className="signup py-5">

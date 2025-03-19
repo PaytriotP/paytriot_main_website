@@ -151,7 +151,7 @@ const onSubmit = async (data: FormValues) => {
             <div className="mb-3">
               <Input
                 rounded
-                className="my-2 input-label"
+                className="my-2"
                 size="lg"
                 type="text"
                 label="Full Name"
@@ -172,7 +172,7 @@ const onSubmit = async (data: FormValues) => {
             <div className="mb-3">
               <Input
                 rounded
-                className="my-2 input-label"
+                className="my-2"
                 size="lg"
                 type="email"
                 label="Email"
@@ -193,7 +193,7 @@ const onSubmit = async (data: FormValues) => {
             <div className="mb-3">
               <Input
                 rounded
-                className="my-2 input-label"
+                className="my-2"
                 size="lg"
                 type="tel"
                 label="Phone Number"
@@ -218,7 +218,7 @@ const onSubmit = async (data: FormValues) => {
             <div className="mb-3">
               <Input
                 rounded
-                className="my-2 input-label"
+                className="my-2"
                 size="lg"
                 type="text"
                 label="Website"
@@ -239,7 +239,7 @@ const onSubmit = async (data: FormValues) => {
             <div className="mb-3">
               <Input
                 rounded
-                className="my-2 input-label"
+                className="my-2"
                 size="lg"
                 type="password"
                 label="Password"
@@ -280,7 +280,7 @@ const onSubmit = async (data: FormValues) => {
             <div className="mb-3">
               <Input
                 rounded
-                className="my-2 input-label"
+                className="my-2"
                 size="lg"
                 type="password"
                 label="Repeat Password"

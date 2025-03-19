@@ -202,6 +202,10 @@ const onSubmit = async (data: FormValues) => {
                 fullWidth
                 {...register("phoneNumber", {
                   required: "Phone number is required",
+                  pattern: {
+                    value: /^\+\d{1,4}[\s\d\-()]{4,}$/,
+                    message: "Please enter a valid phone number with your country code (e.g., +44 123456789)",
+                  },
                   minLength: {
                     value: 5,
                     message: "Please enter a valid phone number",
@@ -224,8 +228,7 @@ const onSubmit = async (data: FormValues) => {
                 {...register("website", {
                   required: "Website is required",
                   pattern: {
-                    value:
-                      /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/,
+                    value: /^(https?:\/\/)?(www\.)?[\w\-]+(\.[\w\-]+)+([\/\w\-.?=%&]*)*$/,
                     message: "Please enter a valid website URL",
                   },
                 })}

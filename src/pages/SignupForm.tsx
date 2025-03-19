@@ -220,7 +220,7 @@ const onSubmit = async (data: FormValues) => {
                 rounded
                 className="my-2 input-label"
                 size="lg"
-                type="url"
+                type="text"
                 label="Website"
                 placeholder="https://yourwebsite.com"
                 status={errors.website ? "error" : undefined}

@@ -93,6 +93,13 @@ a {
   }
 }
 
-.input-label {
-  color: rgb(var(--foreground-rgb));
+/* Light mode - default */
+label {
+  color: black;
 }
+
+/* Dark mode */
+[data-theme='dark'] label {
+  color: white !important;
+}
+

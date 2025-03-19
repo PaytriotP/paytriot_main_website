@@ -16,7 +16,7 @@ export default function Home() {
         <meta name="description" content="Paytriot Payments Landing Page"/>
         
 
-        <title>Paytriot Payments</title>
+        <title>Paytriot Payments | Secure High Risk Payment Solutions  </title>
       </Head>
       
        <TrackingScript />

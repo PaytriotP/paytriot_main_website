@@ -28,32 +28,32 @@ export default function ClientListSlider() {
     <>
       <div className="client-list">
         <div className="inner-client-img">
-          <Image src={logoShopifyLightPng} alt="" className="w-100 client-img" />
+          <Image src={logoShopifyLightPng} alt="Trusted Payment Processing Client UK" className="w-100 client-img" />
         </div>
         <div className="inner-client-img">
           <Image
             src={logoPizzahutLightPng}
-            alt=""
+            alt="Pizza Hut - High Risk Merchant Service Client UK"
             className="w-100 client-img"
           />
         </div>
         <div className="inner-client-img">
-          <Image src={logoMatraLightPng} alt="" className="w-100 client-img" />
+          <Image src={logoMatraLightPng} alt="Matra - Secure Payment Solutions Client Europe" className="w-100 client-img" />
         </div>
         <div className="inner-client-img">
-          <Image src={logoHiltonLightPng} alt="" className="w-100 client-img" />
+          <Image src={logoHiltonLightPng} alt="Hilton Hotels - Paytriot High Risk Merchant Partner" className="w-100 client-img" />
         </div>
         <div className="inner-client-img">
           <Image
             src={logoNitrousLightPng}
-            alt=""
+            alt="Nitrous - Payment Processing Client UK & Europe"
             className="w-100 client-img"
           />
         </div>
         <div className="inner-client-img">
           <Image
             src={logoHamptonLightPng}
-            alt=""
+            alt="Hampton Hotels - Trusted Merchant Services Client"
             className="w-100 client-img"
           />
         </div>

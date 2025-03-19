@@ -17,7 +17,7 @@ const poppins = Poppins({
 });
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <ThemeProvider enableSystem={false} >
+    <ThemeProvider attribute="data-theme" enableSystem={false}>
       <NextUIProvider>
         <main className={`bg ${poppins.className}`}>
           <GoogleAnalytics gaId="AW-16819203227"/>

@@ -92,3 +92,7 @@ a {
     color-scheme: dark;
   }
 }
+
+.input-label {
+  color: rgb(var(--foreground-rgb));
+}

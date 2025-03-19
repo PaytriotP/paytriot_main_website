@@ -373,6 +373,10 @@ h6 {
     /* animation: big-title 15s linear infinite; */
 }
 
+.signup .nextui-input-label {
+  color: var(--nextui-colors-foreground) !important;
+}
+
 @keyframes big-title {
     0% {
         content: "Approval Rate?"
@@ -2159,10 +2163,6 @@ ul.nav-footer li {
 
 [data-theme="dark"] .nextui-navbar-container {
     background: #13121d;
-}
-
-.signup label {
-  color: var(--nextui-colors-foreground) !important;
 }
 
 

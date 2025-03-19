@@ -2161,6 +2161,10 @@ ul.nav-footer li {
     background: #13121d;
 }
 
+.signup label {
+  color: var(--nextui-colors-foreground) !important;
+}
+
 
 .nextui-navbar-toggle,
 .nextui-navbar-toggle-icon {

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { Input, Button, Loading } from "@nextui-org/react"
 import { GoogleAnalytics } from '@next/third-parties/google';
+import { useTheme } from 'next-themes';
 
 
 // Form field type
@@ -17,6 +18,7 @@ type FormValues = {
 }
 
 export default function SignupForm() {
+  const { theme } = useTheme();
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [submissionError, setSubmissionError] = useState<string | null>(null)

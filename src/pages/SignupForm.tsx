@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
+import Head from 'next/head';
 import { Input, Button, Loading } from "@nextui-org/react"
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { useTheme } from 'next-themes';

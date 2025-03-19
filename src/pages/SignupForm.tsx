@@ -121,6 +121,16 @@ const onSubmit = async (data: FormValues) => {
 
 
   return (
+  <>
+  <Head>
+        {/* Required meta tags */}
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Paytriot Payments Contact Us"/>
+
+        <title>Contact Us | Paytriot</title>
+  </Head>
+  <main>
     <section className="signup py-5">
       <div className="container d-flex flex-column align-items-center">
         <h3 className="text-center mb-5">Create Your Paytriot Account</h3>
@@ -305,6 +315,9 @@ const onSubmit = async (data: FormValues) => {
         )}
       </div>
     </section>
-  )
+   <br />
+  </main>
+</>
+  );
 }
 

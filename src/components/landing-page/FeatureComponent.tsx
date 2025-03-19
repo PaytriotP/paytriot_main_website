@@ -33,7 +33,7 @@ export default function FeatureComponent() {
                     role="button"
                     data-bs-toggle="button"
                   >
-                    <Image src={logoPlayStoreSvg} alt="" className="w-100" />
+                    <Image src={logoPlayStoreSvg} alt="Download Paytriot Wallet for High-Risk Payment Processing - Google Play Store" className="w-100" />
                   </Link>
                   <Link
                     href="https://apps.apple.com/gb/app/paytriot-wallet/id1458486345"
@@ -43,7 +43,7 @@ export default function FeatureComponent() {
                     role="button"
                     data-bs-toggle="button"
                   >
-                    <Image src={logoAppStoreSvg} alt="" className="w-100" />
+                    <Image src={logoAppStoreSvg} alt="Secure High-Risk Merchant Payments with Paytriot Wallet - Apple App Store" className="w-100" />
                   </Link>
                 </div>
               </div>

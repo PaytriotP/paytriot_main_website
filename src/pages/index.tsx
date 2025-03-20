@@ -13,10 +13,10 @@ export default function Home() {
       <Head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="Affordable high risk merchant services in UK & Europe with secure payment processing"/>
+        <meta name="description" content="Discover secure payment solutions and affordable merchant services designed to help your business grow. Fast, reliable, and tailored to your needs."/>
         
 
-        <title>Paytriot Payments | Secure High Risk Payment Solutions  </title>
+        <title> Secure Payment Solutions & Affordable Merchant Services </title>
       </Head>
       
        <TrackingScript />

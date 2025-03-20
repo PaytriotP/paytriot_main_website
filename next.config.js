@@ -47,8 +47,8 @@ const nextConfig = {
         basePath: false
        },
        {
-        source: '/blog/page/wallet',
-        destination: '/blog/Paytriot-Wallet-Guide',
+        source: '/blog/Paytriot-Wallet-Guide',
+        destination: '/Paytriot-Wallet-Guide',
         permanent: true,
         basePath: false
        },

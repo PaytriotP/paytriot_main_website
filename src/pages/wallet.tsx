@@ -154,7 +154,7 @@ export default function WalletPage() {
           </div>
           <div className="d-flex justify-content-around">
             <a
-              href="/contact-us"
+              href="contact-us"
               className="btn btn-primary w-100 mt-3"
               role="button"
               data-bs-toggle="button"
@@ -162,7 +162,7 @@ export default function WalletPage() {
               Sign up as a business
             </a>
             <a
-              href="/signup-form"
+              href="contact-us"
               className="btn btn-primary w-100 mt-3"
               role="button"
               data-bs-toggle="button"

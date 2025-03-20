@@ -313,12 +313,12 @@ const onSubmit = async (data: FormValues) => {
                     Sign In
                   </a>
                 </p>
-                 <p className="text-muted small">
+{/*                  <p className="text-muted small">
                    For general queries, please email{" "}
                    <a href="mailto:info@paytriot.co.uk" className="text-warning fw-medium">
                      info@paytriot.co.uk
                    </a>
-                 </p>
+                 </p> */}
               </div>
             </div>
           </form>

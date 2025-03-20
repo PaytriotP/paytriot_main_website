@@ -162,7 +162,7 @@ export default function WalletPage() {
               Sign up as a business
             </a>
             <a
-              href="contact-us"
+              href="/signup-form"
               className="btn btn-primary w-100 mt-3"
               role="button"
               data-bs-toggle="button"

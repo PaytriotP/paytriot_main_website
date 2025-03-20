@@ -29,7 +29,7 @@ export default function HeroComponent() {
               Paytriot now offers a monthly fee for businesses looking to start processing or switching. 
               </p>
               <Link
-                href="/SignupForm"
+                href="/signup-form"
                 className="btn btn-primary"
                 role="button"
                 data-bs-toggle="button"

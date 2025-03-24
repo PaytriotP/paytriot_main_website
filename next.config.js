@@ -53,12 +53,6 @@ const nextConfig = {
         basePath: false
       },
        {
-        source: '/blog/Paytriot-Wallet-Guide',
-        destination: 'https://www.paytriot.co.uk/blog/Paytriot-Wallet-Guide',
-        permanent: true,
-        basePath: false
-       },
-       {
         source: '/blog/page/contact-us',
         destination: '/contact-us',
         permanent: true,

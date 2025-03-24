@@ -41,6 +41,12 @@ const nextConfig = {
         basePath: false
       },
       {
+        source: '/blog/wallet',
+        destination: '/wallet',
+        permanent: true,
+        basePath: false
+      }
+      {
         source: '/blog/page/services',
         destination: '/services',
         permanent: true,

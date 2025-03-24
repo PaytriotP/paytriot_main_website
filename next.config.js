@@ -113,7 +113,12 @@ const nextConfig = {
         permanent: true,
         basePath: false
        },
-
+      {
+        source: '/login',
+        destination: '/contact-us', // or '/wallet' if it makes sense
+        permanent: true,
+        basePath: false
+      },
     ];
   },
 

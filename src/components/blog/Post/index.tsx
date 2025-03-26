@@ -15,6 +15,13 @@ export default function Post(props: any) {
       {post.tags !== null && <Tags tags={post.tags} />}
       <h1 className={TypographyStyles.heading__h1}>{post.title}</h1>
       <RichTextPageContent richTextBodyField={post.body} renderH2Links={true} />
+      <section className={RichTextPageContentStyles.ctaSection}>
+        <h2>Ready to Get Started?</h2>
+        <p>Join thousands of users who trust us for seamless transactions. Sign up now and take your business to the next level!</p>
+        <Link href="/signup-form">
+          <a className={RichTextPageContentStyles.ctaButton}>Get Started</a>
+        </Link>
+      </section>
       {/* {post.author !== null && <Author author={post.author} />} */}
     </article>
   );

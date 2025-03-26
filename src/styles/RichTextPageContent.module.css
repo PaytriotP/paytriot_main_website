@@ -65,3 +65,40 @@
   height: auto;
   margin: 1rem 0 2rem 0;
 }
+
+/* CTA Section Styles */
+.ctaSection {
+  background-color: #f8f9fa; /* Light gray background */
+  text-align: center;
+  padding: 40px 20px;
+  margin-top: 40px;
+  border-radius: 8px;
+}
+
+.ctaSection h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.ctaSection p {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.ctaButton {
+  display: inline-block;
+  background-color: #007bff; /* Blue button */
+  color: white;
+  padding: 12px 24px;
+  font-size: 18px;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background 0.3s ease-in-out;
+}
+
+.ctaButton:hover {
+  background-color: #0056b3; /* Darker blue */
+}
+

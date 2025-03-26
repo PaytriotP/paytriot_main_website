@@ -94,7 +94,7 @@
 
 .ctaButton {
   display: inline-block;
-  background-color: #e8a94a; /* Amber/gold color matching Paytriot button */
+  background-color: #f5a525; /* Updated to the specified color */
   color: white;
   padding: 16px 32px; /* Bigger button */
   font-size: 18px;
@@ -107,7 +107,8 @@
 }
 
 .ctaButton:hover {
-  background-color: #d99a3a; /* Slightly darker on hover */
+  background-color: #e09620; /* Slightly darker on hover */
+  color: white; /* Ensure text stays white on hover */
   transform: translateY(-2px);
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
@@ -116,6 +117,17 @@
 .ctaButton:active {
   transform: scale(0.98);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: white; /* Ensure text stays white when active */
 }
+
+/* Override any default link styling */
+.ctaButton:link,
+.ctaButton:visited,
+.ctaButton:hover,
+.ctaButton:active {
+  color: white;
+  text-decoration: none;
+}
+
 
 

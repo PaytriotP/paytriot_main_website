@@ -4,6 +4,8 @@ import Tags from '@/components/blog/Post/Tags';
 import RichTextPageContent from '@/components/blog/RichTextPageContent';
 import RichTextPageContentStyles from '@/styles/RichTextPageContent.module.css';
 import TypographyStyles from '@/styles/Typography.module.css';
+import Link from 'next/link';
+
 
 export default function Post(props: any) {
   const { post } = props;

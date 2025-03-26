@@ -67,28 +67,55 @@
 }
 
 /* CTA Section Styles */
-/* CTA Section Styles */
 .ctaSection {
-  background-color: #f8f9fa; /* Light gray background */
+  background-color: #f8f9fa; /* Light gray background matching the image */
   text-align: center;
   padding: 60px 30px; /* More padding for better spacing */
-  margin-top: 60px;
+  margin: 60px auto;
   border-radius: 12px; /* Softer edges */
+  max-width: 1200px;
 }
 
 .ctaSection h2 {
-  font-size: 28px; /* Larger heading */
+  font-size: 32px; /* Larger heading */
   font-weight: bold;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  color: #0a1736; /* Dark navy color matching Paytriot branding */
 }
 
 .ctaSection p {
   font-size: 18px; /* Bigger text for readability */
   color: #555;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ctaButton {
+  display: inline-block;
+  background-color: #e8a94a; /* Amber/gold color matching Paytriot button */
+  color: white;
+  padding: 16px 32px; /* Bigger button */
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 50px; /* Fully rounded button like in the image */
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.ctaButton:hover {
+  background-color: #d99a3a; /* Slightly darker on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* Pop animation on click */
 .ctaButton:active {
-  transform: scale(0.95);
+  transform: scale(0.98);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+

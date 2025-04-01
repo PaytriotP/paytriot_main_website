@@ -17,6 +17,16 @@ export default function Home() {
         
 
         <title> Secure Payment Solutions & Affordable Merchant Services </title>
+        {/* Open Graph (Facebook & LinkedIn) */}
+        <meta property="og:title" content="Secure Payment Solutions & Affordable Merchant Services" />
+        <meta property="og:description" content="Discover secure payment solutions and affordable merchant services designed to help your business grow. Fast, reliable, and tailored to your needs." />
+        <meta property="og:url" content="https://yourdomain.com/" />
+        <meta property="og:type" content="website" />
+        
+        {/* Twitter Card (Twitter Preview) */}
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Secure Payment Solutions & Affordable Merchant Services" />
+        <meta name="twitter:description" content="Discover secure payment solutions and affordable merchant services designed to help your business grow. Fast, reliable, and tailored to your needs." />
       </Head>
       
        <TrackingScript />

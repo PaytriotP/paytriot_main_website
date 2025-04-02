@@ -56,7 +56,7 @@ export default function FeatureComponent() {
             </div>
           </div>
           <div className="row position-sticky top-0">
-            <meta name="robots" content="noindex, nofollow" />
+            <meta name="robots" content="index, follow" />
             <div className="col-lg-5 d-flex align-items-center mb-lg-0 mb-5">
               <div className="txt-wrap">
                 <h2 className="mb-lg-4 text-center text-lg-start">

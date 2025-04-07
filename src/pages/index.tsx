@@ -45,8 +45,6 @@ export default function Home() {
         <meta name="twitter:description" content="Discover secure payment solutions and affordable merchant services designed to help your business grow. Fast, reliable, and tailored to your needs." />
       </Head>
       
-       <TrackingScript />
-      
       <main>
         <LandingHero />
         <WhatWeDoComponent />

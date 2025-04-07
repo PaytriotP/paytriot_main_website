@@ -101,6 +101,8 @@ const onSubmit = async (data: FormValues) => {
     setIsSuccess(true);
     reset();
 
+    // Check if the conversion has already been tracked in the session
+    const hasTrackedConversion = sessionStorage.getItem("hasTrackedConversion");
     // Send event to Google Analytics
     // Ensure conversion event only fires once
       if (!hasTrackedConversion) {
@@ -110,7 +112,8 @@ const onSubmit = async (data: FormValues) => {
             value: 1.0,  // Optional: Set conversion value
             currency: "GBP",  // Optional: Set currency
           });
-          setHasTrackedConversion(true); // Prevent firing the event again
+           // Mark that the conversion has been tracked for this session
+        sessionStorage.setItem("hasTrackedConversion", "true");
         }
       }
 

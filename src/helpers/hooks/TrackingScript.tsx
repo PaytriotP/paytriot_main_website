@@ -16,30 +16,50 @@ const TrackingScript: React.FC = () => {
     document.getElementsByTagName('head')[0].appendChild(visitorQueueScript);
 
     // Google Ads tracking script
-    const googleAdsScript = document.createElement('script');
-    googleAdsScript.src = 'https://www.googletagmanager.com/gtag/js?id=AW-16819203227'; // Google Tag ID
-    googleAdsScript.async = true;
+    const appendGoogleAdsScript = () => {
+      const googleAdsScript = document.createElement('script');
+      googleAdsScript.src = 'https://www.googletagmanager.com/gtag/js?id=AW-16819203227'; // Google Tag ID
+      googleAdsScript.async = true;
+      googleAdsScript.id = 'google-ads-script'; // Added an ID for cleanup
+
+      // Append Google Ads script to the head
+      document.getElementsByTagName('head')[0].appendChild(googleAdsScript);
+
+      googleAdsScript.onload = () => {
+        // Initialize Google Tag
+        window.gtag('js', new Date());
+        window.gtag('config', 'AW-16819203227'); // Google Tag ID
+
+        // Check if this session has already tracked the footfall visit event
+        const hasTrackedFootfall = sessionStorage.getItem('hasTrackedFootfallVisit');
+
+        // If the footfall event hasn't been tracked for this session, track it
+        if (!hasTrackedFootfall) {
+          window.gtag('event', 'footfall_visit', {
+            send_to: 'AW-16819203227',
+            event_category: 'Footfall',
+            event_label: 'Landing Page Visit',
+            value: 1.0,
+            currency: 'GBP',  // Currency (adjust if needed)
+          });
+
+          // Mark that the footfall event has been tracked for this session
+          sessionStorage.setItem('hasTrackedFootfallVisit', 'true');
+        }
+      };
+    };
 
     // Append Google Ads script to the head
-    document.getElementsByTagName('head')[0].appendChild(googleAdsScript);
-
-    googleAdsScript.onload = () => {
-      // Initialize Google Tag
-      window.gtag('js', new Date());
-      window.gtag('config', 'AW-16819203227'); // Google Tag ID
-
-      // Track page visit as conversion (footfall tracking)
-      window.gtag('event', 'conversion', {
-        send_to: 'AW-16819203227/ubhlCKfY44oaEJvZgtQ-',  // Conversion ID from Google Ads
-        value: 1.0,  // Set conversion value (optional)
-        currency: 'GBP',  // Currency (adjust if needed)
-         });
-    };
+    appendGoogleAdsScript();
 
     // Clean up the scripts on unmount
     return () => {
       document.getElementsByTagName('head')[0].removeChild(visitorQueueScript);
-      document.getElementsByTagName('head')[0].removeChild(googleAdsScript);
+
+      const googleAdsScript = document.getElementById('google-ads-script');
+      if (googleAdsScript) {
+        document.getElementsByTagName('head')[0].removeChild(googleAdsScript);
+      }
     };
   }, []);
 

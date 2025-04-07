@@ -102,11 +102,16 @@ const onSubmit = async (data: FormValues) => {
     reset();
 
     // Send event to Google Analytics
-      if (typeof window !== 'undefined' && window.gtag) {
-        window.gtag('event', 'form_submission', {
-          event_category: 'Signup',
-          event_label: 'Signup Form Submission',
-        });
+    // Ensure conversion event only fires once
+      if (!hasTrackedConversion) {
+        if (typeof window !== "undefined" && window.gtag) {
+          window.gtag("event", "conversion", {
+            send_to: "AW-16819203227/ubhlCKfY44oaEJvZgtQ-",  // Your Google Conversion ID
+            value: 1.0,  // Optional: Set conversion value
+            currency: "GBP",  // Optional: Set currency
+          });
+          setHasTrackedConversion(true); // Prevent firing the event again
+        }
       }
 
     // Redirect after successful submission

@@ -108,9 +108,13 @@ const onSubmit = async (data: FormValues) => {
       if (!hasTrackedConversion) {
         if (typeof window !== "undefined" && window.gtag) {
           window.gtag("event", "conversion", {
-            send_to: "AW-16819203227/ubhlCKfY44oaEJvZgtQ-",  // Your Google Conversion ID
+            send_to: "AW-16819203227/J0jkCKucrK0aEJvZgtQ-",  // Your Google Conversion ID
             value: 1.0,  // Optional: Set conversion value
             currency: "GBP",  // Optional: Set currency
+             user_data: {
+               email: data.email.trim().toLowerCase(),
+               phone_number: data.phoneNumber.replace(/\D/g, ''),
+             },
           });
            // Mark that the conversion has been tracked for this session
         sessionStorage.setItem("hasTrackedConversion", "true");

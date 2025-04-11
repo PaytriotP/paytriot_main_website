@@ -20,7 +20,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <ThemeProvider attribute="data-theme" enableSystem={false}>
       <NextUIProvider>
         <main className={`bg ${poppins.className}`}>
-{/*           <GoogleAnalytics gaId="AW-16819203227"/> */}
+          <GoogleAnalytics gaId="AW-16819203227"/>
           <TrackingScript/>
           <NavigationMenu />
           <Component {...pageProps} />

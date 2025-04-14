@@ -103,10 +103,15 @@ const onSubmit = async (data: FormValues) => {
 
     // Check if the conversion has already been tracked in the session
     const hasTrackedConversion = sessionStorage.getItem("hasTrackedConversion");
+    console.log("Sending email to gtag:", data.email);
     // Send event to Google Analytics
     // Ensure conversion event only fires once
       if (!hasTrackedConversion) {
         if (typeof window !== "undefined" && window.gtag) {
+          if (!data.email) {
+            console.warn("Missing email — enhanced conversion may not work.");
+          }
+          
           window.gtag("event", "conversion", {
             send_to: "AW-16819203227/ubhlCKfY44oaEJvZgtQ-",  // Your Google Conversion ID
             value: 1.0,  // Optional: Set conversion value
@@ -120,11 +125,17 @@ const onSubmit = async (data: FormValues) => {
         sessionStorage.setItem("hasTrackedConversion", "true");
         }
       }
+    // Enhanced Conversion Logging
+    console.log("Enhanced Conversion Data Sent:", {
+      email: data.email.trim().toLowerCase(),
+      phone_number: data.phoneNumber.replace(/\D/g, ''),
+    });
 
-    // Redirect after successful submission
+    // Add short delay to ensure gtag has time before redirect
     setTimeout(() => {
       window.location.href = "/";
-    }, 5000);
+    }, 500);
+    
   } catch (error: any) {
     setSubmissionError(error.message);
   } finally {

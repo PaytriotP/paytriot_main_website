@@ -122,7 +122,9 @@ const onSubmit = async (data: FormValues) => {
              },
           });
            // Mark that the conversion has been tracked for this session
-        sessionStorage.setItem("hasTrackedConversion", "true");
+        // sessionStorage.setItem("hasTrackedConversion", "true");
+          document.cookie = "hasTrackedConversion=true; path=/; max-age=3600";  // Cookie expires in 1 hour
+          console.log("Conversion event triggered, cookie set.");
         }
       }
     // Enhanced Conversion Logging

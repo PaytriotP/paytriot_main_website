@@ -24,10 +24,16 @@ const TrackingScript: React.FC = () => {
       document.head.appendChild(googleAdsScript);
 
       googleAdsScript.onload = () => {
-        window.dataLayer = window.dataLayer || [];
-        function gtag(...args: any[]) {
-          window.dataLayer.push(args);
+         // Ensure dataLayer exists before pushing to it
+        if (!window.dataLayer) {
+          window.dataLayer = [];
         }
+
+        // Define gtag function
+        function gtag(...args: any[]) {
+          (window.dataLayer as any[]).push(args);
+        }
+        // Attach gtag to window object
         window.gtag = gtag;
 
         gtag('js', new Date());

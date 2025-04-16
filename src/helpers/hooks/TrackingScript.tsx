@@ -15,8 +15,9 @@ const TrackingScript: React.FC = () => {
       document.head.appendChild(visitorQueueScript);
     }
 
-    // Inject Google Ads gtag script only once
-    if (!document.getElementById('google-ads-script')) {
+   // Avoid duplicate script injection
+    if (document.getElementById('google-ads-script')) return;
+    
       const googleAdsScript = document.createElement('script');
       googleAdsScript.src = 'https://www.googletagmanager.com/gtag/js?id=AW-16819203227';
       googleAdsScript.async = true;

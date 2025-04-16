@@ -15,44 +15,33 @@ const TrackingScript: React.FC = () => {
       document.head.appendChild(visitorQueueScript);
     }
 
-   // Avoid duplicate script injection
-    if (document.getElementById('google-ads-script')) return;
-    
-      const googleAdsScript = document.createElement('script');
-      googleAdsScript.src = 'https://www.googletagmanager.com/gtag/js?id=AW-16819203227';
-      googleAdsScript.async = true;
-      googleAdsScript.id = 'google-ads-script';
-      document.head.appendChild(googleAdsScript);
+    // DO NOT inject Google Ads script here if using <GoogleAnalytics /> in _app.tsx
+    // Just wait for gtag to be available and fire the event
 
-      googleAdsScript.onload = () => {
-         // Ensure dataLayer exists before pushing to it
-        if (!window.dataLayer) {
-          window.dataLayer = [];
-        }
+    const trackFootfall = () => {
+      if (
+        typeof window.gtag === 'function' &&
+        !sessionStorage.getItem('hasTrackedFootfallVisit')
+      ) {
+        window.gtag('event', 'footfall_visit', {
+          send_to: 'AW-16819203227',
+          event_category: 'Footfall',
+          event_label: 'Landing Page Visit',
+          value: 1.0,
+          currency: 'GBP',
+        });
+        sessionStorage.setItem('hasTrackedFootfallVisit', 'true');
+      }
+    };
 
-        // Define gtag function
-        function gtag(...args: any[]) {
-          (window.dataLayer as any[]).push(args);
-        }
-        // Attach gtag to window object
-        window.gtag = gtag;
+    const interval = setInterval(() => {
+      if (typeof window.gtag === 'function') {
+        trackFootfall();
+        clearInterval(interval);
+      }
+    }, 300);
 
-        gtag('js', new Date());
-        gtag('config', 'AW-16819203227');
-
-        // Track footfall visit once per session
-        if (!sessionStorage.getItem('hasTrackedFootfallVisit')) {
-          gtag('event', 'footfall_visit', {
-            send_to: 'AW-16819203227',
-            event_category: 'Footfall',
-            event_label: 'Landing Page Visit',
-            value: 1.0,
-            currency: 'GBP',
-          });
-          sessionStorage.setItem('hasTrackedFootfallVisit', 'true');
-        }
-      };
-    }
+    return () => clearInterval(interval);
   }, []);
 
   return null;

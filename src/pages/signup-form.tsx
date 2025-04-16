@@ -103,26 +103,28 @@ const onSubmit = async (data: FormValues) => {
 
     // Check if the conversion has already been tracked in the session
     const hasTrackedConversion = sessionStorage.getItem("hasTrackedConversion");
-    console.log("Sending email to gtag:", data.email);
-    // Send event to Google Analytics
-    // Ensure conversion event only fires once
     if (!hasTrackedConversion) {
+      // Fire conversion event and Enhanced Conversion
       if (typeof window !== "undefined" && typeof window.gtag === "function") {
+        // Ensure email and phone are available for Enhanced Conversions
         if (!data.email) {
-          console.warn("Missing email — enhanced conversion may not work.");
+          console.warn("Missing email — Enhanced Conversions may not work properly.");
         }
+
         // Set user data globally for Enhanced Conversions
         window.gtag("set", "user_data", {
           email: data.email.trim().toLowerCase(),
           phone_number: data.phoneNumber.replace(/\D/g, ''),
         });
 
-        // Fire the conversion event
+        // Fire the conversion event to Google Ads
         window.gtag("event", "conversion", {
           send_to: "AW-16819203227/ubhlCKfY44oaEJvZgtQ-",
           value: 1.0,
           currency: "GBP"
         });
+
+        // Mark the session as having tracked the conversion to avoid duplication
         sessionStorage.setItem("hasTrackedConversion", "true");
       }
     }
@@ -137,13 +139,14 @@ const onSubmit = async (data: FormValues) => {
     setTimeout(() => {
       window.location.href = "/";
     }, 5000);
-    
+
   } catch (error: any) {
     setSubmissionError(error.message);
   } finally {
     setIsSubmitting(false);
   }
 };
+
 
 
 

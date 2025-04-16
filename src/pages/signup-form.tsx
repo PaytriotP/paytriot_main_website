@@ -78,25 +78,25 @@ const onSubmit = async (data: FormValues) => {
       return;
     }
 
-       const response = await fetch("/api/submitForm", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fullName: data.fullName,
-          phoneNumber: data.phoneNumber,
-          email: data.email,
-          website: data.website,
-          password: data.password,
-          repeatPassword: data.repeatPassword,
-        }),
-      })
+    const response = await fetch("/api/submitForm", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        fullName: data.fullName,
+        phoneNumber: data.phoneNumber,
+        email: data.email,
+        website: data.website,
+        password: data.password,
+        repeatPassword: data.repeatPassword,
+      }),
+    });
 
-      if (!response.ok) {
-        const resData = await response.json()
-        throw new Error(resData.message || 'Failed to submit form')
-      }
+    if (!response.ok) {
+      const resData = await response.json();
+      throw new Error(resData.message || 'Failed to submit form');
+    }
 
     setIsSuccess(true);
     reset();
@@ -116,7 +116,7 @@ const onSubmit = async (data: FormValues) => {
           email: data.email.trim().toLowerCase(),
           phone_number: data.phoneNumber.replace(/\D/g, ''),
         });
-        
+
         // Fire the conversion event
         window.gtag("event", "conversion", {
           send_to: "AW-16819203227/ubhlCKfY44oaEJvZgtQ-",
@@ -127,11 +127,6 @@ const onSubmit = async (data: FormValues) => {
       }
     }
 
-        // sessionStorage.setItem("hasTrackedConversion", "true");
-          document.cookie = "hasTrackedConversion=true; path=/; max-age=3600";  // Cookie expires in 1 hour
-          console.log("Conversion event triggered, cookie set.");
-        }
-      }
     // Enhanced Conversion Logging
     console.log("Enhanced Conversion Data Sent:", {
       email: data.email.trim().toLowerCase(),
@@ -141,7 +136,7 @@ const onSubmit = async (data: FormValues) => {
     // Add short delay to ensure gtag has time before redirect
     setTimeout(() => {
       window.location.href = "/";
-    }, 500);
+    }, 5000);
     
   } catch (error: any) {
     setSubmissionError(error.message);
@@ -149,6 +144,7 @@ const onSubmit = async (data: FormValues) => {
     setIsSubmitting(false);
   }
 };
+
 
 
   return (

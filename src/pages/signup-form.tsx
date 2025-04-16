@@ -106,22 +106,27 @@ const onSubmit = async (data: FormValues) => {
     console.log("Sending email to gtag:", data.email);
     // Send event to Google Analytics
     // Ensure conversion event only fires once
-      if (!hasTrackedConversion) {
-        if (typeof window !== "undefined" && window.gtag) {
-          if (!data.email) {
-            console.warn("Missing email — enhanced conversion may not work.");
-          }
-          
-          window.gtag("event", "conversion", {
-            send_to: "AW-16819203227/ubhlCKfY44oaEJvZgtQ-",  // Your Google Conversion ID
-            value: 1.0,  // Optional: Set conversion value
-            currency: "GBP",  // Optional: Set currency
-             user_data: {
-               email: data.email.trim().toLowerCase(),
-               phone_number: data.phoneNumber.replace(/\D/g, ''),
-             },
-          });
-           // Mark that the conversion has been tracked for this session
+    if (!hasTrackedConversion) {
+      if (typeof window !== "undefined" && typeof window.gtag === "function") {
+        if (!data.email) {
+          console.warn("Missing email — enhanced conversion may not work.");
+        }
+        // Set user data globally for Enhanced Conversions
+        window.gtag("set", "user_data", {
+          email: data.email.trim().toLowerCase(),
+          phone_number: data.phoneNumber.replace(/\D/g, ''),
+        });
+        
+        // Fire the conversion event
+        window.gtag("event", "conversion", {
+          send_to: "AW-16819203227/ubhlCKfY44oaEJvZgtQ-",
+          value: 1.0,
+          currency: "GBP"
+        });
+        sessionStorage.setItem("hasTrackedConversion", "true");
+      }
+    }
+
         // sessionStorage.setItem("hasTrackedConversion", "true");
           document.cookie = "hasTrackedConversion=true; path=/; max-age=3600";  // Cookie expires in 1 hour
           console.log("Conversion event triggered, cookie set.");

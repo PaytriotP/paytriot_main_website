@@ -23,7 +23,7 @@ const ContactForm: React.FC = () => {
       {
         "to": [
           {
-            "email": "admin@paytriot.co.uk",
+            "email": "renga@paytriot.co.uk",
             "name": "Admin"
           }
         ],
@@ -58,6 +58,8 @@ const ContactForm: React.FC = () => {
      Phone: ${data.phone},
 
      Website: ${data.website.toString()},
+
+     Subject: ${data.subject},
 
      Message: ${data.message} .
      
@@ -108,7 +110,7 @@ const ContactForm: React.FC = () => {
           size="lg"
           type="text"
           label="Email"
-          {...register('email', { required: true })}
+          {...register('email', { required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/i })}
           status={errors.email ? 'error' : undefined}
           fullWidth
         />
@@ -118,8 +120,8 @@ const ContactForm: React.FC = () => {
           className="my-2"
           size="lg"
           type="phone"
-          label="Phone"
-          {...register('phone', { required: true })}
+          label="Phone (+CountryCode10Digits)"
+          {...register('phone', { required: true, pattern: /^\+\d{1,5}\d{10}$/ })}
           status={errors.phone ? 'error' : undefined}
           fullWidth
         />
@@ -132,6 +134,17 @@ const ContactForm: React.FC = () => {
           label="Website"
           {...register('website', { required: true })}
           status={errors.website ? 'error' : undefined}
+          fullWidth
+        />
+
+         <Input
+          rounded
+          className="my-2"
+          size="lg"
+          type="text"
+          label="Subject"
+          {...register('subject', { required: true })}
+          status={errors.subject ? 'error' : undefined}
           fullWidth
         />
 

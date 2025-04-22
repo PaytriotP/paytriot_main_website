@@ -11,7 +11,7 @@ export default async function handler(
     return;
   }
 
-  const { name, email, phone, website, message } = req.body;
+  const { name, email, phone, website, message, subject } = req.body;
 
   sgMail.setApiKey(`${process.env.Bearer_Token}`);
 
@@ -19,8 +19,9 @@ export default async function handler(
   const msg = {
     to: process.env.TWILIO_TO_EMAIL || '',
     from: process.env.TWILIO_FROM_EMAIL || '',
-    subject: `New Contact Form Submission from ${name}`,
+    subject: `New Contact Form Submission ${subject} from ${name}`,
     html: `
+      <p><strong>Subject:</strong> ${subject}</p>
       <p>Name: ${name}</p>
       <p>Email: ${email}</p>
       <p>Website: ${website}</p>

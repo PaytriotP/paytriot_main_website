@@ -23,7 +23,7 @@ const ContactForm: React.FC = () => {
       {
         "to": [
           {
-            "email": "renga@paytriot.co.uk",
+            "email": "info@paytriot.co.uk",
             "name": "Admin"
           }
         ],

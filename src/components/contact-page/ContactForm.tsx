@@ -120,7 +120,7 @@ const ContactForm: React.FC = () => {
           className="my-2"
           size="lg"
           type="phone"
-          label="Phone (+CountryCode10Digits)"
+          label="Phone"
           {...register('phone', { required: true, pattern: /^\+\d{1,5}\d{10}$/ })}
           status={errors.phone ? 'error' : undefined}
           fullWidth

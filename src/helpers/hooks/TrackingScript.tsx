@@ -23,8 +23,8 @@ const TrackingScript: React.FC = () => {
         typeof window.gtag === 'function' &&
         !sessionStorage.getItem('hasTrackedFootfallVisit')
       ) {
-        window.gtag('event', 'footfall_visit', {
-          send_to: 'AW-16819203227',
+        window.gtag('event', 'page_view', {
+          send_to: 'AW-16819203227/ubhlCKfY44oaEJvZgtQ-',
           event_category: 'Footfall',
           event_label: 'Landing Page Visit',
           value: 1.0,

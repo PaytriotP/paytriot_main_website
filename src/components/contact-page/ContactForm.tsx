@@ -80,6 +80,24 @@ const ContactForm: React.FC = () => {
       if (res.ok) {
         setSuccess(true);
         reset();
+        const hasTracked = sessionStorage.getItem('hasTrackedContactConversion');
+        if (!hasTracked && typeof window !== 'undefined' && typeof window.gtag === 'function') {
+          // Fire conversion event
+          window.gtag('event', 'conversion', {
+            send_to: 'AW-16819203227/7Vb7CIuqvMAaEJvZgtQ-',
+            value: 1.0,
+            currency: 'GBP'
+          });
+          
+          // Enhanced Conversions (optional but recommended)
+          window.gtag('set', 'user_data', {
+            email: data.email.trim().toLowerCase(),
+            phone_number: data.phone.replace(/\D/g, '')
+          });
+          
+          // Mark session as tracked
+          sessionStorage.setItem('hasTrackedContactConversion', 'true');
+        }
       } else {
         setError('Oops! Something went wrong.');
       }

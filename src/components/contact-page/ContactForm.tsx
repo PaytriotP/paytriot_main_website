@@ -85,7 +85,7 @@ const ContactForm: React.FC = () => {
           // Fire conversion event
           window.gtag('event', 'conversion', {
             send_to: 'AW-16819203227/7Vb7CIuqvMAaEJvZgtQ-',
-            value: 1.0,
+            value: 1.50,
             currency: 'GBP'
           });
           

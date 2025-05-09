@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import CallToAction from '@/components/call-to-actions/CallToAction';
 import Footer from '@/components/footer/Footer';
 import NavigationMenu from '@/components/navigation/NavigationMenu';
@@ -15,7 +16,14 @@ const poppins = Poppins({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700']
 });
+
 export default function App({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = '//code.tidio.co/g0m4mrkqkfhz3gdcgypmhso3x8tn9zju.js'; 
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
   return (
     <ThemeProvider attribute="data-theme" enableSystem={false}>
       <NextUIProvider>

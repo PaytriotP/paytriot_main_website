@@ -17,108 +17,218 @@ const nextConfig = {
     //  permanent: true - 308 redirection
     return [
       {
-        source: '//newsdetail/:slug',
-        destination: '/blog/:slug',
-        permanent: false
-     },
-      //Wildcard Path Matching - will match `/blog/a` and `/blog/a/b`
+        source: '/ptr-merchant-api/1.0',
+        has: [{ type: 'host', value: 'doc.paytriot.co.uk' }],
+        destination: '/services',
+        permanent: true,
+      },
+      {
+        source: '/ptr-merchant-api/1.0/', // With trailing slash
+        has: [{ type: 'host', value: 'doc.paytriot.co.uk' }],
+        destination: '/services',
+        permanent: true,
+      },
+      // Catch-all for doc.paytriot.co.uk - place after specific doc.paytriot.co.uk rules
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'doc.paytriot.co.uk' }],
+        destination: '/services', // Your specified destination
+        permanent: true,
+      },
+
+      // Gateway subdomain
+      {
+        source: '/__zenedge/c',
+        has: [{ type: 'host', value: 'gateway.paytriot.co.uk' }],
+        destination: 'https://gateway.paytriot.co.uk/admin/login.php', // Full external URL
+        permanent: true,
+      },
+      // MMS subdomain
+      {
+        source: '/tel:0800%203687345', // Note: Ensure this source path is exactly what's being hit
+        has: [{ type: 'host', value: 'mms.paytriot.co.uk' }],
+        destination: 'https://mms.paytriot.co.uk/admin/login.php', // Full external URL
+        permanent: true,
+      },
+      // Wallet subdomain
+      {
+        source: '/en/auth/login/',
+        has: [{ type: 'host', value: 'wallet.paytriot.co.uk' }],
+        destination: 'https://mms.paytriot.co.uk/admin/login.php', // Full external URL. Consider if this should be wallet login.
+        permanent: true,
+      },
+
+      // Specific /home/newsdetail/ items
+      {
+        source: '/home/newsdetail/cable-&-other-pay-tv-services,-merchant-account-and-payment-acquiring',
+        destination: '/blog/home-entertainment-merchant-account-and-payment-gateway',
+        permanent: true,
+      },
+      {
+        source: '/home/newsdetail/chiropractors,-payment-gateway-and-merchant-account',
+        destination: '/blog/chiropractors-payment-gateway-and-merchant-account-61',
+        permanent: true,
+      },
+      {
+        source: '/home/newsdetail/chiropractors,-payment-gateway-and-merchant-account1',
+        destination: '/blog/chiropractors-payment-gateway-and-merchant-account-61',
+        permanent: true,
+      },
+      {
+        source: '/home/newsdetail/circus,-credit-card-processing-and-payment-gateway.',
+        destination: '/blog/circus-credit-card-processing-and-payment-gateway-50',
+        permanent: true,
+      },
+      {
+        source: '/home/newsdetail/competitions-credit-card-processing-and-merchant-services.-47',
+        destination: '/blog/competitions-credit-card-processing-and-merchant-services-47-47',
+        permanent: true,
+      },
+      {
+        source: '/home/newsdetail/golf-courses,-merchant-account-and-credit-card-processing',
+        destination: '/blog/golf-courses-merchant-account-and-credit-card-processing-53',
+        permanent: true,
+      },
+      {
+        source: '/home/newsdetail/hairdressers,-merchant-account-and-payment-gateway.',
+        destination: '/blog/hairdressers-merchant-account-and-payment-gateway-52',
+        permanent: true,
+      },
+      {
+        source: '/home/newsdetail/paytriot-payments-help-high-risk-businesses-receive-merchant-accounts-in-hours-instead-of-weeks',
+        destination: '/blog/paytriot-payments-help-high-risk-businesses-receive-merchant-accounts-in-hours-instead-of-weeks-37',
+        permanent: true,
+      },
+      {
+        source: '/home/newsdetail/paytriot-payments-help-high-risk-businesses-receive-merchant-accounts-in-hours-instead-of-weeks-37/', // Trailing slash
+        destination: '/blog/paytriot-payments-help-high-risk-businesses-receive-merchant-accounts-in-hours-instead-of-weeks-37',
+        permanent: true,
+      },
+      {
+        source: '/home/newsdetail/paytriot-payments-help-high-risk-businesses-receive-merchant-accounts-in-hours-instead-of-weeks/', // Another variation, ensure distinct if needed
+        destination: '/blog/paytriot-payments-help-high-risk-businesses-receive-merchant-accounts-in-hours-instead-of-weeks-37',
+        permanent: true,
+      },
+      {
+        source: '/home/newsdetail/radios,-televisions-&amp;-hi-fis,-electronic-store,-merchant-account-and-payment-acquiring.',
+        destination: '/blog/paytriot-payments-for-online-computer-stores-uk-europe',
+        permanent: true,
+      },
+      {
+        source: '/home/newsdetail/supermarkets-merchant-account-and-payment-gateway',
+        destination: '/blog/services', // As per your original rule
+        permanent: true,
+      },
+
+      // END: Specific /home/newsdetail/ items
+
+      // GENERAL /home/newsdetail or similar WILDCARD/REGEX rules
+      // This will catch any /home/newsdetail/... that wasn't caught by a more specific rule above.
       {
         source: '/home/newsdetail/:slug*',
         destination: '/blog/:slug*',
-        permanent: false
+        permanent: false, // Kept as false as in original, consider if it should be true for unmatched ones too.
       },
-      //Regex Path Matching - The regex below will match `/post/123` but not `/post/abc`
+      // This rule is very specific due to '//'. If it's meant for paths like yourdomain.com//newsdetail/..., it's fine.
+      // If it's for standard /newsdetail/..., it should be source: '/newsdetail/:slug'.
       {
-        source: '/post/:slug(\\d{1,})',
+        source: '//newsdetail/:slug',
+        destination: '/blog/:slug',
+        permanent: false,
+      },
+      // Regex Path Matching
+      {
+        source: '/post/:slug(\\d{1,})', // Matches /post/123 but not /post/abc
         destination: '/news/:slug',
-        permanent: false
-       },
-      
-       {
+        permanent: false,
+      },
+
+      // Other specific page redirects
+      {
         source: '/blog/page/about-us',
         destination: '/about-us',
         permanent: true,
-        basePath: false
+        basePath: false,
       },
       {
-        source: '/blog/wallet',
+        source: '/blog/wallet', // Note: This is a direct /blog/wallet, not /blog/page/wallet
         destination: '/wallet',
         permanent: true,
-        basePath: false
+        basePath: false,
       },
-      
       {
         source: '/blog/page/services',
         destination: '/services',
         permanent: true,
-        basePath: false
-       },
+        basePath: false,
+      },
       {
         source: '/blog/page/wallet',
         destination: '/wallet',
         permanent: true,
-        basePath: false
+        basePath: false,
       },
-       {
+      {
         source: '/blog/page/contact-us',
         destination: '/contact-us',
         permanent: true,
-        basePath: false
-       },
-       {
+        basePath: false,
+      },
+      {
         source: '/blog/page/partners',
         destination: '/partners',
         permanent: true,
-        basePath: false
-       },
-       {
+        basePath: false,
+      },
+      {
         source: '/blog/page/e-money-account',
         destination: '/e-money-account',
         permanent: true,
-        basePath: false
-       },
-       {
+        basePath: false,
+      },
+      {
         source: '/blog/page/pricing',
         destination: '/pricing',
         permanent: true,
-        basePath: false
-       },
-       {
+        basePath: false,
+      },
+      {
         source: '/blog/page/blog',
         destination: '/blog',
         permanent: true,
-        basePath: false
-       },
-       {
+        basePath: false,
+      },
+      {
         source: '/blog/page/terms-and-conditions',
         destination: '/terms-and-conditions',
         permanent: true,
-        basePath: false
-       },
-       {
+        basePath: false,
+      },
+      {
         source: '/blog/page/privacy-policy',
         destination: '/privacy-policy',
         permanent: true,
-        basePath: false
-       },
-       {
-        source: '/news/page/',
+        basePath: false,
+      },
+      {
+        source: '/news/page/', // Catches /news/page/ and redirects to /blog
         destination: '/blog',
         permanent: true,
-        basePath: false
-       },
-       {
+        basePath: false,
+      },
+      {
         source: '/home/about',
         destination: '/about-us',
         permanent: true,
-        basePath: false
-       },
+        basePath: false,
+      },
       {
         source: '/login',
-        destination: '/contact-us', // or '/wallet' if it makes sense
+        destination: '/contact-us', // or '/wallet' if it makes sense - kept as /contact-us
         permanent: true,
-        basePath: false
+        basePath: false,
       },
+      // Consolidating /Home/ContactUs variations
       {
         source: '/Home/ContactUs',
         destination: '/contact-us',
@@ -143,98 +253,39 @@ const nextConfig = {
       },
       {
         source: '/home/directdebit/', // Trailing slash
-        destination: '/blog/paytriot-payments-help-high-risk-businesses-receive-merchant-accounts-in-hours-instead-of-weeks-37', // Specific blog post
+        destination: '/blog/paytriot-payments-help-high-risk-businesses-receive-merchant-accounts-in-hours-instead-of-weeks-37',
         permanent: true,
       },
 
-      // Blog/NewsDetail consolidations and cleaning
+      // Blog/NewsDetail consolidations and cleaning (specific blog posts not starting with /home/newsdetail/)
       {
-        source: '/blog/supermarkets-merchant-account-and-payment-gateway', // Cleaned from %C2%A0
-        destination: '/blog/services', // Specific blog post
+        source: '/blog/supermarkets-merchant-account-and-payment-gateway',
+        destination: '/blog/services', // Redirecting specific blog post to /services
         permanent: true,
       },
       {
-        source: '/home/newsdetail/cable-&-other-pay-tv-services,-merchant-account-and-payment-acquiring',
-        destination: '/blog/home-entertainment-merchant-account-and-payment-gateway',
-        permanent: true,
-      },
-      // Chiropractors group
-      {
-        source: '/blog/chiropractors,-payment-gateway-and-merchant-account', // Cleaned
+        source: '/blog/chiropractors,-payment-gateway-and-merchant-account',
         destination: '/blog/chiropractors-payment-gateway-and-merchant-account-61',
         permanent: true,
       },
       {
-        source: '/home/newsdetail/chiropractors,-payment-gateway-and-merchant-account', // Cleaned
-        destination: '/blog/chiropractors-payment-gateway-and-merchant-account-61',
+        source: '/blog/competitions,-credit-card-processing-and-merchant-services.',
+        destination: '/blog/competitions-credit-card-processing-and-merchant-services-47-47',
         permanent: true,
       },
       {
-        source: '/home/newsdetail/chiropractors,-payment-gateway-and-merchant-account1', // Cleaned, number 1
-        destination: '/blog/chiropractors-payment-gateway-and-merchant-account-61',
-        permanent: true,
-      },
-      // Circus
-      {
-        source: '/home/newsdetail/circus,-credit-card-processing-and-payment-gateway.', // Cleaned
+        source: '/blog/entertainers-payment-gateway-and-merchant-account',
         destination: '/blog/circus-credit-card-processing-and-payment-gateway-50',
         permanent: true,
       },
-      // Competitions group
       {
-        source: '/blog/competitions,-credit-card-processing-and-merchant-services.', // Cleaned
-        destination: '/blog/competitions-credit-card-processing-and-merchant-services-47-47',
-        permanent: true,
-      },
-      {
-        source: '/home/newsdetail/competitions-credit-card-processing-and-merchant-services.-47', // Cleaned
-        destination: '/blog/competitions-credit-card-processing-and-merchant-services-47-47',
-        permanent: true,
-      },
-      // Entertainers
-      {
-        source: '/blog/entertainers-payment-gateway-and-merchant-account', // Cleaned
-        destination: '/blog/circus-credit-card-processing-and-payment-gateway-50', // Re-directing to circus blog post as per your mapping
-        permanent: true,
-      },
-      // Football Clubs
-      {
-        source: '/blog/football-clubs-merchant-account-and-payment-gateway1', // Cleaned, number 1
+        source: '/blog/football-clubs-merchant-account-and-payment-gateway1',
         destination: '/blog/football-clubs-merchant-account-and-payment-gateway',
         permanent: true,
       },
-      // Footwear
       {
-        source: '/blog/footwear,-merchant-account-and-payment-gateway', // Cleaned
+        source: '/blog/footwear,-merchant-account-and-payment-gateway',
         destination: '/blog/footwear-merchant-account-and-payment-gateway-51',
-        permanent: true,
-      },
-      // Golf Courses
-      {
-        source: '/home/newsdetail/golf-courses,-merchant-account-and-credit-card-processing', // Cleaned
-        destination: '/blog/golf-courses-merchant-account-and-credit-card-processing-53',
-        permanent: true,
-      },
-      // Hairdressers
-      {
-        source: '/home/newsdetail/hairdressers,-merchant-account-and-payment-gateway.', // Cleaned
-        destination: '/blog/hairdressers-merchant-account-and-payment-gateway-52',
-        permanent: true,
-      },
-      // High-Risk Businesses group
-      {
-        source: '/home/newsdetail/paytriot-payments-help-high-risk-businesses-receive-merchant-accounts-in-hours-instead-of-weeks',
-        destination: '/blog/paytriot-payments-help-high-risk-businesses-receive-merchant-accounts-in-hours-instead-of-weeks-37',
-        permanent: true,
-      },
-      {
-        source: '/home/newsdetail/paytriot-payments-help-high-risk-businesses-receive-merchant-accounts-in-hours-instead-of-weeks-37/',
-        destination: '/blog/paytriot-payments-help-high-risk-businesses-receive-merchant-accounts-in-hours-instead-of-weeks-37',
-        permanent: true,
-      },
-      {
-        source: '/home/newsdetail/paytriot-payments-help-high-risk-businesses-receive-merchant-accounts-in-hours-instead-of-weeks/',
-        destination: '/blog/paytriot-payments-help-high-risk-businesses-receive-merchant-accounts-in-hours-instead-of-weeks-37',
         permanent: true,
       },
       {
@@ -242,55 +293,47 @@ const nextConfig = {
         destination: '/blog/paytriot-payments-help-high-risk-businesses-receive-merchant-accounts-in-hours-instead-of-weeks-37',
         permanent: true,
       },
-      // Radios / Electronics
+
+      // General page cleanups (trailing slashes, alternative names)
       {
-        source: '/home/newsdetail/radios,-televisions-&amp;-hi-fis,-electronic-store,-merchant-account-and-payment-acquiring.', // Cleaned. Test this one very carefully!
-        destination: '/blog/paytriot-payments-for-online-computer-stores-uk-europe',
-        permanent: true,
-      },
-      // Supermarkets
-      {
-        source: '/home/newsdetail/supermarkets-merchant-account-and-payment-gateway', // Cleaned
-        destination: '/blog/services', // Your new destination
-        permanent: true,
-      },
-      // /services-2/
-      {
-        source: '/services-2', // Non-trailing slash
+        source: '/services-2',
         destination: '/services',
         permanent: true,
       },
-      // /terms/
       {
-        source: '/terms', // Non-trailing slash
+        source: '/terms',
         destination: '/terms-and-conditions',
         permanent: true,
       },
-      // /privacy-policy/
       {
-        source: '/privacy-policy/',
+        source: '/privacy-policy/', // Handles trailing slash for privacy-policy
         destination: '/privacy-policy',
         permanent: true,
       },
-      // /merchant-services/
+      // NEW/MODIFIED Redirect: /merchant-services/ to /services
       {
         source: '/merchant-services/',
-        destination: '/merchant-services',
+        destination: '/services', // Changed destination
         permanent: true,
       },
-      // /partners/
+      // If you also want /merchant-services (no trailing slash) to redirect to /services:
+      // {
+      //   source: '/merchant-services',
+      //   destination: '/services',
+      //   permanent: true,
+      // },
       {
-        source: '/partners/',
+        source: '/partners/', // Handles trailing slash for partners
         destination: '/partners',
         permanent: true,
       },
-      // /404 page redirect to homepage
       {
-        source: '/404',
-        destination: '/', // Redirecting to root as a general 404 handler
-        permanent: true,
+        source: '/404', // 404 page redirect
+        destination: '/',
+        permanent: true, // Consider if a 404 should be a permanent redirect to home
       },
-      // Consolidating various /Home/ paths
+
+      // Consolidating various /Home/ paths (ensure these don't conflict with more specific /home/newsdetail above)
       {
         source: '/Home/e-money-account',
         destination: '/e-money-account',
@@ -320,17 +363,19 @@ const nextConfig = {
       // Consolidating `blog/page/bank-account`, `home/e-money-account`, `home/news/category/e-money-account`
       {
         source: '/blog/page/bank-account',
-        destination: '/blog/e-money-account',
+        destination: '/blog/e-money-account', // Destination updated for consistency if there's a blog page for e-money
         permanent: true,
       },
-      {
-        source: '/home/e-money-account', // Already covered, but good for explicit clarity if needed
-        destination: '/e-money-account',
-        permanent: true,
-      },
+      // '/home/e-money-account' is already covered by '/Home/e-money-account' if casing is ignored by server,
+      // but explicit rule is fine. It correctly points to '/e-money-account'.
+      // {
+      //   source: '/home/e-money-account',
+      //   destination: '/e-money-account',
+      //   permanent: true,
+      // },
       {
         source: '/home/news/category/e-money-account',
-        destination: '/blog/e-money-account',
+        destination: '/blog/e-money-account', // Destination updated for consistency
         permanent: true,
       },
 
@@ -353,64 +398,6 @@ const nextConfig = {
       {
         source: '/home/news/category/services',
         destination: '/services',
-        permanent: true,
-      },
-      {
-        source: '/:path*', // Catch-all for doc.paytriot.co.uk
-        has: [{
-          type: 'host',
-          value: 'doc.paytriot.co.uk',
-        }],
-        destination: '/services', // Your specified destination
-        permanent: true,
-      },
-      // Specific doc.paytriot.co.uk path
-      {
-        source: '/ptr-merchant-api/1.0',
-        has: [{
-          type: 'host',
-          value: 'doc.paytriot.co.uk',
-        }],
-        destination: '/services',
-        permanent: true,
-      },
-      {
-        source: '/ptr-merchant-api/1.0/', // With trailing slash
-        has: [{
-          type: 'host',
-          value: 'doc.paytriot.co.uk',
-        }],
-        destination: '/services',
-        permanent: true,
-      },
-      // Gateway subdomain
-      {
-        source: '/__zenedge/c',
-        has: [{
-          type: 'host',
-          value: 'gateway.paytriot.co.uk',
-        }],
-        destination: 'https://gateway.paytriot.co.uk/admin/login.php', // Full external URL
-        permanent: true,
-      },
-      // MMS subdomain
-      {
-        source: '/tel:0800%203687345',
-        has: [{
-          type: 'host',
-          value: 'mms.paytriot.co.uk',
-        }],
-        destination: 'https://mms.paytriot.co.uk/admin/login.php', // Full external URL
-        permanent: true,
-      },
-      // Wallet subdomain
-      {
-        source: '/en/auth/login/',
-        has: [{
-          type: 'host',
-          value: 'wallet.paytriot.co.uk',
-        }],
-        destination: 'https://mms.paytriot.co.uk/admin/login.php', // Full external URL
         permanent: true,
       },
     ];

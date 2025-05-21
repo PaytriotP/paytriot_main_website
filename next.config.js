@@ -16,7 +16,7 @@ const nextConfig = {
     //  permanent: false - 307 redirection
     //  permanent: true - 308 redirection
     return [
-      {
+{
         source: '/ptr-merchant-api/1.0',
         has: [{ type: 'host', value: 'doc.paytriot.co.uk' }],
         destination: '/services',
@@ -58,14 +58,15 @@ const nextConfig = {
         permanent: true,
       },
 
-      // Specific /home/newsdetail/ items
+      // Specific /home/newsdetail/ items - ENSURE EXACT MATCH, including hidden chars like \u00A0
       {
         source: '/home/newsdetail/cable-&-other-pay-tv-services,-merchant-account-and-payment-acquiring',
         destination: '/blog/home-entertainment-merchant-account-and-payment-gateway',
         permanent: true,
       },
+      // FIX: Add specific rule for chiropractors with \u00A0 from /home/newsdetail/
       {
-        source: '/home/newsdetail/chiropractors,-payment-gateway-and-merchant-account',
+        source: '/home/newsdetail/chiropractors,-payment-gateway-and-merchant-account\u00A0',
         destination: '/blog/chiropractors-payment-gateway-and-merchant-account-61',
         permanent: true,
       },
@@ -74,8 +75,20 @@ const nextConfig = {
         destination: '/blog/chiropractors-payment-gateway-and-merchant-account-61',
         permanent: true,
       },
+      // FIX: Add specific rule for chiropractors with \u00A01 from /home/newsdetail/
+      {
+        source: '/home/newsdetail/chiropractors,-payment-gateway-and-merchant-account\u00A01',
+        destination: '/blog/chiropractors-payment-gateway-and-merchant-account-61',
+        permanent: true,
+      },
       {
         source: '/home/newsdetail/circus,-credit-card-processing-and-payment-gateway.',
+        destination: '/blog/circus-credit-card-processing-and-payment-gateway-50',
+        permanent: true,
+      },
+      // FIX: Add specific rule for circus with \u00A0 from /home/newsdetail/
+      {
+        source: '/home/newsdetail/circus,-credit-card-processing-and-payment-gateway.\u00A0',
         destination: '/blog/circus-credit-card-processing-and-payment-gateway-50',
         permanent: true,
       },
@@ -94,6 +107,12 @@ const nextConfig = {
         destination: '/blog/hairdressers-merchant-account-and-payment-gateway-52',
         permanent: true,
       },
+      // FIX: Add specific rule for hairdressers without trailing dot from /home/newsdetail/
+      {
+        source: '/home/newsdetail/hairdressers,-merchant-account-and-payment-gateway',
+        destination: '/blog/hairdressers-merchant-account-and-payment-gateway-52',
+        permanent: true,
+      },
       {
         source: '/home/newsdetail/paytriot-payments-help-high-risk-businesses-receive-merchant-accounts-in-hours-instead-of-weeks',
         destination: '/blog/paytriot-payments-help-high-risk-businesses-receive-merchant-accounts-in-hours-instead-of-weeks-37',
@@ -109,6 +128,22 @@ const nextConfig = {
         destination: '/blog/paytriot-payments-help-high-risk-businesses-receive-merchant-accounts-in-hours-instead-of-weeks-37',
         permanent: true,
       },
+      // FIX: Add specific rule for radios from /home/newsdetail/ (with trailing dot, and with/without \u00A0 if applicable)
+      {
+        source: '/home/newsdetail/radios, televisions & hi-fis, electronic store,-merchant-account-and-payment-acquiring.', // Decoded path with trailing dot
+        destination: '/blog/paytriot-payments-for-online-computer-stores-uk-europe',
+        permanent: true,
+      },
+      {
+        source: '/home/newsdetail/radios, televisions & hi-fis, electronic store,-merchant-account-and-payment-acquiring', // Decoded path without trailing dot
+        destination: '/blog/paytriot-payments-for-online-computer-stores-uk-europe',
+        permanent: true,
+      },
+      {
+        source: '/home/newsdetail/radios,\u00A0televisions\u00A0&\u00A0hi-fis,\u00A0electronic\u00A0store,-merchant-account-and-payment-acquiring.', // With literal \u00A0 and trailing dot
+        destination: '/blog/paytriot-payments-for-online-computer-stores-uk-europe',
+        permanent: true,
+      },
       {
         source: '/home/newsdetail/radios,-televisions-&amp;-hi-fis,-electronic-store,-merchant-account-and-payment-acquiring.',
         destination: '/blog/paytriot-payments-for-online-computer-stores-uk-europe',
@@ -119,6 +154,12 @@ const nextConfig = {
         destination: '/blog/services', // As per your original rule
         permanent: true,
       },
+      // FIX: Add specific rule for supermarkets with \u00A0 from /home/newsdetail/
+      {
+        source: '/home/newsdetail/supermarkets-merchant-account-and-payment-gateway\u00A0',
+        destination: '/blog/services',
+        permanent: true,
+      },
 
       // END: Specific /home/newsdetail/ items
 
@@ -127,20 +168,20 @@ const nextConfig = {
       {
         source: '/home/newsdetail/:slug*',
         destination: '/blog/:slug*',
-        permanent: false, // Kept as false as in original, consider if it should be true for unmatched ones too.
+        permanent: true, // Changed to true for SEO if these are old blog posts
       },
       // This rule is very specific due to '//'. If it's meant for paths like yourdomain.com//newsdetail/..., it's fine.
       // If it's for standard /newsdetail/..., it should be source: '/newsdetail/:slug'.
       {
         source: '//newsdetail/:slug',
         destination: '/blog/:slug',
-        permanent: false,
+        permanent: true, // Changed to true
       },
       // Regex Path Matching
       {
         source: '/post/:slug(\\d{1,})', // Matches /post/123 but not /post/abc
         destination: '/news/:slug',
-        permanent: false,
+        permanent: true, // Changed to true
       },
 
       // Other specific page redirects
@@ -228,6 +269,12 @@ const nextConfig = {
         permanent: true,
         basePath: false,
       },
+      // FIX: Add redirect for /home/register
+      {
+        source: '/home/register',
+        destination: '/contact-us', // Assuming contact-us is the new registration point
+        permanent: true,
+      },
       // Consolidating /Home/ContactUs variations
       {
         source: '/Home/ContactUs',
@@ -263,8 +310,26 @@ const nextConfig = {
         destination: '/blog/services', // Redirecting specific blog post to /services
         permanent: true,
       },
+      // FIX: Add specific rule for supermarkets with \u00A0
+      {
+        source: '/blog/supermarkets-merchant-account-and-payment-gateway\u00A0',
+        destination: '/blog/services',
+        permanent: true,
+      },
       {
         source: '/blog/chiropractors,-payment-gateway-and-merchant-account',
+        destination: '/blog/chiropractors-payment-gateway-and-merchant-account-61',
+        permanent: true,
+      },
+      // FIX: Add specific rule for chiropractors with \u00A0
+      {
+        source: '/blog/chiropractors,-payment-gateway-and-merchant-account\u00A0',
+        destination: '/blog/chiropractors-payment-gateway-and-merchant-account-61',
+        permanent: true,
+      },
+      // FIX: Add specific rule for chiropractors with \u00A01
+      {
+        source: '/blog/chiropractors,-payment-gateway-and-merchant-account\u00A01',
         destination: '/blog/chiropractors-payment-gateway-and-merchant-account-61',
         permanent: true,
       },
@@ -273,8 +338,20 @@ const nextConfig = {
         destination: '/blog/competitions-credit-card-processing-and-merchant-services-47-47',
         permanent: true,
       },
+      // FIX: Add specific rule for competitions without trailing dot
+      {
+        source: '/blog/competitions,-credit-card-processing-and-merchant-services',
+        destination: '/blog/competitions-credit-card-processing-and-merchant-services-47-47',
+        permanent: true,
+      },
       {
         source: '/blog/entertainers-payment-gateway-and-merchant-account',
+        destination: '/blog/circus-credit-card-processing-and-payment-gateway-50',
+        permanent: true,
+      },
+      // FIX: Add specific rule for entertainers with \u00A0
+      {
+        source: '/blog/entertainers-payment-gateway-and-merchant-account\u00A0',
         destination: '/blog/circus-credit-card-processing-and-payment-gateway-50',
         permanent: true,
       },
@@ -291,6 +368,17 @@ const nextConfig = {
       {
         source: '/paytriot-payments-help-high-risk-businesses-receive-merchant-accounts-in-hours-instead-of-weeks', // Root level path
         destination: '/blog/paytriot-payments-help-high-risk-businesses-receive-merchant-accounts-in-hours-instead-of-weeks-37',
+        permanent: true,
+      },
+      // FIX: Add specific rule for radios from /blog/ (decoded path and literal \u00A0)
+      {
+        source: '/blog/radios, televisions & hi-fis, electronic store,-merchant-account-and-payment-acquiring',
+        destination: '/blog/paytriot-payments-for-online-computer-stores-uk-europe',
+        permanent: true,
+      },
+      {
+        source: '/blog/radios,\u00A0televisions\u00A0&\u00A0hi-fis,\u00A0electronic\u00A0store,-merchant-account-and-payment-acquiring', // With literal \u00A0
+        destination: '/blog/paytriot-payments-for-online-computer-stores-uk-europe',
         permanent: true,
       },
 
@@ -316,12 +404,12 @@ const nextConfig = {
         destination: '/services', // Changed destination
         permanent: true,
       },
-      // If you also want /merchant-services (no trailing slash) to redirect to /services:
-      // {
-      //   source: '/merchant-services',
-      //   destination: '/services',
-      //   permanent: true,
-      // },
+      // FIX: Add rule for /merchant-services (no trailing slash)
+      {
+        source: '/merchant-services',
+        destination: '/services',
+        permanent: true,
+      },
       {
         source: '/partners/', // Handles trailing slash for partners
         destination: '/partners',
@@ -366,13 +454,6 @@ const nextConfig = {
         destination: '/blog/e-money-account', // Destination updated for consistency if there's a blog page for e-money
         permanent: true,
       },
-      // '/home/e-money-account' is already covered by '/Home/e-money-account' if casing is ignored by server,
-      // but explicit rule is fine. It correctly points to '/e-money-account'.
-      // {
-      //   source: '/home/e-money-account',
-      //   destination: '/e-money-account',
-      //   permanent: true,
-      // },
       {
         source: '/home/news/category/e-money-account',
         destination: '/blog/e-money-account', // Destination updated for consistency

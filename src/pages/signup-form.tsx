@@ -220,43 +220,33 @@ const onSubmit = async (data: FormValues) => {
               {errors.email && <div className="text-danger small mt-1">{errors.email.message}</div>}
             </div>
             
-            <div className="mb-3">
-              <Controller
-                name="phoneNumber"
-                control={control}
-                rules={{
-                  required: "Phone number is required",
-                  validate: (value) => {
-                    if (!value.startsWith("+")) return "Must start with +";
-                    if (/\s/.test(value)) return "No spaces allowed";
-                    if (/-/.test(value)) return "No dashes allowed";
-                    if (!/^\+\d{5,15}$/.test(value)) return "Only digits allowed after +";
-                    return true;
-                  }
-                }}
-                render={({ field, fieldState }) => (
-                  <div className="mb-3">
-                    <Input
-                      {...field}
-                      rounded
-                      className="my-2"
-                      size="lg"
-                      type="tel"
-                      label="Phone Number"
-                      placeholder="+441234567890"
-                      fullWidth
-                      isInvalid={!!fieldState.error}
-                      />
-                    {fieldState.error && (
-                    <div className="text-danger text-sm mt-1">
-                      {fieldState.error.message}
-                    </div>
-                  )}
-                  </div>
-                )}
-                />
-
-            </div>
+           <div className="mb-3">
+             <Input
+               rounded
+               className="my-2"
+               size="lg"
+               type="tel"
+               label="Phone Number"
+               placeholder="+441234567890"
+               fullWidth
+               status={errors.phoneNumber ? "error" : undefined}
+               {...register("phoneNumber", {
+                 required: "Phone number is required",
+                 pattern: {
+                   value: /^\+\d{5,15}$/,
+                   message: "Phone number must start with + and contain only digits (no spaces or dashes)",
+                 },
+                 validate: (value) => {
+                   if (/\s/.test(value)) return "Please remove spaces from the phone number";
+                   if (/-/.test(value)) return "Please remove dashes from the phone number";
+                   return true;
+                 },
+               })}
+               />
+             {errors.phoneNumber && (
+            <div className="text-danger small mt-1">{errors.phoneNumber.message}</div>
+          )}
+           </div>
 
 
 

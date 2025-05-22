@@ -140,7 +140,7 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: '/home/newsdetail/radios,%C2%A0televisions%C2%A0&%C2%A0hi-fis,%C2%A0electronic%C2%A0store,-merchant-account-and-payment-acquiring.', // With literal \u00A0 and trailing dot
+        source: '/home/newsdetail/radios,%C2%A0televisions%C2%A0&%C2%A0hi-fis,%C2%A0electronic%C2%A0store,-merchant-account-and-payment-acquiring', // With literal \u00A0 and trailing dot
         destination: '/blog/paytriot-payments-for-online-computer-stores-uk-europe',
         permanent: true,
       },

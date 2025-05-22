@@ -243,13 +243,15 @@ const onSubmit = async (data: FormValues) => {
                   },
                 })}
                 onInput={(e) => {
-                  const value = e.target.value;
+                  const input = e.target as HTMLInputElement;
+                  const value = input.value;
+                  
                   if (value.includes(" ") || value.includes("-")) {
                     alert("Please avoid using spaces or dashes in the phone number.");
-                    // Optionally remove the space or dash immediately:
-                    e.target.value = value.replace(/[\s-]/g, '');
+                    input.value = value.replace(/[\s-]/g, '');
                   }
                 }}
+
                 />
               {errors.phoneNumber && (
             <div className="text-danger small mt-1">

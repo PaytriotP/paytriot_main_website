@@ -226,37 +226,30 @@ const onSubmit = async (data: FormValues) => {
                 control={control}
                 rules={{
                   required: "Phone number is required",
-                  pattern: {
-                    value: /^\+\d{5,15}$/,
-                    message: "Phone number must start with + and contain only digits (no spaces or dashes)",
-                  },
                   validate: (value) => {
-                    if (/\s/.test(value)) return "Please remove spaces from the phone number";
-                    if (/-/.test(value)) return "Please remove dashes from the phone number";
+                    if (!value.startsWith("+")) return "Must start with +";
+                    if (/\s/.test(value)) return "No spaces allowed";
+                    if (/-/.test(value)) return "No dashes allowed";
+                    if (!/^\+\d{5,15}$/.test(value)) return "Only digits allowed after +";
                     return true;
-                  },
+                  }
                 }}
                 render={({ field, fieldState }) => (
-                  <>
-                    <Input
-                      {...field}
-                      rounded
-                      className="my-2"
-                      size="lg"
-                      type="tel"
-                      label="Phone Number"
-                      placeholder="+441234567890"
-                      fullWidth
-                      color={fieldState.error ? "error" : "default"}
-                      />
-                    {fieldState.error && (
-                    <div className="text-danger small mt-1">
-                      {fieldState.error.message}
-                    </div>
-                  )}
-                  </>
+                  <Input
+                    {...field}
+                    rounded
+                    className="my-2"
+                    size="lg"
+                    type="tel"
+                    label="Phone Number"
+                    placeholder="+441234567890"
+                    fullWidth
+                    status={fieldState.error ? "error" : undefined}
+                    errorMessage={fieldState.error?.message}
+                    />
                 )}
                 />
+
             </div>
 
 

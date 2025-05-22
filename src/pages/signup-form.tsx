@@ -246,6 +246,9 @@ const onSubmit = async (data: FormValues) => {
                   },
                 })}
                 />
+              {errors.phoneNumber && (
+            <div className="text-danger small mt-1">{errors.phoneNumber.message}</div>
+          )}
             </div>
 
 

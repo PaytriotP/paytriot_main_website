@@ -223,11 +223,11 @@ const onSubmit = async (data: FormValues) => {
                 rounded
                 className="my-2"
                 size="lg"
-                type="tel" // This is 'tel' for phone number, 'email' for email
+                type="tel"
                 label="Phone Number"
                 placeholder="+441234567890"
                 fullWidth
-                status={errors.phoneNumber ? "error" : undefined}
+                isInvalid={!!errors.phoneNumber}
                 errorMessage={errors.phoneNumber?.message}
                 {...register("phoneNumber", {
                   required: "Phone number is required",
@@ -246,10 +246,8 @@ const onSubmit = async (data: FormValues) => {
                   },
                 })}
                 />
-              {errors.phoneNumber && ( // This displays the text message below, same as email
-                <div className="text-danger small mt-1">{errors.phoneNumber.message}</div>
-              )}
             </div>
+
 
             <div className="mb-3">
               <Input

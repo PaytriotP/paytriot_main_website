@@ -247,7 +247,7 @@ const onSubmit = async (data: FormValues) => {
                       label="Phone Number"
                       placeholder="+441234567890"
                       fullWidth
-                      color={fieldState.error ? "danger" : "default"}
+                      color={fieldState.error ? "error" : "default"}
                       />
                     {fieldState.error && (
                     <div className="text-danger small mt-1">

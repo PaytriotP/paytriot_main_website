@@ -160,7 +160,9 @@ const onSubmit = async (data: FormValues) => {
   <main>
     <section className="signup py-5">
       <div className="container d-flex flex-column align-items-center">
+        {!isSuccess && (
         <h3 className="text-center mb-5">Create Your Paytriot Account</h3>
+      )}
 
         {isSuccess ? (
           <div className="text-center w-100 mb-4">
@@ -242,21 +244,9 @@ const onSubmit = async (data: FormValues) => {
                     return true;
                   },
                 })}
-                onInput={(e) => {
-                  const input = e.target as HTMLInputElement;
-                  const value = input.value;
-                  
-                  if (value.includes(" ") || value.includes("-")) {
-                    alert("Please avoid using spaces or dashes in the phone number.");
-                    input.value = value.replace(/[\s-]/g, '');
-                  }
-                }}
-
                 />
               {errors.phoneNumber && (
-            <div className="text-danger small mt-1">
-              {errors.phoneNumber.message}
-            </div>
+            <div className="text-danger small mt-1">{errors.phoneNumber.message}</div>
           )}
             </div>
 

@@ -235,18 +235,24 @@ const onSubmit = async (data: FormValues) => {
                   }
                 }}
                 render={({ field, fieldState }) => (
-                  <Input
-                    {...field}
-                    rounded
-                    className="my-2"
-                    size="lg"
-                    type="tel"
-                    label="Phone Number"
-                    placeholder="+441234567890"
-                    fullWidth
-                    status={fieldState.error ? "error" : undefined}
-                    errorMessage={fieldState.error?.message}
-                    />
+                  <div className="mb-3">
+                    <Input
+                      {...field}
+                      rounded
+                      className="my-2"
+                      size="lg"
+                      type="tel"
+                      label="Phone Number"
+                      placeholder="+441234567890"
+                      fullWidth
+                      isInvalid={!!fieldState.error}
+                      />
+                    {fieldState.error && (
+                    <div className="text-danger text-sm mt-1">
+                      {fieldState.error.message}
+                    </div>
+                  )}
+                  </div>
                 )}
                 />
 

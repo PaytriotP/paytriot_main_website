@@ -219,7 +219,7 @@ const onSubmit = async (data: FormValues) => {
               />
               {errors.email && <div className="text-danger small mt-1">{errors.email.message}</div>}
             </div>
-
+            
             <div className="mb-3">
               <Controller
                 name="phoneNumber"
@@ -231,31 +231,34 @@ const onSubmit = async (data: FormValues) => {
                     message: "Phone number must start with + and contain only digits (no spaces or dashes)",
                   },
                   validate: (value) => {
-                    if (/\s/.test(value)) {
-                      return "Please remove spaces from the phone number";
-                    }
-                    if (/-/.test(value)) {
-                      return "Please remove dashes from the phone number";
-                    }
+                    if (/\s/.test(value)) return "Please remove spaces from the phone number";
+                    if (/-/.test(value)) return "Please remove dashes from the phone number";
                     return true;
                   },
                 }}
                 render={({ field, fieldState }) => (
-                  <Input
-                    {...field}
-                    rounded
-                    className="my-2"
-                    size="lg"
-                    type="tel"
-                    label="Phone Number"
-                    placeholder="+441234567890"
-                    fullWidth
-                    isInvalid={!!fieldState.error}
-                    errorMessage={fieldState.error?.message}
-                    />
+                  <>
+                    <Input
+                      {...field}
+                      rounded
+                      className="my-2"
+                      size="lg"
+                      type="tel"
+                      label="Phone Number"
+                      placeholder="+441234567890"
+                      fullWidth
+                      color={fieldState.error ? "danger" : "default"}
+                      />
+                    {fieldState.error && (
+                    <div className="text-danger small mt-1">
+                      {fieldState.error.message}
+                    </div>
+                  )}
+                  </>
                 )}
                 />
             </div>
+
 
 
             <div className="mb-3">

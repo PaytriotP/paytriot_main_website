@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, Controller } from "react-hook-form"
 import Head from 'next/head';
 import { Input, Button, Loading } from "@nextui-org/react"
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { useTheme } from 'next-themes';
+
 
 
 // Form field type
@@ -27,6 +28,7 @@ export default function SignupForm() {
     register,
     handleSubmit,
     watch,
+    control,
     formState: { errors },
     reset,
     setError: setFormError,
@@ -219,17 +221,10 @@ const onSubmit = async (data: FormValues) => {
             </div>
 
             <div className="mb-3">
-              <Input
-                rounded
-                className="my-2"
-                size="lg"
-                type="tel"
-                label="Phone Number"
-                placeholder="+441234567890"
-                fullWidth
-                isInvalid={!!errors.phoneNumber}
-                errorMessage={errors.phoneNumber?.message}
-                {...register("phoneNumber", {
+              <Controller
+                name="phoneNumber"
+                control={control}
+                rules={{
                   required: "Phone number is required",
                   pattern: {
                     value: /^\+\d{5,15}$/,
@@ -239,16 +234,27 @@ const onSubmit = async (data: FormValues) => {
                     if (/\s/.test(value)) {
                       return "Please remove spaces from the phone number";
                     }
-                    if (/[-]/.test(value)) {
+                    if (/-/.test(value)) {
                       return "Please remove dashes from the phone number";
                     }
                     return true;
                   },
-                })}
+                }}
+                render={({ field, fieldState }) => (
+                  <Input
+                    {...field}
+                    rounded
+                    className="my-2"
+                    size="lg"
+                    type="tel"
+                    label="Phone Number"
+                    placeholder="+441234567890"
+                    fullWidth
+                    isInvalid={!!fieldState.error}
+                    errorMessage={fieldState.error?.message}
+                    />
+                )}
                 />
-              {errors.phoneNumber && (
-            <div className="text-danger small mt-1">{errors.phoneNumber.message}</div>
-          )}
             </div>
 
 

@@ -66,7 +66,7 @@ const nextConfig = {
       },
       // FIX: Add specific rule for chiropractors with \u00A0 from /home/newsdetail/
       {
-        source: '/home/newsdetail/chiropractors,-payment-gateway-and-merchant-account\u00A0',
+        source: '/home/newsdetail/chiropractors,-payment-gateway-and-merchant-account%C2%A0',
         destination: '/blog/chiropractors-payment-gateway-and-merchant-account-61',
         permanent: true,
       },
@@ -77,7 +77,7 @@ const nextConfig = {
       },
       // FIX: Add specific rule for chiropractors with \u00A01 from /home/newsdetail/
       {
-        source: '/home/newsdetail/chiropractors,-payment-gateway-and-merchant-account\u00A01',
+        source: '/home/newsdetail/chiropractors,-payment-gateway-and-merchant-account%C2%A01',
         destination: '/blog/chiropractors-payment-gateway-and-merchant-account-61',
         permanent: true,
       },
@@ -88,7 +88,7 @@ const nextConfig = {
       },
       // FIX: Add specific rule for circus with \u00A0 from /home/newsdetail/
       {
-        source: '/home/newsdetail/circus,-credit-card-processing-and-payment-gateway.\u00A0',
+        source: '/home/newsdetail/circus,-credit-card-processing-and-payment-gateway.%C2%A0',
         destination: '/blog/circus-credit-card-processing-and-payment-gateway-50',
         permanent: true,
       },
@@ -140,7 +140,7 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: '/home/newsdetail/radios,\u00A0televisions\u00A0&\u00A0hi-fis,\u00A0electronic\u00A0store,-merchant-account-and-payment-acquiring.', // With literal \u00A0 and trailing dot
+        source: '/home/newsdetail/radios,%C2%A0televisions%C2%A0&%C2%A0hi-fis,%C2%A0electronic%C2%A0store,-merchant-account-and-payment-acquiring.', // With literal \u00A0 and trailing dot
         destination: '/blog/paytriot-payments-for-online-computer-stores-uk-europe',
         permanent: true,
       },
@@ -156,7 +156,7 @@ const nextConfig = {
       },
       // FIX: Add specific rule for supermarkets with \u00A0 from /home/newsdetail/
       {
-        source: '/home/newsdetail/supermarkets-merchant-account-and-payment-gateway\u00A0',
+        source: '/blog/supermarkets-merchant-account-and-payment-gateway%C2%A0',
         destination: '/blog/services',
         permanent: true,
       },

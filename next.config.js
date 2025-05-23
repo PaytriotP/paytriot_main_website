@@ -94,7 +94,7 @@ const nextConfig = {
       },
 
       {
-        source: 'https://www.paytriot.co.uk/blog/entertainers-payment-gateway-and-merchant-account%C2%A0',
+        source: '/home/newsdetail/entertainers-payment-gateway-and-merchant-account%C2%A0',
         destination: '/blog/circus-credit-card-processing-and-payment-gateway-50',
         permanent: true,
       },

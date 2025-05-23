@@ -15,6 +15,22 @@ const TrackingScript: React.FC = () => {
       document.head.appendChild(visitorQueueScript);
     }
 
+        if (!document.getElementById('hotjar_tracking')) {
+      const hjScript = document.createElement('script');
+      hjScript.innerHTML = `
+        (function(h,o,t,j,a,r){
+            h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+            h._hjSettings={hjid:6413372,hjsv:6};
+            a=o.getElementsByTagName('head')[0];
+            r=o.createElement('script');r.async=1;
+            r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+            a.appendChild(r);
+        })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+      `;
+      hjScript.id = 'hotjar_tracking';
+      document.head.appendChild(hjScript);
+    }
+
     // DO NOT inject Google Ads script here if using <GoogleAnalytics /> in _app.tsx
     // Just wait for gtag to be available and fire the event
 

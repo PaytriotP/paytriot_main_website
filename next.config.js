@@ -16,47 +16,6 @@ const nextConfig = {
     //  permanent: false - 307 redirection
     //  permanent: true - 308 redirection
     return [
-{
-        source: '/ptr-merchant-api/1.0',
-        has: [{ type: 'host', value: 'doc.paytriot.co.uk' }],
-        destination: '/services',
-        permanent: true,
-      },
-      {
-        source: '/ptr-merchant-api/1.0/', // With trailing slash
-        has: [{ type: 'host', value: 'doc.paytriot.co.uk' }],
-        destination: '/services',
-        permanent: true,
-      },
-      // Catch-all for doc.paytriot.co.uk - place after specific doc.paytriot.co.uk rules
-      {
-        source: '/:path*',
-        has: [{ type: 'host', value: 'doc.paytriot.co.uk' }],
-        destination: '/services', // Your specified destination
-        permanent: true,
-      },
-
-      // Gateway subdomain
-      {
-        source: '/__zenedge/c',
-        has: [{ type: 'host', value: 'gateway.paytriot.co.uk' }],
-        destination: 'https://gateway.paytriot.co.uk/admin/login.php', // Full external URL
-        permanent: true,
-      },
-      // MMS subdomain
-      {
-        source: '/tel:0800%203687345', // Note: Ensure this source path is exactly what's being hit
-        has: [{ type: 'host', value: 'mms.paytriot.co.uk' }],
-        destination: 'https://mms.paytriot.co.uk/admin/login.php', // Full external URL
-        permanent: true,
-      },
-      // Wallet subdomain
-      {
-        source: '/en/auth/login/',
-        has: [{ type: 'host', value: 'wallet.paytriot.co.uk' }],
-        destination: 'https://mms.paytriot.co.uk/admin/login.php', // Full external URL. Consider if this should be wallet login.
-        permanent: true,
-      },
 
       // Specific /home/newsdetail/ items - ENSURE EXACT MATCH, including hidden chars like \u00A0
       {

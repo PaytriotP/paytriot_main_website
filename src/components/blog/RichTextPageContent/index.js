@@ -7,6 +7,13 @@ import LinkIcon from './svg/LinkIcon';
 import { BLOCKS, MARKS, INLINES } from '@contentful/rich-text-types';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 
+function extractText(node) {
+  if (!node) return '';
+  if (node.nodeType === 'text') return node.value;
+  if (Array.isArray(node.content)) return node.content.map(extractText).join('');
+  return '';
+}
+
 function slugifyString(string) {
   return string
     .replace(/\s+/g, '-')
@@ -29,14 +36,12 @@ export function getRichTextRenderOptions(links, options) {
   );
 
   const entryMap = new Map();
-  // loop through the block linked entries and add them to the map
   if (links.entries.block) {
     for (const entry of links.entries.block) {
       entryMap.set(entry.sys.id, entry);
     }
   }
 
-  // loop through the inline linked entries and add them to the map
   if (links.entries.inline) {
     for (const entry of links.entries.inline) {
       entryMap.set(entry.sys.id, entry);
@@ -68,42 +73,35 @@ export function getRichTextRenderOptions(links, options) {
           {children}
         </Link>
       ),
-      [BLOCKS.HR]: text => (
+      [BLOCKS.HR]: () => (
         <hr className={RichTextPageContentStyles.page__hr} />
       ),
       [BLOCKS.HEADING_1]: (node, children) => (
         <h1 className={TypographyStyles.heading__h1}>{children}</h1>
       ),
       [BLOCKS.HEADING_2]: (node, children) => {
-        // Safely extract plain text from node
-        const extractText = (node) => {
-          if (!node) return '';
-          if (node.nodeType === 'text') return node.value;
-          if (node.content) return node.content.map(extractText).join('');
-          return '';
-        };
         const headingText = extractText(node);
         const slug = slugifyString(headingText);
-        
+
         if (renderH2Links) {
           return (
             <div className={RichTextPageContentStyles.page__linkedHeaderContainer}>
-        <h2 id={slug} className={TypographyStyles.heading__h2}>
-      {children}
-        </h2>
-        <Link
-        className={`${RichTextPageContentStyles.page__headerLink} ${TypographyStyles.inlineLink}`}
-        href={`#${slug}`}
-        aria-label={headingText}
-        >
-          <LinkIcon />
-          </Link>
-          </div>
+              <h2 id={slug} className={TypographyStyles.heading__h2}>
+                {children}
+              </h2>
+              <Link
+                className={`${RichTextPageContentStyles.page__headerLink} ${TypographyStyles.inlineLink}`}
+                href={`#${slug}`}
+                aria-label={headingText}
+              >
+                <LinkIcon />
+              </Link>
+            </div>
           );
-}else {
-  return <h2 className={TypographyStyles.heading__h2}>{children}</h2>;
-    }
-},
+        }
+
+        return <h2 className={TypographyStyles.heading__h2}>{children}</h2>;
+      },
 
       [BLOCKS.HEADING_3]: (node, children) => (
         <h3 className={TypographyStyles.heading__h3}>{children}</h3>

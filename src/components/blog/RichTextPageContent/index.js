@@ -75,30 +75,36 @@ export function getRichTextRenderOptions(links, options) {
         <h1 className={TypographyStyles.heading__h1}>{children}</h1>
       ),
       [BLOCKS.HEADING_2]: (node, children) => {
+        // Safely extract plain text from node
+        const extractText = (node) => {
+          if (!node) return '';
+          if (node.nodeType === 'text') return node.value;
+          if (node.content) return node.content.map(extractText).join('');
+          return '';
+        };
+        const headingText = extractText(node);
+        const slug = slugifyString(headingText);
+        
         if (renderH2Links) {
           return (
-            <div
-              className={RichTextPageContentStyles.page__linkedHeaderContainer}
-            >
-              <h2
-                id={`${slugifyString(children[0])}`}
-                className={TypographyStyles.heading__h2}
-              >
-                {children}
-              </h2>
-              <Link
-                className={`${RichTextPageContentStyles.page__headerLink} ${TypographyStyles.inlineLink}`}
-                href={`#${slugifyString(children[0])}`}
-                aria-label={children}
-              >
-                <LinkIcon />
-              </Link>
-            </div>
+            <div className={RichTextPageContentStyles.page__linkedHeaderContainer}>
+        <h2 id={slug} className={TypographyStyles.heading__h2}>
+      {children}
+        </h2>
+        <Link
+        className={`${RichTextPageContentStyles.page__headerLink} ${TypographyStyles.inlineLink}`}
+        href={`#${slug}`}
+        aria-label={headingText}
+        >
+          <LinkIcon />
+          </Link>
+          </div>
           );
-        } else {
-          return <h2 className={TypographyStyles.heading__h2}>{children}</h2>;
-        }
-      },
+}else {
+  return <h2 className={TypographyStyles.heading__h2}>{children}</h2>;
+    }
+},
+
       [BLOCKS.HEADING_3]: (node, children) => (
         <h3 className={TypographyStyles.heading__h3}>{children}</h3>
       ),

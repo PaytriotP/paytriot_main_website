@@ -363,67 +363,6 @@ const ContactForm: React.FC = () => {
 
   return (
     <div className="contact-wrap-custom">
-      <style jsx>{`
-        .custom-input :global(input),
-        .custom-input :global(textarea) {
-          border-color: rgb(var(--card-border-rgb)) !important;
-          transition: border-color 0.2s ease, box-shadow 0.2s ease;
-          background-color: rgba(var(--card-rgb), 0.1) !important;
-        }
-        
-        .custom-input :global(input:hover),
-        .custom-input :global(textarea:hover) {
-          border-color: #E67E22 !important;
-          background-color: rgba(255, 255, 255, 0.8) !important;
-        }
-        
-        .custom-input :global(input:focus),
-        .custom-input :global(textarea:focus) {
-          border-color: #E67E22 !important;
-          box-shadow: 0 0 0 2px rgba(230, 126, 34, 0.2) !important;
-          background-color: white !important;
-        }
-
-        .progress-container {
-          background-color: rgba(var(--card-rgb), 0.2);
-          border-radius: var(--border-radius);
-        }
-
-        .trust-signals {
-          background: linear-gradient(135deg, rgba(34, 197, 94, 0.05), rgba(59, 130, 246, 0.05));
-          border: 1px solid rgba(var(--card-border-rgb), 0.3);
-          border-radius: var(--border-radius);
-        }
-
-        .completion-card {
-          border-radius: var(--border-radius);
-          border: 1px solid rgba(230, 126, 34, 0.2);
-        }
-
-        .ready-card {
-          border-radius: var(--border-radius);
-          border: 1px solid rgba(34, 197, 94, 0.2);
-        }
-
-        @media (prefers-color-scheme: dark) {
-          .custom-input :global(input),
-          .custom-input :global(textarea) {
-            background-color: rgba(var(--card-rgb), 0.2) !important;
-            color: rgb(var(--foreground-rgb)) !important;
-          }
-          
-          .custom-input :global(input:hover),
-          .custom-input :global(textarea:hover) {
-            background-color: rgba(var(--card-rgb), 0.3) !important;
-          }
-          
-          .custom-input :global(input:focus),
-          .custom-input :global(textarea:focus) {
-            background-color: rgba(var(--card-rgb), 0.4) !important;
-          }
-        }
-      `}</style>
-
       {/* Progress Indicator */}
       {formProgress > 0 && (
         <div className="mb-4">
@@ -433,14 +372,12 @@ const ContactForm: React.FC = () => {
               {Math.round(formProgress)}%
             </span>
           </div>
-          <div className="progress-container" style={{ height: "8px", overflow: "hidden" }}>
+          <div className="progress" style={{ height: "8px" }}>
             <div
+              className="progress-bar"
               style={{
                 width: `${formProgress}%`,
-                height: "100%",
                 background: "linear-gradient(90deg, #E67E22, #F39C12)",
-                borderRadius: "var(--border-radius)",
-                transition: "width 0.3s ease",
               }}
             ></div>
           </div>
@@ -455,7 +392,7 @@ const ContactForm: React.FC = () => {
           <div className="col-md-6">
             <Input
               rounded
-              className="my-2 custom-input"
+              className="my-2"
               size="lg"
               type="text"
               label="Full Name *"
@@ -468,7 +405,7 @@ const ContactForm: React.FC = () => {
           <div className="col-md-6">
             <Input
               rounded
-              className="my-2 custom-input"
+              className="my-2"
               size="lg"
               type="email"
               label="Email Address *"
@@ -484,7 +421,7 @@ const ContactForm: React.FC = () => {
           <div className="col-md-6">
             <Input
               rounded
-              className="my-2 custom-input"
+              className="my-2"
               size="lg"
               type="tel"
               label="Phone Number *"
@@ -497,7 +434,7 @@ const ContactForm: React.FC = () => {
           <div className="col-md-6">
             <Input
               rounded
-              className="my-2 custom-input"
+              className="my-2"
               size="lg"
               type="text"
               label="Website *"
@@ -511,7 +448,7 @@ const ContactForm: React.FC = () => {
 
         <Input
           rounded
-          className="my-2 custom-input"
+          className="my-2"
           size="lg"
           type="text"
           label="Subject *"
@@ -524,7 +461,7 @@ const ContactForm: React.FC = () => {
         <Textarea
           rows={6}
           size="lg"
-          className="my-2 custom-input"
+          className="my-2"
           label="Message *"
           placeholder="Tell us about your payment processing needs..."
           fullWidth
@@ -533,7 +470,7 @@ const ContactForm: React.FC = () => {
         />
 
         {/* Trust Signals */}
-        <div className="trust-signals p-3 mb-3">
+        <div className="p-3 rounded-3 mb-3 bg-light border">
           <div className="row g-3">
             <div className="col-md-6">
               <div className="d-flex align-items-center">
@@ -594,7 +531,10 @@ const ContactForm: React.FC = () => {
 
           {/* Completion Encouragement */}
           {formProgress > 0 && formProgress < 100 && (
-            <div className="completion-card text-center p-3 mt-3" style={{ background: "rgba(230, 126, 34, 0.05)" }}>
+            <div
+              className="text-center p-3 mt-3 rounded-3 border"
+              style={{ backgroundColor: "rgba(230, 126, 34, 0.05)" }}
+            >
               <p className="small fw-semibold mb-0" style={{ color: "#E67E22" }}>
                 🎯 You're {Math.round(formProgress)}% complete! Just {6 - currentStep} more field
                 {6 - currentStep !== 1 ? "s" : ""} to go.
@@ -603,7 +543,10 @@ const ContactForm: React.FC = () => {
           )}
 
           {formProgress === 100 && (
-            <div className="ready-card text-center p-3 mt-3" style={{ background: "rgba(34, 197, 94, 0.05)" }}>
+            <div
+              className="text-center p-3 mt-3 rounded-3 border"
+              style={{ backgroundColor: "rgba(34, 197, 94, 0.05)" }}
+            >
               <p className="small fw-semibold mb-0 text-success d-flex align-items-center justify-content-center">
                 <i className="fas fa-check-circle me-2"></i>✨ Perfect! Your form is ready to submit.
               </p>
@@ -630,4 +573,3 @@ const ContactForm: React.FC = () => {
 }
 
 export default ContactForm
-

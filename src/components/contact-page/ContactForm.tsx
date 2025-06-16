@@ -461,7 +461,8 @@ const ContactForm: React.FC = () => {
                     <input
                       type="tel"
                       id="phone"
-                      {...register('phone', { required: true })}
+                      {...register('phone', { required: true, 
+                        pattern: /^\+?[0-9\s-()]{7,25}$ })}
                       value={formData.phone}
                       onChange={e => handleInputChange('phone', e.target.value)}
                       placeholder="+44 (0)20 1234 5678"
@@ -728,6 +729,7 @@ const ContactForm: React.FC = () => {
         {success && (
           <div
             className={`${styles['alert-message']} ${styles['alert-success']}`}
+              style={{ marginTop: '20px' }} 
           >
             {success}
           </div>
@@ -736,6 +738,7 @@ const ContactForm: React.FC = () => {
         {error && (
           <div
             className={`${styles['alert-message']} ${styles['alert-error']}`}
+              style={{ marginTop: '20px' }} 
           >
             {error}
           </div>

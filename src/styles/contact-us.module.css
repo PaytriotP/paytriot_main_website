@@ -1,0 +1,525 @@
+.main {
+  background: transparent;
+  margin: 0;
+  padding: 0;
+}
+
+.contact-section {
+  background: #fff;
+  padding: 40px 16px 0 16px;
+  margin-top: 0;
+}
+
+.contact-section .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 0;
+}
+
+.contact-section .subtitle {
+  font-size: 18px;
+  color: #6b7280;
+  font-weight: 500;
+  margin-bottom: 12px;
+  letter-spacing: 0.2px;
+  font-family: inherit;
+  text-align: center;
+}
+
+.contact-section .title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #1a202c;
+  margin-bottom: 24px;
+  letter-spacing: -1px;
+  font-family: inherit;
+  text-align: center;
+}
+
+.contact-section .description {
+  font-size: 18px;
+  color: #4a5568;
+  margin-bottom: 24px;
+  font-family: inherit;
+  text-align: center;
+}
+
+.contact-section .stats {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  transform: translateX(-10px);
+}
+
+.contact-section .stat-item {
+  text-align: center;
+}
+
+.contact-section .stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #f5a525;
+  margin-bottom: 2px;
+  font-family: inherit;
+}
+
+.contact-section .stat-label {
+  font-size: 14px;
+  color: #4a5568;
+  font-family: inherit;
+}
+
+.contact-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4rem;
+  align-items: flex-start;
+  margin-top: 40px;
+}
+
+.contact-form-column {
+  flex: 2;
+  min-width: 0;
+}
+
+.contact-form-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.07);
+  padding: 2.5rem;
+  border: 1.5px solid #f3f4f6;
+  margin-bottom: 32px;
+  margin-top: 0;
+  padding: 1.5rem;
+}
+
+.contact-form-header {
+  margin-top: 24px;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.contact-form-title {
+  font-weight: 700;
+  font-size: 22px;
+  color: #f5a525;
+  margin-bottom: 6px;
+}
+
+.contact-form-subtitle {
+  color: #6b7280;
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+
+.testimonials-section {
+  margin-bottom: 32px;
+}
+
+.testimonials-section .text-center {
+  font-weight: 700;
+  font-size: 28px;
+  margin-bottom: 24px;
+}
+
+.testimonials-row {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.testimonial-col {
+  flex: 1;
+  background: #fff;
+  border-radius: 12px;
+  border: 1.5px solid #f3f4f6;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  padding: 24px;
+}
+
+.testimonial-stars {
+  font-weight: 600;
+  color: #f5a525;
+  margin-bottom: 8px;
+}
+
+.testimonial-text {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.testimonial-author {
+  font-weight: 500;
+  color: #1a202c;
+}
+
+.testimonial-role {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.payment-methods-section {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  border: 1.5px solid #f3f4f6;
+  padding: 32px;
+  margin-bottom: 32px;
+}
+
+.payment-methods-section .mb-2 {
+  font-weight: 700;
+  font-size: 22px;
+  margin-bottom: 18px;
+}
+
+.payment-methods-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.badge-outline {
+  background: #f5f7fa;
+  border: 1.5px solid #e5e7eb;
+  color: #1a202c;
+  font-weight: 700;
+  padding: 8px 18px;
+  font-size: 16px;
+}
+
+.badge-apple-pay {
+  background: #000;
+  color: #fff;
+  font-weight: 700;
+  padding: 8px 18px;
+  font-size: 16px;
+}
+
+.badge-google-pay {
+  background: #4285f4;
+  color: #fff;
+  font-weight: 700;
+  padding: 8px 18px;
+  font-size: 16px;
+}
+
+.aside-column {
+  flex: 1;
+  min-width: 320px;
+  max-width: 400px;
+  width: 100%;
+}
+
+.contact-wrap-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 1.5px solid #f3f4f6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+}
+
+.contact-wrap-card .contact-icon {
+  margin-bottom: 1rem;
+}
+
+.contact-wrap-card h4 {
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.contact-wrap-card .p-14 {
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.contact-wrap-card .btn-warning {
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  font-size: 16px;
+  background: #f5a525;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(245, 165, 37, 0.08);
+  width: 100%;
+}
+
+.contact-info-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 1.5px solid #f3f4f6;
+  padding: 1.5rem;
+}
+
+.contact-info-card h5 {
+  margin-bottom: 0.5rem;
+}
+
+.contact-info-card div {
+  margin-bottom: 1rem;
+}
+
+.why-choose-paytriot-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  padding: 1.5rem;
+  border: 1.5px solid #f3f4f6;
+  margin-bottom: 40px;
+}
+
+.why-choose-paytriot-card h5 {
+  margin-bottom: 0.5rem;
+}
+
+.why-choose-paytriot-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.why-choose-paytriot-card li {
+  margin-bottom: 1rem;
+}
+
+.why-choose-paytriot-card li:last-child {
+  margin-bottom: 0;
+}
+
+.why-choose-paytriot-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.why-choose-paytriot-card li:last-child .why-choose-paytriot-item {
+  margin-bottom: 0;
+}
+
+.why-choose-paytriot-icon-wrapper {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.why-choose-paytriot-icon {
+  width: 100%;
+  height: 100%;
+}
+
+.why-choose-paytriot-content {
+  flex: 1;
+}
+
+.why-choose-paytriot-strong {
+  display: block;
+  font-weight: 600;
+  color: #f5a525;
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.why-choose-paytriot-h4 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.why-choose-paytriot-p {
+  font-size: 15px;
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+.why-choose-paytriot-details {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+.why-choose-paytriot-item:hover .why-choose-paytriot-details {
+  max-height: 200px; /* A value large enough to contain the content */
+  opacity: 1;
+}
+
+.contact-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px; /* Reduced font size for placeholder */
+  resize: vertical;
+  min-height: 100px;
+  background: #fff;
+  color: #1a202c;
+  transition: border-color 0.2s ease;
+}
+
+.success-message {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #d4edda;
+  color: #155724;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 16px;
+}
+
+/* Dark mode styles */
+[data-theme='dark'] .main {
+  /* Removed explicit background to inherit from body */
+}
+
+[data-theme='dark'] .contact-section {
+  background: transparent;
+}
+
+[data-theme='dark'] .contact-section .subtitle,
+[data-theme='dark'] .contact-section .description,
+[data-theme='dark'] .contact-section .stat-label {
+  color: #a0aec0;
+}
+
+[data-theme='dark'] .contact-section .title {
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .contact-section .stat-value {
+  color: #f5a525;
+}
+
+[data-theme='dark'] .contact-form-card,
+[data-theme='dark'] .testimonial-col,
+[data-theme='dark'] .payment-methods-section,
+[data-theme='dark'] .contact-wrap-card,
+[data-theme='dark'] .contact-info-card,
+[data-theme='dark'] .why-choose-paytriot-card {
+  background: #2d3748;
+  border-color: #4a5568;
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme='dark'] .contact-form-subtitle,
+[data-theme='dark'] .testimonial-text,
+[data-theme='dark'] .testimonial-role,
+[data-theme='dark'] .contact-wrap-card h4,
+[data-theme='dark'] .contact-wrap-card .p-14,
+[data-theme='dark'] .contact-info-card div,
+[data-theme='dark'] .why-choose-paytriot-p {
+  color: #a0aec0;
+}
+
+[data-theme='dark'] .contact-form-title,
+[data-theme='dark'] .testimonials-section .text-center,
+[data-theme='dark'] .testimonial-author,
+[data-theme='dark'] .payment-methods-section .mb-2,
+[data-theme='dark'] .contact-info-card h5,
+[data-theme='dark'] .why-choose-paytriot-card h5,
+[data-theme='dark'] .why-choose-paytriot-strong {
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .badge-outline {
+  background: #4a5568;
+  border-color: #6b7280;
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .why-choose-paytriot-icon-wrapper {
+  /* No specific background needed, icons are SVG and should adapt */
+}
+
+[data-theme='dark'] .why-choose-paytriot-h4 {
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .why-choose-paytriot-p {
+  color: #a0aec0;
+}
+
+[data-theme='dark'] .why-choose-paytriot-card h5 {
+  color: #f7fafc;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .contact-section {
+    padding: 20px 16px;
+  }
+
+  .contact-section .title {
+    font-size: 28px;
+  }
+
+  .contact-section .description {
+    font-size: 16px;
+  }
+
+  .contact-section .stats {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .contact-content {
+    margin-top: 20px;
+  }
+
+  .contact-form-column {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .aside-column {
+    min-width: unset;
+    max-width: 100%;
+  }
+
+  .testimonials-row {
+    flex-direction: column;
+  }
+
+  .contact-form-card,
+  .testimonial-col,
+  .payment-methods-section,
+  .contact-wrap-card,
+  .contact-info-card,
+  .why-choose-paytriot-card {
+    padding: 1.5rem;
+  }
+
+  .contact-form-title {
+    font-size: 20px;
+  }
+
+  .testimonials-section .text-center {
+    font-size: 24px;
+  }
+
+  .payment-methods-badges {
+    justify-content: center;
+  }
+}

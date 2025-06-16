@@ -457,19 +457,22 @@ const ContactForm: React.FC = () => {
 
                 <div className={styles['form-column']}>
                   <div className={styles['form-group']}>
-                    <label htmlFor="phone">Phone *</label>
+                 <label htmlFor="phone">Phone *</label>
                     <input
                       type="tel"
                       id="phone"
-                      {...register('phone', { required: true, 
-                        pattern: /^\+?[0-9\s-()]{7,25}$ })}
+                      {...register('phone', {
+                        required: true,
+                        // Basic pattern for phone with country code (e.g., +1234567890, 001234567890)
+                        pattern: /^\+?[0-9\s-()]{7,25}$/
+                      })}
                       value={formData.phone}
                       onChange={e => handleInputChange('phone', e.target.value)}
-                      placeholder="+44 (0)20 1234 5678"
+                      placeholder="+44 (0)20 1234 5678 or +1-555-123-4567" // <--- UPDATED
                     />
                     {errors.phone && (
                       <span className={styles['error-message']}>
-                        This field is required
+                        Please enter a valid phone number, including country code (e.g., +44...). // <--- UPDATED
                       </span>
                     )}
                   </div>

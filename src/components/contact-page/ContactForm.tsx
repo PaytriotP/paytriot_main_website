@@ -472,7 +472,7 @@ const ContactForm: React.FC = () => {
                     />
                     {errors.phone && (
                       <span className={styles['error-message']}>
-                        Please enter a valid phone number, including country code (e.g., +44...). // <--- UPDATED
+                        Please enter a valid phone number, including country code (e.g., +44...).
                       </span>
                     )}
                   </div>

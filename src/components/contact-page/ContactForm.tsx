@@ -738,7 +738,7 @@ const ContactForm: React.FC = () => {
         {error && (
           <div
             className={`${styles['alert-message']} ${styles['alert-error']}`}
-              style={{ marginTop: '20px' }} 
+            style={{ marginTop: '20px' }} // <--- THIS IS THE CORRECTED LINE
           >
             {error}
           </div>

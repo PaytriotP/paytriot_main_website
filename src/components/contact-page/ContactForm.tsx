@@ -468,7 +468,7 @@ const ContactForm: React.FC = () => {
                       })}
                       value={formData.phone}
                       onChange={e => handleInputChange('phone', e.target.value)}
-                      placeholder="+44 (0)20 1234 5678 or +1-555-123-4567" // <--- UPDATED
+                      placeholder="+44 (0)20 1234 5678"
                     />
                     {errors.phone && (
                       <span className={styles['error-message']}>

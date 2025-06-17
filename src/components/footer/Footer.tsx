@@ -144,8 +144,7 @@ export default function Footer() {
                 <h4>Contact Details</h4>
                 <div className="address-wrap">
                   <label htmlFor="label-14/light" className="label-14">
-                    <span>Address:</span> Eagle Court, Vine Street,
-                    Uxbridge, UB8 1JG
+                    <span>Address:</span> Eagle Court, Vine Street, Uxbridge, UB8 1JG
                   </label>
                   <label htmlFor="label-14/light" className="label-14">
                     <span>Phone:</span> +44 (0203)884 1611

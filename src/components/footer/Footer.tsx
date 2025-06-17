@@ -144,7 +144,7 @@ export default function Footer() {
                 <h4>Contact Details</h4>
                 <div className="address-wrap">
                   <label htmlFor="label-14/light" className="label-14">
-                    <span>Address:</span> The Charter Building, Charter Place,
+                    <span>Address:</span> Eagle Court, Vine Street,
                     Uxbridge, UB8 1JG
                   </label>
                   <label htmlFor="label-14/light" className="label-14">

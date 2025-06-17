@@ -350,7 +350,7 @@ export default function ContactUs() {
                           >
                             <p className={styles['why-choose-paytriot-p']}>
                               Get up and running quickly with our efficient
-                              onboarding process — designed to minimize delays
+                              onboarding process — designed to minimise delays
                               and help you start accepting payments faster.
                             </p>
                           </div>

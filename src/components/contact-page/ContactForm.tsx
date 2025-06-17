@@ -570,10 +570,9 @@ const ContactForm: React.FC = () => {
 
               <div className={styles['form-group']}>
                 <label
-                  htmlFor="additionalInfo"
-                  className={styles['section-label']}
-                >
-                  Additional Information (Optional)
+                  htmlFor="additionalInfo">
+                  Additional Information {' '}
+                  <span className={styles['optional-text']}>(Optional)</span>
                 </label>
                 <textarea
                   id="additionalInfo"

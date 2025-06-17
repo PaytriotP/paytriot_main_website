@@ -70,27 +70,15 @@ import { useEffect } from 'react';
 
 export default function ContactUs() {
   useEffect(() => {
-    const handleScrollToForm = () => {
-      if (window.innerWidth <= 768) {
-        // Assuming 768px as mobile breakpoint
-        const contactFormElement = document.getElementById('contact-form');
-        if (contactFormElement) {
-          contactFormElement.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
+        if (window.innerWidth <= 768) {
+      const contactFormElement = document.getElementById('contact-form');
+      if (contactFormElement) {
+        contactFormElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
       }
-    };
-
-    // Scroll to form on page load if on mobile
-    handleScrollToForm();
-
-    // Optional: Add event listener for orientation changes or window resize if needed
-    window.addEventListener('resize', handleScrollToForm);
-    return () => {
-      window.removeEventListener('resize', handleScrollToForm);
-    };
+    }
   }, []);
 
   return (
@@ -218,7 +206,7 @@ export default function ContactUs() {
                   <h5 className={styles['mb-2']}>Get in Touch</h5>
                   <div>
                     <strong>Phone:</strong>{' '}
-                    <a href="tel:+44203884181">+44 (0)203 884 181</a>
+                    <a href="tel:+44(0203)8841611">+44 (0203)884 1611</a>
                   </div>
                   <div>
                     <strong>Email:</strong>{' '}

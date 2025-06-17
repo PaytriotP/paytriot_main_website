@@ -501,7 +501,7 @@ const ContactForm: React.FC = () => {
 
                 <div className={styles['form-column']}>
                   <div className={styles['form-group']}>
-                    <label htmlFor="website">Website</label>
+                    <label htmlFor="website">Website *</label>
                     <input
                       type="text"
                       id="website"

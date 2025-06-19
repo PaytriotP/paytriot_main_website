@@ -500,21 +500,28 @@ const ContactForm: React.FC = () => {
                 </div>
 
                 <div className={styles['form-column']}>
-                  <div className={styles['form-group']}>
-                    <label htmlFor="website">Website *</label>
-                    <input
-                      type="text"
-                      id="website"
-                      {...register('website')}
-                      value={formData.website}
-                      onChange={e =>
-                        handleInputChange('website', e.target.value)
-                      }
-                      placeholder="Enter your website URL"
-                    />
-                  </div>
+                    <div className={styles['form-group']}>
+                        <label htmlFor="website">Website *</label>
+                        <input
+                            type="text"
+                            id="website"
+                            {...register('website', {
+                                required: 'Website is required',
+                                pattern: {
+                                    // This regex will match common URL formats, including those without http/https or www
+                                    value: /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.){1,}[a-zA-Z0-9-]{2,}(\/[^\s]*)?$/i,
+                                    message: 'Please enter a valid website URL (e.g., www.example.com or https://example.com)',
+                                },
+                            })}
+                            value={formData.website} // Keep this if you're managing state manually as well
+                            onChange={e =>
+                                handleInputChange('website', e.target.value) // Keep this if you're managing state manually as well
+                                }
+                            placeholder="Enter your website URL"
+                            />
+                        {errors.website && <span className={styles['error-message']}>{errors.website.message}</span>}
+                    </div>
                 </div>
-              </div>
 
               <div className={styles['form-group']}>
                 <label htmlFor="ecommercePlatform">

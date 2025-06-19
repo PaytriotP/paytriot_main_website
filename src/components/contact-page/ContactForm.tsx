@@ -457,7 +457,7 @@ const ContactForm: React.FC = () => {
 
                 <div className={styles['form-column']}>
                   <div className={styles['form-group']}>
-                 <label htmlFor="phone">Phone *</label>
+                    <label htmlFor="phone">Phone *</label>
                     <input
                       type="tel"
                       id="phone"
@@ -522,6 +522,7 @@ const ContactForm: React.FC = () => {
                         {errors.website && <span className={styles['error-message']}>{errors.website.message}</span>}
                     </div>
                 </div>
+              </div>
 
               <div className={styles['form-group']}>
                 <label htmlFor="ecommercePlatform">

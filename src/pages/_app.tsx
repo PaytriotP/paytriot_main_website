@@ -23,6 +23,21 @@ export default function App({ Component, pageProps }: AppProps) {
     script.src = '//code.tidio.co/g0m4mrkqkfhz3gdcgypmhso3x8tn9zju.js'; 
     script.async = true;
     document.body.appendChild(script);
+
+    const botpressInjectScript = document.createElement('script');
+    botpressInjectScript.src = 'https://cdn.botpress.cloud/webchat/v3.0/inject.js';
+    botpressInjectScript.defer = true; // Use defer for non-blocking load
+    document.body.appendChild(botpressInjectScript);
+
+    const botpressContentScript = document.createElement('script');
+    botpressContentScript.src = 'https://files.bpcontent.cloud/2025/05/13/15/20250513151330-Y0FB3XP6.js';
+    botpressContentScript.defer = true; // Use defer for non-blocking load
+    document.body.appendChild(botpressContentScript);
+
+    return () => {
+      document.body.removeChild(botpressInjectScript);
+      document.body.removeChild(botpressContentScript);
+    };
   }, []);
   return (
     <ThemeProvider attribute="data-theme" enableSystem={false}>

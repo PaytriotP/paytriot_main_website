@@ -19,26 +19,27 @@ const poppins = Poppins({
 
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
-    const tidioScript = document.createElement('script');
-    tidioScript.src = '//code.tidio.co/g0m4mrkqkfhz3gdcgypmhso3x8tn9zju.js';
-    tidioScript.async = true;
-    document.body.appendChild(tidioScript);
+    const script = document.createElement('script');
+    script.src = '//code.tidio.co/g0m4mrkqkfhz3gdcgypmhso3x8tn9zju.js';
+    script.async = true;
+    document.body.appendChild(script);
 
     const botpressInjectScript = document.createElement('script');
     botpressInjectScript.src = 'https://cdn.botpress.cloud/webchat/v3.0/inject.js';
-    botpressInjectScript.defer = true;
+    botpressInjectScript.defer = true; // Use defer for non-blocking load
     document.body.appendChild(botpressInjectScript);
 
     const botpressContentScript = document.createElement('script');
     botpressContentScript.src = 'https://files.bpcontent.cloud/2025/05/13/15/20250513151330-Y0FB3XP6.js';
-    botpressContentScript.defer = true;
+    botpressContentScript.defer = true; // Use defer for non-blocking load
     document.body.appendChild(botpressContentScript);
 
     const toneJsScript = document.createElement('script');
     toneJsScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js';
-    toneJsScript.defer = true;
+    toneJsScript.defer = true; // Use defer for non-blocking load
     document.body.appendChild(toneJsScript);
 
+    // Function to play a simple sound (e.g., a "ding" sound)
     const playWelcomeSound = async () => {
       if (typeof window.Tone !== 'undefined') {
         try {
@@ -47,7 +48,7 @@ export default function App({ Component, pageProps }: AppProps) {
             console.log('Tone.js AudioContext started.');
           }
           const synth = new window.Tone.Synth().toDestination();
-          synth.triggerAttackRelease("C4", "8n");
+          synth.triggerAttackAttackRelease("C4", "8n");
           console.log('Welcome sound played.');
         } catch (error) {
           console.error('Error playing welcome sound:', error);
@@ -58,11 +59,12 @@ export default function App({ Component, pageProps }: AppProps) {
     };
 
     const initBotpressAndOpen = () => {
+
       if (window.botpress && !window.botpress._isCustomizedAndProactiveInit) {
         window.botpress._isCustomizedAndProactiveInit = true;
         console.log('Botpress proactive setup initiated by _app.tsx');
 
-        const onWebchatReady = (event) => {
+        const onWebchatReady = (event: any) => { // <-- Fix applied here: added ': any'
           if (event.type === 'webchat/ready' || event.type === 'webchat/connected') {
             console.log('Botpress Webchat is ready. Attempting to auto-open, play sound, and send welcome event.');
 
@@ -100,24 +102,17 @@ export default function App({ Component, pageProps }: AppProps) {
 
     const scriptLoadTimeout = setTimeout(() => {
       initBotpressAndOpen();
-    }, 1500);
+    }, 1500); // 1.5 second delay, adjust if needed
 
     return () => {
-      if (tidioScript.parentNode) {
-        tidioScript.parentNode.removeChild(tidioScript);
-      }
-      if (botpressInjectScript.parentNode) {
-        botpressInjectScript.parentNode.removeChild(botpressInjectScript);
-      }
-      if (botpressContentScript.parentNode) {
-        botpressContentScript.parentNode.removeChild(botpressContentScript);
-      }
-      if (toneJsScript.parentNode) {
-        toneJsScript.parentNode.removeChild(toneJsScript);
-      }
+      document.body.removeChild(botpressInjectScript);
+      document.body.removeChild(botpressContentScript);
+      document.body.removeChild(toneJsScript);
       clearTimeout(scriptLoadTimeout);
+      // Event listeners should be managed by their respective `offEvent` calls.
     };
   }, []);
+}
 
   return (
     <ThemeProvider attribute="data-theme" enableSystem={false}>

@@ -112,7 +112,6 @@ export default function App({ Component, pageProps }: AppProps) {
       // Event listeners should be managed by their respective `offEvent` calls.
     };
   }, []);
-}
 
   return (
     <ThemeProvider attribute="data-theme" enableSystem={false}>

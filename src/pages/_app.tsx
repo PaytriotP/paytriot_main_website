@@ -19,19 +19,19 @@ const poppins = Poppins({
 
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = '//code.tidio.co/g0m4mrkqkfhz3gdcgypmhso3x8tn9zju.js';
-    script.async = true;
-    document.body.appendChild(script);
+    const tidioScript = document.createElement('script');
+    tidioScript.src = '//code.tidio.co/g0m4mrkqkfhz3gdcgypmhso3x8tn9zju.js';
+    tidioScript.async = true;
+    document.body.appendChild(tidioScript);
 
     const botpressInjectScript = document.createElement('script');
     botpressInjectScript.src = 'https://cdn.botpress.cloud/webchat/v3.0/inject.js';
-    botpressInjectScript.defer = true; 
+    botpressInjectScript.defer = true;
     document.body.appendChild(botpressInjectScript);
 
     const botpressContentScript = document.createElement('script');
     botpressContentScript.src = 'https://files.bpcontent.cloud/2025/05/13/15/20250513151330-Y0FB3XP6.js';
-    botpressContentScript.defer = true; 
+    botpressContentScript.defer = true;
     document.body.appendChild(botpressContentScript);
 
     const toneJsScript = document.createElement('script');
@@ -100,11 +100,11 @@ export default function App({ Component, pageProps }: AppProps) {
 
     const scriptLoadTimeout = setTimeout(() => {
       initBotpressAndOpen();
-    }, 1500); // 1.5 second delay, adjust if needed
+    }, 1500);
 
     return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
+      if (tidioScript.parentNode) {
+        tidioScript.parentNode.removeChild(tidioScript);
       }
       if (botpressInjectScript.parentNode) {
         botpressInjectScript.parentNode.removeChild(botpressInjectScript);
@@ -118,7 +118,7 @@ export default function App({ Component, pageProps }: AppProps) {
       clearTimeout(scriptLoadTimeout);
     };
   }, []);
-  
+
   return (
     <ThemeProvider attribute="data-theme" enableSystem={false}>
       <NextUIProvider>

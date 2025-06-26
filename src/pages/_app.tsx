@@ -34,9 +34,15 @@ export default function App({ Component, pageProps }: AppProps) {
     botpressContentScript.defer = true; // Use defer for non-blocking load
     document.body.appendChild(botpressContentScript);
 
+    const toneJsScript = document.createElement('script');
+    toneJsScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js';
+    toneJsScript.defer = true; // Use defer for non-blocking load
+    document.body.appendChild(toneJsScript);
+
     return () => {
       document.body.removeChild(botpressInjectScript);
       document.body.removeChild(botpressContentScript);
+      document.body.removeChild(toneJsScript);
     };
   }, []);
   return (

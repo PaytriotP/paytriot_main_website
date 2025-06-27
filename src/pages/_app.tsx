@@ -57,7 +57,9 @@ export default function App({ Component, pageProps }: AppProps) {
       }
     };
 
-    const waitForBotpressReady = (callback: () => void, retries = 50, delay = 200) => {
+    // Robust function to wait for Botpress to be fully ready
+    // Increased retries and delay
+    const waitForBotpressReady = (callback: () => void, retries = 100, delay = 300) => { // Increased retries to 100, delay to 300ms (total 30 seconds)
       if (typeof window.botpress !== 'undefined' && typeof window.botpress.onEvent === 'function') {
         console.log('Botpress onEvent is available.');
         callback();

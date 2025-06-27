@@ -12,6 +12,11 @@ import 'public/css/style.css';
 import TrackingScript from '@/helpers/hooks/TrackingScript';
 import { GoogleAnalytics } from '@next/third-parties/google';
 
+const BOT_ID = "cb70fa70-47b7-40bb-9347-843e0a92544a"; // Updated with your provided Bot ID
+const CLIENT_ID = "451136e6-64d4-4f4b-bbaf-5ae20dda4630";
+const BOTPRESS_CONTENT_SCRIPT_URL = 'https://files.bpcontent.cloud/2025/05/13/15/20250513151330-Y0FB3XP6.js';
+
+
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700']
@@ -22,22 +27,33 @@ export default function App({ Component, pageProps }: AppProps) {
     const script = document.createElement('script');
     script.src = '//code.tidio.co/g0m4mrkqkfhz3gdcgypmhso3x8tn9zju.js';
     script.async = true;
-    document.body.appendChild(script);
+    if (!document.querySelector(`script[src="${script.src}"]`)) {
+      document.body.appendChild(script);
+    }
+
 
     const botpressInjectScript = document.createElement('script');
     botpressInjectScript.src = 'https://cdn.botpress.cloud/webchat/v3.0/inject.js';
     botpressInjectScript.defer = true;
-    document.body.appendChild(botpressInjectScript);
+    if (!document.querySelector(`script[src="${botpressInjectScript.src}"]`)) {
+      document.body.appendChild(botpressInjectScript);
+    }
 
     const botpressContentScript = document.createElement('script');
-    botpressContentScript.src = 'https://files.bpcontent.cloud/2025/05/13/15/20250513151330-Y0FB3XP6.js';
+    botpressContentScript.src = BOTPRESS_CONTENT_SCRIPT_URL;
     botpressContentScript.defer = true;
-    document.body.appendChild(botpressContentScript);
+    if (!document.querySelector(`script[src="${botpressContentScript.src}"]`)) {
+      document.body.appendChild(botpressContentScript);
+    }
+
 
     const toneJsScript = document.createElement('script');
     toneJsScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js';
     toneJsScript.defer = true;
-    document.body.appendChild(toneJsScript);
+    if (!document.querySelector(`script[src="${toneJsScript.src}"]`)) {
+      document.body.appendChild(toneJsScript);
+    }
+
 
     const playWelcomeSound = async () => {
       if (typeof window.Tone !== 'undefined') {
@@ -57,32 +73,31 @@ export default function App({ Component, pageProps }: AppProps) {
       }
     };
 
-    // Robust function to wait for Botpress to be fully ready
-    // Increased retries and delay
-    const waitForBotpressReady = (callback: () => void, retries = 100, delay = 300) => { // Increased retries to 100, delay to 300ms (total 30 seconds)
-      if (typeof window.botpress !== 'undefined' && typeof window.botpress.onEvent === 'function') {
-        console.log('Botpress onEvent is available.');
-        callback();
-      } else if (retries > 0) {
-        console.log(`Waiting for window.botpress.onEvent... Retries left: ${retries}`);
-        setTimeout(() => waitForBotpressReady(callback, retries - 1, delay), delay);
-      } else {
-        console.error('Botpress webchat did not become ready after multiple attempts.');
-      }
-    };
+    const initializeBotpress = () => {
+      if (typeof window.botpress !== 'undefined' && typeof window.botpress.init === 'function') {
+        if (!window.botpress._isInitializedCustom) {
+          window.botpress.init({
+            "botId": BOT_ID,
+            "clientId": CLIENT_ID,
+            "configuration": {
+                "website": {},
+                "email": {},
+                "phone": {},
+                "termsOfService": {},
+                "privacyPolicy": {}
+            }
+          });
+          window.botpress._isInitializedCustom = true;
+          console.log('Botpress SDK explicitly initialized by _app.tsx');
 
-    const initBotpressAndOpen = () => {
-      if (window.botpress && !window.botpress._isCustomizedAndProactiveInit) {
-        window.botpress._isCustomizedAndProactiveInit = true;
-        console.log('Botpress proactive setup initiated by _app.tsx');
-
-        const performProactiveActions = () => {
           const onWebchatReady = (event: any) => {
             if (event.type === 'webchat/ready' || event.type === 'webchat/connected') {
               console.log('Botpress Webchat is fully ready. Attempting to auto-open, play sound, and send welcome event.');
 
-              if (!window.botpress.isWebchatOpen) {
+              if (typeof window.botpress.isWebchatOpen === 'boolean' && !window.botpress.isWebchatOpen) {
                 window.botpress.open();
+              } else {
+                console.log('Botpress Webchat is already open or isWebchatOpen status is unavailable.');
               }
               
               playWelcomeSound();
@@ -100,7 +115,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
           window.botpress.onEvent(onWebchatReady, ['webchat/ready', 'webchat/connected']);
 
-          if (window.botpress.isWebchatReady && !window.botpress.isWebchatOpen) {
+          if (typeof window.botpress.isWebchatReady === 'boolean' && window.botpress.isWebchatReady && !window.botpress.isWebchatOpen) {
             console.log('Webchat already ready on initial check. Attempting immediate open and sound.');
             window.botpress.open();
             playWelcomeSound();
@@ -110,27 +125,25 @@ export default function App({ Component, pageProps }: AppProps) {
             });
             window.botpress.offEvent(onWebchatReady);
           }
-        };
-
-        waitForBotpressReady(performProactiveActions);
-
-      } else if (window.botpress && window.botpress._isCustomizedAndProactiveInit) {
-        console.log('Botpress proactive setup already initiated.');
+        } else {
+          console.log('Botpress SDK already initialized by custom logic.');
+        }
       } else {
-        console.warn('window.botpress is not available even after initial check. Auto-open and sound features might not work.');
+        console.log('window.botpress or window.botpress.init not yet available. Retrying...');
+        setTimeout(initializeBotpress, 200);
       }
     };
 
-    const initialDelayTimeout = setTimeout(() => {
-      initBotpressAndOpen();
-    }, 500);
+    const startInitialization = setTimeout(() => {
+      initializeBotpress();
+    }, 1000);
 
     return () => {
       document.body.removeChild(script);
       document.body.removeChild(botpressInjectScript);
       document.body.removeChild(botpressContentScript);
       document.body.removeChild(toneJsScript);
-      clearTimeout(initialDelayTimeout);
+      clearTimeout(startInitialization);
     };
   }, []);
 

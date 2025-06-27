@@ -10,6 +10,7 @@ import { ThemeProvider } from 'next-themes';
 import type { AppProps } from 'next/app';
 import 'public/css/style.css';
 import TrackingScript from '@/helpers/hooks/TrackingScript';
+import BotpressChat from '@/components/landing-page/BotpressChat';
 import { GoogleAnalytics } from '@next/third-parties/google';
 
 const poppins = Poppins({
@@ -41,6 +42,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <TrackingScript/>
           <NavigationMenu />
           <Component {...pageProps} />
+          <BotpressChat />
           <CallToAction />
           <Footer />
         </main>

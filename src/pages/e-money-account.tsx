@@ -1,4 +1,5 @@
-import LottiePlayer from '@/components/LottiePlayer';
+import dynamic from 'next/dynamic';
+// import LottiePlayer from '@/components/LottiePlayer';
 import Head from 'next/head';
 import Image from 'next/image';
 import Script from 'next/script';
@@ -13,6 +14,11 @@ import iconCurrencySvg from 'public/images/icon-currency.svg';
 import iconRatesSvg from 'public/images/icon-rates.svg';
 import iconWalletSvg from 'public/images/icon-wallet.svg';
 
+const DynamicLottiePlayer = dynamic(
+  () => import('@/components/LottiePlayer'), 
+  { ssr: false }
+);
+
 export default function BankAccount() {
   return (
     <>
@@ -25,7 +31,7 @@ export default function BankAccount() {
         <title>E-Money Account | Paytriot</title>
       </Head>
       <main>
-        <section className="banking">
+{/*         <section className="banking">
           <div className="container">
             <h1 className="text-center mb-4">
               New Age E-Money Account for You
@@ -35,7 +41,17 @@ export default function BankAccount() {
             </p>
             <LottiePlayer animationData={servicesDashboardJson} />
           </div>
+        </section> */}
+        <section className="banking">
+          <div className="container">
+            <h1 className="text-center mb-4">New Age E-Money Account for You</h1>
+            <p className="p-18 text-center mb-5">
+              A Simple &amp; Powerful E-Money Account is Here
+            </p>
+            <DynamicLottiePlayer animationData={servicesDashboardJson} />
+          </div>
         </section>
+        
         <section className="account">
           <div className="container">
             <h2 className="text-center">
@@ -79,7 +95,7 @@ export default function BankAccount() {
             </div>
           </div>
         </section>
-        <section className="companion">
+{/*         <section className="companion">
           <div className="container">
             <h2 className="text-center">Your New Business Companion</h2>
             <div className="row">
@@ -106,6 +122,39 @@ export default function BankAccount() {
               </div>
               <div className="col-lg-6">
                 <LottiePlayer animationData={oneAccountMultipleAccessJson} />
+              </div>
+            </div>
+          </div>
+        </section> */}
+          <section className="companion">
+          <div className="container">
+            <h2 className="text-center">Your New Business Companion</h2>
+            <div className="row">
+              <div className="col-lg-6">
+                <DynamicLottiePlayer animationData={easyMoneyJson} />
+              </div>
+              <div className="col-lg-6 d-flex justify-content-center align-items-center">
+                <div className="txt-wrap">
+                  <h2>Easy money transfers in seconds</h2>
+                  <p className="p-18 mt-4">
+                    Transfer funds from your E-Money Account with speed. We support
+                    Faster Payments, SEPA and SWIFT
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-lg-6">
+                <div className="txt-wrap">
+                  <h2>One Account, Multiple Access</h2>
+                  <p className="p-18 mt-4">
+                    Setup your E-Money Account with multiple currencies and access
+                    it online or via your app on iOS or Android..
+                  </p>
+                </div>
+              </div>
+              <div className="col-lg-6">
+                <DynamicLottiePlayer animationData={oneAccountMultipleAccessJson} />
               </div>
             </div>
           </div>

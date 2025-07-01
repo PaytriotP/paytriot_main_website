@@ -8,7 +8,8 @@ declare global {
     botpress: {
       init: (config: any) => Promise<void>;
       sendEvent: (event: any) => void;
-      onEvent: (callback: (event: any) => void, eventTypes?: string[]) => void;
+      // CORRECTED: Declaring 'on' method as per user's embed code
+      on: (eventName: string, callback: (...args: any[]) => void) => void; 
       open: () => void;
       close: () => void;
       isWebchatOpen: boolean;
@@ -22,7 +23,8 @@ declare global {
 
 const BOT_ID = "cb70fa70-47b7-40bb-9347-843e0a92544a";
 const CLIENT_ID = "451136e6-64d4-4f4b-bbaf-5ae20dda4630";
-const BOTPRESS_CONTENT_SCRIPT_URL = 'https://files.bpcontent.cloud/2025/05/13/15/20250513151330-Y0FB3XP6.js';
+// Using the inject.js URL from the user's provided embed code
+const BOTPRESS_CDN_INJECT_URL = 'https://cdn.botpress.cloud/webchat/v3.0/inject.js'; 
 
 const BotpressChat: React.FC = () => {
   const { theme } = useTheme();
@@ -33,8 +35,8 @@ const BotpressChat: React.FC = () => {
       return;
     }
 
-    let webchatReadyInterval: NodeJS.Timeout | undefined;
-    let initTimeout: NodeJS.Timeout | undefined;
+    let checkBotpressObjectInterval: NodeJS.Timeout | undefined;
+    const HAS_VISITED_KEY = 'bp_has_visited_site';
 
     const loadScript = (id: string, src: string, defer: boolean) => {
       return new Promise<void>((resolve, reject) => {
@@ -46,9 +48,7 @@ const BotpressChat: React.FC = () => {
         script.id = id;
         script.src = src;
         script.defer = defer;
-        script.onload = () => {
-          setTimeout(resolve, 100); 
-        };
+        script.onload = resolve; // Resolve immediately after script loads
         script.onerror = () => {
           console.error(`Failed to load script: ${src}`);
           reject(new Error(`Failed to load script: ${src}`));
@@ -57,116 +57,108 @@ const BotpressChat: React.FC = () => {
       });
     };
 
-    const initializeBotpress = async () => {
+    const setupBotpress = async () => {
       try {
-        await Promise.all([
-          loadScript('bp-content-script', BOTPRESS_CONTENT_SCRIPT_URL, true),
-        ]);
-
+        // 1. Load the Botpress inject script from CDN
+        await loadScript('bp-inject-script', BOTPRESS_CDN_INJECT_URL, true);
+        
         initializedRef.current = true;
 
-        const HAS_VISITED_KEY = 'bp_has_visited_site';
         const hasVisitedBefore = localStorage.getItem(HAS_VISITED_KEY);
         const shouldHideWidget = hasVisitedBefore === 'true';
 
-        const tryInitBotpress = () => {
-          if (typeof window.botpress !== 'undefined' && typeof window.botpress.init === 'function' && !(window.botpress as any)._isCustomInitialized) {
-            
-            // --- NEW: Check if onEvent is a function before calling it ---
-            // This ensures onEvent is available before we try to register a listener.
-            if (!shouldHideWidget) { // Only attempt to auto-open for first-time users
-                if (typeof window.botpress.onEvent === 'function') {
-                    window.botpress.onEvent(() => {
-                        console.log("[Botpress] Webchat is ready, attempting to auto-open for first-time user.");
-                        if (window.botpress && !window.botpress.isWebchatOpen) { 
-                            window.botpress.open();
-                            console.log("[Botpress] Webchat auto-opened!");
-                            localStorage.setItem(HAS_VISITED_KEY, 'true'); 
-                        }
-                    }, ["webchat:ready"]);
-                } else {
-                    console.warn("[Botpress] window.botpress.onEvent is not yet a function. Retrying initialization...");
-                    initTimeout = setTimeout(tryInitBotpress, 200); // Retry init if onEvent not ready
-                    return; // Exit current tryInitBotpress and try again
-                }
-            }
-            // --- END NEW ---
+        // Use a simple poll to wait for window.botpress and its init function to be available.
+        // This is a common practice for third-party scripts that load asynchronously.
+        checkBotpressObjectInterval = setInterval(() => {
+            if (typeof window.botpress !== 'undefined' && typeof window.botpress.init === 'function') {
+                clearInterval(checkBotpressObjectInterval);
+                console.log("[Botpress] window.botpress object and init function are ready.");
 
-            const initPromise = window.botpress.init({
-              "botId": BOT_ID,
-              "clientId": CLIENT_ID,
-              "selector": "#botpress-chat-container",
-              "configuration": {
-                "hideWidget": shouldHideWidget, 
-                "composerPlaceholder": "Chat with bot",
-                "botConversationDescription": "Paytriot Payments Virtual Assistant",
-                "botName": "Paytriot Assistant",
-                "containerWidth": "350px",
-                "containerHeight": "500px",
-                "enableConversationSuggestions": false,
-                "stylesheet": "",
-                "email": {},
-                "phone": {},
-                "termsOfService": {},
-                "privacyPolicy": {},
-                "version": "v1",
-                "website": {},
-                "color": "#f79a20",
-                "variant": "soft",
-                "headerVariant": "glass",
-                "themeMode": "light",
-                "fontFamily": "rubik",
-                "radius": 4,
-                "feedbackEnabled": false,
-              }
-            });
-
-            if (initPromise && typeof initPromise.then === 'function') {
-              initPromise.then(() => {
-                (window.botpress as any)._isCustomInitialized = true;
-                
-                if (shouldHideWidget) { 
-                    // This is for returning users, where the flag might already be set, but ensures robustness
-                    localStorage.setItem(HAS_VISITED_KEY, 'true'); 
+                // 2. Set up the event listener *immediately* after window.botpress is available.
+                // This mirrors the user's test.html structure, where 'on' is called early.
+                if (!shouldHideWidget) { // Only auto-open for first-time users
+                    // Ensure 'on' method is available before calling it, to prevent TypeErrors
+                    if (typeof window.botpress.on === 'function') {
+                        window.botpress.on("webchat:ready", () => {
+                            console.log("[Botpress] 'webchat:ready' event received, attempting to auto-open.");
+                            if (window.botpress && !window.botpress.isWebchatOpen) { 
+                                window.botpress.open();
+                                console.log("[Botpress] Webchat auto-opened!");
+                                localStorage.setItem(HAS_VISITED_KEY, 'true'); 
+                            }
+                        });
+                    } else {
+                        console.error("[Botpress] Error: window.botpress.on is not a function after loading inject.js. Auto-open functionality might be affected.");
+                    }
                 }
 
-              }).catch(error => {
-                console.error('Error during Botpress init() promise:', error);
-                initTimeout = setTimeout(tryInitBotpress, 200);
-              });
+                // 3. Initialize the Botpress webchat with the provided configuration
+                window.botpress.init({
+                    "botId": BOT_ID,
+                    "clientId": CLIENT_ID, // clientId is a top-level property in user's embed code
+                    "selector": "#botpress-chat-container", // Using our existing React container
+                    "configuration": {
+                        "hideWidget": shouldHideWidget, // Conditional visibility based on user's request
+                        "composerPlaceholder": "Chat with bot",
+                        "botConversationDescription": "Paytriot Payments Virtual Assistant",
+                        "botName": "Paytriot Assistant",
+                        "containerWidth": "350px", 
+                        "containerHeight": "500px", 
+                        "enableConversationSuggestions": false,
+                        "stylesheet": "",
+                        "email": {
+                            "title": "info@paytriot.co.uk",
+                            "link": "info@paytriot.co.uk"
+                        },
+                        "phone": {},
+                        "termsOfService": {},
+                        "privacyPolicy": {},
+                        "version": "v1",
+                        "website": {},
+                        "color": "#f79a20",
+                        "variant": "soft",
+                        "headerVariant": "glass",
+                        "themeMode": "light",
+                        "fontFamily": "rubik",
+                        "radius": 4,
+                        "feedbackEnabled": false,
+                        "footer": "[⚡ by Botpress](https://botpress.com/?from=webchat)" // Added from user's embed code
+                    }
+                }).then(() => {
+                    (window.botpress as any)._isCustomInitialized = true;
+                    // For returning users, ensure localStorage flag is set.
+                    // For first-time users, it's set after the chat successfully opens via the 'on' listener.
+                    if (shouldHideWidget) { 
+                        localStorage.setItem(HAS_VISITED_KEY, 'true'); 
+                    }
+                }).catch(error => {
+                    console.error('Error during Botpress init() promise:', error);
+                });
             } else {
-              initTimeout = setTimeout(tryInitBotpress, 200);
+                // This console log is commented out to reduce noise, but indicates polling is active
+                // console.log("[Botpress] Waiting for window.botpress object and init function to be ready...");
             }
-          } else if (typeof window.botpress === 'undefined' || typeof window.botpress.init !== 'function') {
-            initTimeout = setTimeout(tryInitBotpress, 200);
-          }
-        };
-        tryInitBotpress();
-
-        webchatReadyInterval = setInterval(() => {
-          if (typeof window.botpress !== 'undefined' && window.botpress.isWebchatReady) {
-            clearInterval(webchatReadyInterval);
-          }
-        }, 300);
+        }, 50); // Check every 50ms for Botpress object and its core functions
 
       } catch (error) {
         console.error('Critical error during script loading or initial setup:', error);
       }
     };
 
-    initializeBotpress();
+    setupBotpress();
 
     return () => {
-      if (webchatReadyInterval) clearInterval(webchatReadyInterval);
-      if (initTimeout) clearTimeout(initTimeout);
+      if (checkBotpressObjectInterval) clearInterval(checkBotpressObjectInterval);
 
-      ['bp-content-script'].forEach(id => {
+      // Clean up the injected script element when the component unmounts
+      ['bp-inject-script'].forEach(id => { 
         const scriptElement = document.getElementById(id);
         if (scriptElement && document.body.contains(scriptElement)) {
           document.body.removeChild(scriptElement);
         }
       });
 
+      // Reset internal flags for potential re-initialization if component remounts
       if (window.botpress) {
         (window.botpress as any)._isCustomInitialized = false;
         (window.botpress as any)._hasProactiveActionsRun = false;
@@ -174,8 +166,9 @@ const BotpressChat: React.FC = () => {
       }
       initializedRef.current = false;
     };
-  }, []);
+  }, []); // Empty dependency array ensures this effect runs only once on mount
 
+  // Effect to handle theme changes (dark/light mode)
   useEffect(() => {
     if (theme === 'dark') {
       document.documentElement.setAttribute('data-theme', 'dark');
@@ -186,6 +179,7 @@ const BotpressChat: React.FC = () => {
 
   return (
     <div id="botpress-chat-container" className={styles.chatContainer}>
+      {/* Global styles for the embedded iframe and hiding the default button */}
       <style jsx global>{`
         #botpress-chat-container iframe {
           opacity: 1 !important;
@@ -201,7 +195,7 @@ const BotpressChat: React.FC = () => {
           z-index: 1000 !important;
         }
         #botpress-chat-container .bpFab {
-          display: none !important;
+          display: none !important; /* This hides the default floating chat bubble */
         }
         #botpress-chat-container .bpWebchat {
             position: unset !important;

@@ -1,7 +1,7 @@
 // components/BotpressChat.jsx
 import React, { useEffect, useRef } from 'react';
 import { useTheme } from 'next-themes';
-import styles from '../styles/chatbot.module.css'; // Assuming you have this CSS module as previously discussed
+import styles from '../../styles/chatbot.module.css';
 
 declare global {
   interface Window {

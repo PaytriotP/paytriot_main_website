@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+// components/BotpressChat.jsx
+import React, { useEffect, useRef } from 'react';
 import { useTheme } from 'next-themes';
-import styles from '../styles/chatbot.module.css';
+import styles from '../styles/chatbot.module.css'; // Ensure this CSS isn't hiding anything
 
 declare global {
   interface Window {
@@ -20,13 +21,15 @@ declare global {
   }
 }
 
+const BOT_ID = "cb70fa70-47b7-40bb-9347-843e0a92544a";
+const CLIENT_ID = "451136e6-64d4-4f4b-bbaf-5ae20dda4630";
+const BOTPRESS_CONTENT_SCRIPT_URL = 'https://files.bpcontent.cloud/2025/05/13/15/20250513151330-Y0FB3XP6.js';
+const BOTPRESS_INJECT_SCRIPT_URL = 'https://cdn.botpress.cloud/webchat/v3.0/inject.js';
+const TONEJS_SCRIPT_URL = 'https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js';
+
 const BotpressChat: React.FC = () => {
   const { theme } = useTheme();
-
-  const BOT_ID = "cb70fa70-47b7-40bb-9347-843e0a92544a";
-  const CLIENT_ID = "451136e6-64d4-4f4b-bbaf-5ae20dda4630";
-  const BOTPRESS_CONTENT_SCRIPT_URL = 'https://files.bpcontent.cloud/2025/05/13/15/20250513151330-Y0FB3XP6.js';
-
+  const initializedRef = useRef(false);
 
   const playWelcomeSound = async () => {
     if (typeof window.Tone !== 'undefined') {
@@ -36,39 +39,40 @@ const BotpressChat: React.FC = () => {
         }
         const synth = new window.Tone.Synth().toDestination();
         synth.triggerAttackRelease("C4", "8n");
+        console.log('[BotpressChat] Welcome sound attempted.');
       } catch (error) {
         console.error('[BotpressChat] Error playing welcome sound:', error);
       }
     } else {
-      console.warn('[BotpressChat] Tone.js not loaded or not ready for sound playback. Skipping welcome sound.');
+      console.warn('[BotpressChat] Tone.js not loaded or not ready. Skipping welcome sound.');
     }
   };
 
   useEffect(() => {
-    let webchatReadyInterval: NodeJS.Timeout;
-    let initTimeout: NodeJS.Timeout;
+    if (typeof window === 'undefined' || initializedRef.current) {
+      return;
+    }
 
-    const scriptsToLoad = [
-      { id: 'bp-inject-script', src: 'https://cdn.botpress.cloud/webchat/v3.0/inject.js', defer: true },
-      { id: 'bp-content-script', src: BOTPRESS_CONTENT_SCRIPT_URL, defer: true },
-      { id: 'tonejs-script', src: 'https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js', defer: true }
-    ];
+    let webchatReadyInterval: NodeJS.Timeout | undefined;
+    let initTimeout: NodeJS.Timeout | undefined;
 
-    const loadScript = (scriptObj: { id: string; src: string; defer: boolean }) => {
+    const loadScript = (id: string, src: string, defer: boolean) => {
       return new Promise<void>((resolve, reject) => {
-        if (document.getElementById(scriptObj.id)) {
+        if (document.getElementById(id)) {
           resolve();
           return;
         }
         const script = document.createElement('script');
-        script.id = scriptObj.id;
-        script.src = scriptObj.src;
-        script.defer = scriptObj.defer;
+        script.id = id;
+        script.src = src;
+        script.defer = defer;
         script.onload = () => {
-          resolve();
+          setTimeout(resolve, 50);
+          console.log(`[BotpressChat] Script loaded: ${id}`);
         };
         script.onerror = () => {
-          reject(new Error(`Failed to load script: ${scriptObj.src}`));
+          console.error(`[BotpressChat] Failed to load script: ${src}`);
+          reject(new Error(`Failed to load script: ${src}`));
         };
         document.body.appendChild(script);
       });
@@ -76,67 +80,99 @@ const BotpressChat: React.FC = () => {
 
     const initializeBotpressAndProactiveActions = async () => {
       try {
-        await Promise.all(scriptsToLoad.map(loadScript));
+        await loadScript('bp-inject-script', BOTPRESS_INJECT_SCRIPT_URL, true);
+        await Promise.all([
+          loadScript('bp-content-script', BOTPRESS_CONTENT_SCRIPT_URL, true),
+          loadScript('tonejs-script', TONEJS_SCRIPT_URL, true)
+        ]);
 
-        if (typeof window.botpress !== 'undefined' && typeof window.botpress.init === 'function' && !(window.botpress as any)._isCustomInitialized) {
-            await window.botpress.init({
-                "botId": BOT_ID,
-                "clientId": CLIENT_ID,
-                "configuration": {
-                    "composerPlaceholder": "Chat with bot",
-                    "botConversationDescription": "Paytriot Payments Virtual Assistant",
-                    "botName": "Paytriot Assistant",
-                    "containerWidth": "350px",
-                    "containerHeight": "500px",
-                    "hideWidget": true,
-                    "enableConversationSuggestions": false,
-                    "stylesheet": "",
-                    "email": {},
-                    "phone": {},
-                    "termsOfService": {},
-                    "privacyPolicy": {}
-                }
+        console.log('[BotpressChat] All core scripts initiated loading.');
+        initializedRef.current = true;
+
+        const tryInitBotpress = () => {
+          if (typeof window.botpress !== 'undefined' && typeof window.botpress.init === 'function' && !(window.botpress as any)._isCustomInitialized) {
+            window.botpress.init({
+              "botId": BOT_ID,
+              "clientId": CLIENT_ID,
+              "configuration": {
+                "composerPlaceholder": "Chat with bot",
+                "botConversationDescription": "Paytriot Payments Virtual Assistant",
+                "botName": "Paytriot Assistant",
+                "containerWidth": "350px",
+                "containerHeight": "500px",
+                "hideWidget": false, // <--- Set this to FALSE
+                "enableConversationSuggestions": false,
+                "stylesheet": "",
+                "email": {},
+                "phone": {},
+                "termsOfService": {},
+                "privacyPolicy": {}
+              }
+            }).then(() => {
+              (window.botpress as any)._isCustomInitialized = true;
+              console.log('[BotpressChat] Botpress init() successful.');
+            }).catch(error => {
+              console.error('[BotpressChat] Error during Botpress init():', error);
             });
-            (window.botpress as any)._isCustomInitialized = true;
-        } else if (typeof window.botpress !== 'undefined' && (window.botpress as any)._isCustomInitialized) {
-        } else {
-            initTimeout = setTimeout(initializeBotpressAndProactiveActions, 200);
-            return;
-        }
+          } else if (typeof window.botpress === 'undefined' || typeof window.botpress.init !== 'function') {
+            initTimeout = setTimeout(tryInitBotpress, 200);
+          }
+        };
+        tryInitBotpress();
 
         webchatReadyInterval = setInterval(() => {
           if (typeof window.botpress !== 'undefined' && window.botpress.isWebchatReady && typeof window.botpress.onEvent === 'function') {
             clearInterval(webchatReadyInterval);
+            console.log('[BotpressChat] Webchat is ready and onEvent is available!');
 
-            if (!(window.botpress as any)._hasProactiveActionsRun) {
-              (window.botpress as any)._hasProactiveActionsRun = true;
+            const HAS_VISITED_KEY = 'bp_has_visited_session'; // Changed key for clarity
+            let hasVisited = sessionStorage.getItem(HAS_VISITED_KEY); // Use sessionStorage for "this session"
 
-              if (!window.botpress.isWebchatOpen) {
-                window.botpress.open();
-              }
-              
-              playWelcomeSound();
+            // If you want it to be per-browser forever, use localStorage:
+            // const HAS_VISITED_KEY = 'bp_has_visited_forever';
+            // let hasVisited = localStorage.getItem(HAS_VISITED_KEY);
 
-              window.botpress.sendEvent({
-                type: 'proactive_website_load',
-                payload: { source: 'website_load_event_from_cdn_ui' }
-              });
+            if (!hasVisited) {
+                console.log('[BotpressChat] First-time visitor detected for this session.');
+                sessionStorage.setItem(HAS_VISITED_KEY, 'true'); // Mark as visited for this session
+
+                // Botpress will auto-open if hideWidget: false (recommended)
+                // If you *must* force open:
+                // if (!window.botpress.isWebchatOpen) {
+                //     window.botpress.open();
+                //     console.log('[BotpressChat] Webchat manually opened proactively for first-time visitor.');
+                // }
+
+                // --- THIS IS THE CRITICAL CHANGE ---
+                // Send the event that your Botpress flow's Event Filter is listening for
+                window.botpress.sendEvent({
+                    type: 'proactive_website_load', // Matches your Botpress flow's Event Filter
+                    payload: {
+                        source: 'website_load_event_from_nextjs_code',
+                        message: 'Initial page load' // Optional: provide context for the bot
+                    }
+                });
+                console.log('[BotpressChat] Sent "proactive_website_load" event to Botpress.');
+
+                playWelcomeSound(); // Will still face autoplay restrictions
             } else {
+                console.log('[BotpressChat] Returning visitor for this session. Not sending proactive event.');
             }
 
             if (!(window.botpress as any)._hasMessageListener) {
               window.botpress.onEvent((event: any) => {
                 if (event.type === 'message') {
+                  console.log('[BotpressChat] Received message event:', event);
                 }
               }, ['message']);
               (window.botpress as any)._hasMessageListener = true;
+              console.log('[BotpressChat] Message listener set up.');
             }
 
-          } else {
           }
         }, 300);
       } catch (error) {
-        console.error('[BotpressChat] Critical error during script loading or initial Botpress setup:', error);
+        console.error('[BotpressChat] Critical error during script loading or initial setup:', error);
       }
     };
 
@@ -146,10 +182,11 @@ const BotpressChat: React.FC = () => {
       if (webchatReadyInterval) clearInterval(webchatReadyInterval);
       if (initTimeout) clearTimeout(initTimeout);
       
-      scriptsToLoad.forEach(scriptObj => {
-        const scriptElement = document.getElementById(scriptObj.id);
+      ['bp-inject-script', 'bp-content-script', 'tonejs-script'].forEach(id => {
+        const scriptElement = document.getElementById(id);
         if (scriptElement && document.body.contains(scriptElement)) {
           document.body.removeChild(scriptElement);
+          console.log(`[BotpressChat] Removed script: ${id}`);
         }
       });
 
@@ -158,6 +195,7 @@ const BotpressChat: React.FC = () => {
         (window.botpress as any)._hasProactiveActionsRun = false;
         (window.botpress as any)._hasMessageListener = false;
       }
+      initializedRef.current = false;
     };
   }, []);
 

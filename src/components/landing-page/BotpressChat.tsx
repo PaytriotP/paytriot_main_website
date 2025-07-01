@@ -6,9 +6,9 @@ import styles from '../../styles/chatbot.module.css';
 declare global {
   interface Window {
     botpress: {
-      init: (config: any) => Promise<void>;
+      init: (config: any) => void; // CORRECTED: init no longer returns a Promise based on user's HTML
       sendEvent: (event: any) => void;
-      on: (eventName: string, callback: (...args: any[]) => void) => void; // Corrected 'on' method
+      on: (eventName: string, callback: (...args: any[]) => void) => void;
       open: () => void;
       close: () => void;
       isWebchatOpen: boolean;
@@ -46,8 +46,7 @@ const BotpressChat: React.FC = () => {
         script.id = id;
         script.src = src;
         script.defer = defer;
-        // CORRECTED: Wrap resolve in an arrow function to match Event handler signature
-        script.onload = () => resolve(); 
+        script.onload = () => resolve(); // Corrected onload handler
         script.onerror = () => {
           console.error(`Failed to load script: ${src}`);
           reject(new Error(`Failed to load script: ${src}`));
@@ -68,12 +67,12 @@ const BotpressChat: React.FC = () => {
         checkBotpressObjectInterval = setInterval(() => {
             if (typeof window.botpress !== 'undefined' && typeof window.botpress.init === 'function') {
                 clearInterval(checkBotpressObjectInterval);
-                console.log("[Botpress] window.botpress object and init function are ready.");
+                console.log("[Botpress] window.botpress object and init function are ready. Proceeding with setup.");
 
                 if (!shouldHideWidget) { 
                     if (typeof window.botpress.on === 'function') {
                         window.botpress.on("webchat:ready", () => {
-                            console.log("[Botpress] 'webchat:ready' event received, attempting to auto-open.");
+                            console.log("[Botpress] 'webchat:ready' event received, attempting to auto-open for first-time user.");
                             if (window.botpress && !window.botpress.isWebchatOpen) { 
                                 window.botpress.open();
                                 console.log("[Botpress] Webchat auto-opened!");
@@ -85,6 +84,8 @@ const BotpressChat: React.FC = () => {
                     }
                 }
 
+                // 3. Initialize the Botpress webchat with the provided configuration
+                // CORRECTED: Removed .then() chain as per user's test.html
                 window.botpress.init({
                     "botId": BOT_ID,
                     "clientId": CLIENT_ID, 
@@ -110,21 +111,23 @@ const BotpressChat: React.FC = () => {
                         "color": "#f79a20",
                         "variant": "soft",
                         "headerVariant": "glass",
-                        "themeMode": "light",
+                            "themeMode": "light",
                         "fontFamily": "rubik",
                         "radius": 4,
                         "feedbackEnabled": false,
                         "footer": "[⚡ by Botpress](https://botpress.com/?from=webchat)" 
                     }
-                }).then(() => {
-                    (window.botpress as any)._isCustomInitialized = true;
-                    
-                    if (shouldHideWidget) { 
-                        localStorage.setItem(HAS_VISITED_KEY, 'true'); 
-                    }
-                }).catch(error => {
-                    console.error('Error during Botpress init() promise:', error);
                 });
+
+                // Set _isCustomInitialized immediately after calling init, as per HTML model
+                (window.botpress as any)._isCustomInitialized = true;
+                
+                // If it's a returning user, ensure localStorage flag is set (robustness)
+                // For first-time users, the flag is set by the 'webchat:ready' listener after open().
+                if (shouldHideWidget) { 
+                    localStorage.setItem(HAS_VISITED_KEY, 'true'); 
+                }
+
             } else {
                 // console.log("[Botpress] Waiting for window.botpress object and init function to be ready...");
             }

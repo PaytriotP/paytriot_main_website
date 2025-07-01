@@ -33,8 +33,8 @@ const BotpressChat: React.FC = () => {
       return;
     }
 
-    let checkBotpressMethodsInterval: NodeJS.Timeout | undefined; // Renamed for clarity
-    const HAS_VISITED_KEY = 'bp_has_visited_site';
+    let checkBotpressMethodsInterval: NodeJS.Timeout | undefined; 
+    // Removed HAS_VISITED_KEY and related logic for this debugging step
 
     const loadScript = (id: string, src: string, defer: boolean) => {
       return new Promise<void>((resolve, reject) => {
@@ -61,38 +61,28 @@ const BotpressChat: React.FC = () => {
         
         initializedRef.current = true;
 
-        const hasVisitedBefore = localStorage.getItem(HAS_VISITED_KEY);
-        const shouldHideWidget = hasVisitedBefore === 'true';
+        // Force hideWidget to false for debugging
+        const shouldHideWidget = false; // TEMPORARY: FOR DEBUGGING
 
-        // Poll until both init AND on methods are available on window.botpress
         checkBotpressMethodsInterval = setInterval(() => {
             if (
                 typeof window.botpress !== 'undefined' &&
                 typeof window.botpress.init === 'function' &&
-                typeof window.botpress.on === 'function' // Ensure 'on' is also a function
+                typeof window.botpress.on === 'function'
             ) {
                 clearInterval(checkBotpressMethodsInterval);
                 console.log("[Botpress] All core methods (init, on) are ready. Proceeding with setup.");
 
-                // Set up the 'webchat:ready' event listener now that 'on' is confirmed available
-                if (!shouldHideWidget) { 
-                    window.botpress.on("webchat:ready", () => {
-                        console.log("[Botpress] 'webchat:ready' event received, attempting to auto-open for first-time user.");
-                        if (window.botpress && !window.botpress.isWebchatOpen) { 
-                            window.botpress.open();
-                            console.log("[Botpress] Webchat auto-opened!");
-                            localStorage.setItem(HAS_VISITED_KEY, 'true'); 
-                        }
-                    });
-                }
+                // TEMPORARY: Removed auto-open on 'webchat:ready' to debug base visibility
+                // window.botpress.on("webchat:ready", () => { ... });
 
-                // Initialize Botpress
+                // Initialize Botpress with hideWidget: false
                 window.botpress.init({
                     "botId": BOT_ID,
                     "clientId": CLIENT_ID, 
                     "selector": "#botpress-chat-container", 
                     "configuration": {
-                        "hideWidget": shouldHideWidget, 
+                        "hideWidget": shouldHideWidget, // Will be false
                         "composerPlaceholder": "Chat with bot",
                         "botConversationDescription": "Paytriot Payments Virtual Assistant",
                         "botName": "Paytriot Assistant",
@@ -120,17 +110,14 @@ const BotpressChat: React.FC = () => {
                     }
                 });
 
-                // Set _isCustomInitialized immediately after calling init
                 (window.botpress as any)._isCustomInitialized = true;
                 
-                if (shouldHideWidget) { 
-                    localStorage.setItem(HAS_VISITED_KEY, 'true'); 
-                }
+                // No localStorage update here for HAS_VISITED_KEY as we are debugging auto-open
 
             } else {
                 // console.log("[Botpress] Waiting for Botpress core methods (init, on) to be ready...");
             }
-        }, 50); // Poll every 50ms
+        }, 50); 
 
       } catch (error) {
         console.error('Critical error during script loading or initial setup:', error);

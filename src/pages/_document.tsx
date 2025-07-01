@@ -16,6 +16,7 @@ class MyDocument extends Document {
       <Html lang="en">
         <Head>
           {CssBaseline.flush()}
+          <script src="https://cdn.botpress.cloud/webchat/v3.0/inject.js" defer></script>
         </Head>
         <body>
           <Main />

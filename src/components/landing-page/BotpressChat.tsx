@@ -8,7 +8,7 @@ declare global {
     botpress: {
       init: (config: any) => Promise<void>;
       sendEvent: (event: any) => void;
-      onEvent: (callback: (event: any) => void, eventTypes?: string[]) => void; // Correct method is onEvent
+      onEvent: (callback: (event: any) => void, eventTypes?: string[]) => void;
       open: () => void;
       close: () => void;
       isWebchatOpen: boolean;
@@ -69,23 +69,29 @@ const BotpressChat: React.FC = () => {
         const hasVisitedBefore = localStorage.getItem(HAS_VISITED_KEY);
         const shouldHideWidget = hasVisitedBefore === 'true';
 
-        // --- CORRECTED: Use onEvent instead of on ---
-        if (!shouldHideWidget) { // Only attempt to auto-open for first-time users
-          window.botpress.onEvent(() => { // Changed from .on to .onEvent
-            console.log("[Botpress] Webchat is ready, attempting to auto-open for first-time user.");
-            // Check if already open to prevent redundant calls and potential issues
-            if (window.botpress && !window.botpress.isWebchatOpen) { 
-                window.botpress.open();
-                console.log("[Botpress] Webchat auto-opened!");
-                // Set the visited flag ONLY after successful auto-opening (expansion)
-                localStorage.setItem(HAS_VISITED_KEY, 'true'); 
-            }
-          }, ["webchat:ready"]); // Specify the event type
-        }
-        // --- END CORRECTED ---
-
         const tryInitBotpress = () => {
           if (typeof window.botpress !== 'undefined' && typeof window.botpress.init === 'function' && !(window.botpress as any)._isCustomInitialized) {
+            
+            // --- NEW: Check if onEvent is a function before calling it ---
+            // This ensures onEvent is available before we try to register a listener.
+            if (!shouldHideWidget) { // Only attempt to auto-open for first-time users
+                if (typeof window.botpress.onEvent === 'function') {
+                    window.botpress.onEvent(() => {
+                        console.log("[Botpress] Webchat is ready, attempting to auto-open for first-time user.");
+                        if (window.botpress && !window.botpress.isWebchatOpen) { 
+                            window.botpress.open();
+                            console.log("[Botpress] Webchat auto-opened!");
+                            localStorage.setItem(HAS_VISITED_KEY, 'true'); 
+                        }
+                    }, ["webchat:ready"]);
+                } else {
+                    console.warn("[Botpress] window.botpress.onEvent is not yet a function. Retrying initialization...");
+                    initTimeout = setTimeout(tryInitBotpress, 200); // Retry init if onEvent not ready
+                    return; // Exit current tryInitBotpress and try again
+                }
+            }
+            // --- END NEW ---
+
             const initPromise = window.botpress.init({
               "botId": BOT_ID,
               "clientId": CLIENT_ID,
@@ -119,9 +125,8 @@ const BotpressChat: React.FC = () => {
               initPromise.then(() => {
                 (window.botpress as any)._isCustomInitialized = true;
                 
-                // If it's a returning user, ensure localStorage flag is set (robustness)
-                // For first-time users, the flag is now set after window.botpress.open() in onEvent
                 if (shouldHideWidget) { 
+                    // This is for returning users, where the flag might already be set, but ensures robustness
                     localStorage.setItem(HAS_VISITED_KEY, 'true'); 
                 }
 

@@ -27,26 +27,12 @@ const BOTPRESS_CONTENT_SCRIPT_URL = 'https://files.bpcontent.cloud/2025/05/13/15
 const BOTPRESS_INJECT_SCRIPT_URL = 'https://cdn.botpress.cloud/webchat/v3.0/inject.js';
 const TONEJS_SCRIPT_URL = 'https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js';
 
+
 const BotpressChat: React.FC = () => {
   const { theme } = useTheme();
   const initializedRef = useRef(false);
 
-  const playWelcomeSound = async () => {
-    if (typeof window.Tone !== 'undefined') {
-      try {
-        if (window.Tone.context.state !== 'running') {
-          await window.Tone.start();
-        }
-        const synth = new window.Tone.Synth().toDestination();
-        synth.triggerAttackRelease("C4", "8n");
-        console.log('[BotpressChat] Welcome sound attempted.');
-      } catch (error) {
-        console.error('[BotpressChat] Error playing welcome sound:', error);
-      }
-    } else {
-      console.warn('[BotpressChat] Tone.js not loaded or not ready. Skipping welcome sound.');
-    }
-  };
+  // ... (playWelcomeSound function) ...
 
   useEffect(() => {
     if (typeof window === 'undefined' || initializedRef.current) {
@@ -67,7 +53,7 @@ const BotpressChat: React.FC = () => {
         script.src = src;
         script.defer = defer;
         script.onload = () => {
-          setTimeout(resolve, 50);
+          setTimeout(resolve, 100); // Increased timeout slightly here, can help with race conditions
           console.log(`[BotpressChat] Script loaded: ${id}`);
         };
         script.onerror = () => {
@@ -90,8 +76,10 @@ const BotpressChat: React.FC = () => {
         initializedRef.current = true;
 
         const tryInitBotpress = () => {
+          // Check if botpress and its init function are available
           if (typeof window.botpress !== 'undefined' && typeof window.botpress.init === 'function' && !(window.botpress as any)._isCustomInitialized) {
-            window.botpress.init({
+            console.log('[BotpressChat] Attempting to call window.botpress.init()...');
+            const initPromise = window.botpress.init({
               "botId": BOT_ID,
               "clientId": CLIENT_ID,
               "configuration": {
@@ -100,7 +88,7 @@ const BotpressChat: React.FC = () => {
                 "botName": "Paytriot Assistant",
                 "containerWidth": "350px",
                 "containerHeight": "500px",
-                "hideWidget": false, // <--- Set this to FALSE
+                "hideWidget": false,
                 "enableConversationSuggestions": false,
                 "stylesheet": "",
                 "email": {},
@@ -108,13 +96,23 @@ const BotpressChat: React.FC = () => {
                 "termsOfService": {},
                 "privacyPolicy": {}
               }
-            }).then(() => {
-              (window.botpress as any)._isCustomInitialized = true;
-              console.log('[BotpressChat] Botpress init() successful.');
-            }).catch(error => {
-              console.error('[BotpressChat] Error during Botpress init():', error);
             });
+
+            // IMPORTANT: Check if initPromise is actually a Promise before calling .then()
+            if (initPromise && typeof initPromise.then === 'function') {
+              initPromise.then(() => {
+                (window.botpress as any)._isCustomInitialized = true;
+                console.log('[BotpressChat] Botpress init() successful.');
+              }).catch(error => {
+                console.error('[BotpressChat] Error during Botpress init() promise:', error);
+              });
+            } else {
+              console.error('[BotpressChat] window.botpress.init() did not return a valid Promise. Retrying...');
+              // Retry if init() didn't return a promise, indicating it's not ready or failed internally
+              initTimeout = setTimeout(tryInitBotpress, 200);
+            }
           } else if (typeof window.botpress === 'undefined' || typeof window.botpress.init !== 'function') {
+            console.log('[BotpressChat] window.botpress or init function not yet available. Retrying...');
             initTimeout = setTimeout(tryInitBotpress, 200);
           }
         };
@@ -125,36 +123,23 @@ const BotpressChat: React.FC = () => {
             clearInterval(webchatReadyInterval);
             console.log('[BotpressChat] Webchat is ready and onEvent is available!');
 
-            const HAS_VISITED_KEY = 'bp_has_visited_session'; // Changed key for clarity
-            let hasVisited = sessionStorage.getItem(HAS_VISITED_KEY); // Use sessionStorage for "this session"
-
-            // If you want it to be per-browser forever, use localStorage:
-            // const HAS_VISITED_KEY = 'bp_has_visited_forever';
-            // let hasVisited = localStorage.getItem(HAS_VISITED_KEY);
+            const HAS_VISITED_KEY = 'bp_has_visited_session';
+            let hasVisited = sessionStorage.getItem(HAS_VISITED_KEY);
 
             if (!hasVisited) {
                 console.log('[BotpressChat] First-time visitor detected for this session.');
-                sessionStorage.setItem(HAS_VISITED_KEY, 'true'); // Mark as visited for this session
+                sessionStorage.setItem(HAS_VISITED_KEY, 'true');
 
-                // Botpress will auto-open if hideWidget: false (recommended)
-                // If you *must* force open:
-                // if (!window.botpress.isWebchatOpen) {
-                //     window.botpress.open();
-                //     console.log('[BotpressChat] Webchat manually opened proactively for first-time visitor.');
-                // }
-
-                // --- THIS IS THE CRITICAL CHANGE ---
-                // Send the event that your Botpress flow's Event Filter is listening for
                 window.botpress.sendEvent({
-                    type: 'proactive_website_load', // Matches your Botpress flow's Event Filter
+                    type: 'proactive_website_load',
                     payload: {
                         source: 'website_load_event_from_nextjs_code',
-                        message: 'Initial page load' // Optional: provide context for the bot
+                        message: 'Initial page load'
                     }
                 });
                 console.log('[BotpressChat] Sent "proactive_website_load" event to Botpress.');
 
-                playWelcomeSound(); // Will still face autoplay restrictions
+                playWelcomeSound();
             } else {
                 console.log('[BotpressChat] Returning visitor for this session. Not sending proactive event.');
             }
@@ -169,6 +154,8 @@ const BotpressChat: React.FC = () => {
               console.log('[BotpressChat] Message listener set up.');
             }
 
+          } else {
+            // console.log('[BotpressChat] Waiting for webchat to be ready...'); // Keep this commented unless needed for verbose debugging
           }
         }, 300);
       } catch (error) {

@@ -8,7 +8,7 @@ declare global {
     botpress: {
       init: (config: any) => Promise<void>;
       sendEvent: (event: any) => void;
-      onEvent: (callback: (event: any) => void, eventTypes?: string[]) => void;
+      onEvent: (callback: (event: any) => void, eventTypes?: string[]) => void; // Correct method is onEvent
       open: () => void;
       close: () => void;
       isWebchatOpen: boolean;
@@ -69,10 +69,9 @@ const BotpressChat: React.FC = () => {
         const hasVisitedBefore = localStorage.getItem(HAS_VISITED_KEY);
         const shouldHideWidget = hasVisitedBefore === 'true';
 
-        // --- NEW: Add webchat:ready listener for explicit open ---
-        // This listener is registered early to catch the 'webchat:ready' event reliably.
+        // --- CORRECTED: Use onEvent instead of on ---
         if (!shouldHideWidget) { // Only attempt to auto-open for first-time users
-          window.botpress.on("webchat:ready", () => {
+          window.botpress.onEvent(() => { // Changed from .on to .onEvent
             console.log("[Botpress] Webchat is ready, attempting to auto-open for first-time user.");
             // Check if already open to prevent redundant calls and potential issues
             if (window.botpress && !window.botpress.isWebchatOpen) { 
@@ -81,9 +80,9 @@ const BotpressChat: React.FC = () => {
                 // Set the visited flag ONLY after successful auto-opening (expansion)
                 localStorage.setItem(HAS_VISITED_KEY, 'true'); 
             }
-          });
+          }, ["webchat:ready"]); // Specify the event type
         }
-        // --- END NEW ---
+        // --- END CORRECTED ---
 
         const tryInitBotpress = () => {
           if (typeof window.botpress !== 'undefined' && typeof window.botpress.init === 'function' && !(window.botpress as any)._isCustomInitialized) {
@@ -121,7 +120,7 @@ const BotpressChat: React.FC = () => {
                 (window.botpress as any)._isCustomInitialized = true;
                 
                 // If it's a returning user, ensure localStorage flag is set (robustness)
-                // For first-time users, the flag is now set after window.botpress.open()
+                // For first-time users, the flag is now set after window.botpress.open() in onEvent
                 if (shouldHideWidget) { 
                     localStorage.setItem(HAS_VISITED_KEY, 'true'); 
                 }

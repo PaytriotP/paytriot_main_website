@@ -6,9 +6,9 @@ import styles from '../../styles/chatbot.module.css';
 declare global {
   interface Window {
     botpress: {
-      init: (config: any) => void; // CORRECTED: init no longer returns a Promise based on user's HTML
+      init: (config: any) => void; 
       sendEvent: (event: any) => void;
-      on: (eventName: string, callback: (...args: any[]) => void) => void;
+      on: (eventName: string, callback: (...args: any[]) => void) => void; 
       open: () => void;
       close: () => void;
       isWebchatOpen: boolean;
@@ -33,7 +33,7 @@ const BotpressChat: React.FC = () => {
       return;
     }
 
-    let checkBotpressObjectInterval: NodeJS.Timeout | undefined;
+    let checkBotpressMethodsInterval: NodeJS.Timeout | undefined; // Renamed for clarity
     const HAS_VISITED_KEY = 'bp_has_visited_site';
 
     const loadScript = (id: string, src: string, defer: boolean) => {
@@ -46,7 +46,7 @@ const BotpressChat: React.FC = () => {
         script.id = id;
         script.src = src;
         script.defer = defer;
-        script.onload = () => resolve(); // Corrected onload handler
+        script.onload = () => resolve(); 
         script.onerror = () => {
           console.error(`Failed to load script: ${src}`);
           reject(new Error(`Failed to load script: ${src}`));
@@ -64,28 +64,29 @@ const BotpressChat: React.FC = () => {
         const hasVisitedBefore = localStorage.getItem(HAS_VISITED_KEY);
         const shouldHideWidget = hasVisitedBefore === 'true';
 
-        checkBotpressObjectInterval = setInterval(() => {
-            if (typeof window.botpress !== 'undefined' && typeof window.botpress.init === 'function') {
-                clearInterval(checkBotpressObjectInterval);
-                console.log("[Botpress] window.botpress object and init function are ready. Proceeding with setup.");
+        // Poll until both init AND on methods are available on window.botpress
+        checkBotpressMethodsInterval = setInterval(() => {
+            if (
+                typeof window.botpress !== 'undefined' &&
+                typeof window.botpress.init === 'function' &&
+                typeof window.botpress.on === 'function' // Ensure 'on' is also a function
+            ) {
+                clearInterval(checkBotpressMethodsInterval);
+                console.log("[Botpress] All core methods (init, on) are ready. Proceeding with setup.");
 
+                // Set up the 'webchat:ready' event listener now that 'on' is confirmed available
                 if (!shouldHideWidget) { 
-                    if (typeof window.botpress.on === 'function') {
-                        window.botpress.on("webchat:ready", () => {
-                            console.log("[Botpress] 'webchat:ready' event received, attempting to auto-open for first-time user.");
-                            if (window.botpress && !window.botpress.isWebchatOpen) { 
-                                window.botpress.open();
-                                console.log("[Botpress] Webchat auto-opened!");
-                                localStorage.setItem(HAS_VISITED_KEY, 'true'); 
-                            }
-                        });
-                    } else {
-                        console.error("[Botpress] Error: window.botpress.on is not a function after loading inject.js. Auto-open functionality might be affected.");
-                    }
+                    window.botpress.on("webchat:ready", () => {
+                        console.log("[Botpress] 'webchat:ready' event received, attempting to auto-open for first-time user.");
+                        if (window.botpress && !window.botpress.isWebchatOpen) { 
+                            window.botpress.open();
+                            console.log("[Botpress] Webchat auto-opened!");
+                            localStorage.setItem(HAS_VISITED_KEY, 'true'); 
+                        }
+                    });
                 }
 
-                // 3. Initialize the Botpress webchat with the provided configuration
-                // CORRECTED: Removed .then() chain as per user's test.html
+                // Initialize Botpress
                 window.botpress.init({
                     "botId": BOT_ID,
                     "clientId": CLIENT_ID, 
@@ -111,7 +112,7 @@ const BotpressChat: React.FC = () => {
                         "color": "#f79a20",
                         "variant": "soft",
                         "headerVariant": "glass",
-                            "themeMode": "light",
+                        "themeMode": "light",
                         "fontFamily": "rubik",
                         "radius": 4,
                         "feedbackEnabled": false,
@@ -119,19 +120,17 @@ const BotpressChat: React.FC = () => {
                     }
                 });
 
-                // Set _isCustomInitialized immediately after calling init, as per HTML model
+                // Set _isCustomInitialized immediately after calling init
                 (window.botpress as any)._isCustomInitialized = true;
                 
-                // If it's a returning user, ensure localStorage flag is set (robustness)
-                // For first-time users, the flag is set by the 'webchat:ready' listener after open().
                 if (shouldHideWidget) { 
                     localStorage.setItem(HAS_VISITED_KEY, 'true'); 
                 }
 
             } else {
-                // console.log("[Botpress] Waiting for window.botpress object and init function to be ready...");
+                // console.log("[Botpress] Waiting for Botpress core methods (init, on) to be ready...");
             }
-        }, 50); 
+        }, 50); // Poll every 50ms
 
       } catch (error) {
         console.error('Critical error during script loading or initial setup:', error);
@@ -141,7 +140,7 @@ const BotpressChat: React.FC = () => {
     setupBotpress();
 
     return () => {
-      if (checkBotpressObjectInterval) clearInterval(checkBotpressObjectInterval);
+      if (checkBotpressMethodsInterval) clearInterval(checkBotpressMethodsInterval);
 
       ['bp-inject-script'].forEach(id => { 
         const scriptElement = document.getElementById(id);

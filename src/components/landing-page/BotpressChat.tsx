@@ -5,7 +5,6 @@ import styles from '../../styles/chatbot.module.css';
 
 declare global {
   interface Window {
-    // Tone type definition removed as Tone.js is no longer used/loaded
     botpress: {
       init: (config: any) => Promise<void>;
       sendEvent: (event: any) => void;
@@ -24,7 +23,6 @@ declare global {
 const BOT_ID = "cb70fa70-47b7-40bb-9347-843e0a92544a";
 const CLIENT_ID = "451136e6-64d4-4f4b-bbaf-5ae20dda4630";
 const BOTPRESS_CONTENT_SCRIPT_URL = 'https://files.bpcontent.cloud/2025/05/13/15/20250513151330-Y0FB3XP6.js';
-// TONEJS_SCRIPT_URL constant entirely removed
 
 const BotpressChat: React.FC = () => {
   const { theme } = useTheme();
@@ -63,17 +61,29 @@ const BotpressChat: React.FC = () => {
       try {
         await Promise.all([
           loadScript('bp-content-script', BOTPRESS_CONTENT_SCRIPT_URL, true),
-          // Removed the line that loads Tone.js
         ]);
 
         initializedRef.current = true;
 
-        // --- User Recognition Logic ---
         const HAS_VISITED_KEY = 'bp_has_visited_site';
         const hasVisitedBefore = localStorage.getItem(HAS_VISITED_KEY);
-
         const shouldHideWidget = hasVisitedBefore === 'true';
-        // --- End of User Recognition Logic ---
+
+        // --- NEW: Add webchat:ready listener for explicit open ---
+        // This listener is registered early to catch the 'webchat:ready' event reliably.
+        if (!shouldHideWidget) { // Only attempt to auto-open for first-time users
+          window.botpress.on("webchat:ready", () => {
+            console.log("[Botpress] Webchat is ready, attempting to auto-open for first-time user.");
+            // Check if already open to prevent redundant calls and potential issues
+            if (window.botpress && !window.botpress.isWebchatOpen) { 
+                window.botpress.open();
+                console.log("[Botpress] Webchat auto-opened!");
+                // Set the visited flag ONLY after successful auto-opening (expansion)
+                localStorage.setItem(HAS_VISITED_KEY, 'true'); 
+            }
+          });
+        }
+        // --- END NEW ---
 
         const tryInitBotpress = () => {
           if (typeof window.botpress !== 'undefined' && typeof window.botpress.init === 'function' && !(window.botpress as any)._isCustomInitialized) {
@@ -110,9 +120,12 @@ const BotpressChat: React.FC = () => {
               initPromise.then(() => {
                 (window.botpress as any)._isCustomInitialized = true;
                 
-                if (!shouldHideWidget) {
-                    localStorage.setItem(HAS_VISITED_KEY, 'true');
+                // If it's a returning user, ensure localStorage flag is set (robustness)
+                // For first-time users, the flag is now set after window.botpress.open()
+                if (shouldHideWidget) { 
+                    localStorage.setItem(HAS_VISITED_KEY, 'true'); 
                 }
+
               }).catch(error => {
                 console.error('Error during Botpress init() promise:', error);
                 initTimeout = setTimeout(tryInitBotpress, 200);
@@ -143,7 +156,6 @@ const BotpressChat: React.FC = () => {
       if (webchatReadyInterval) clearInterval(webchatReadyInterval);
       if (initTimeout) clearTimeout(initTimeout);
 
-      // Removed 'tonejs-script' from the cleanup array
       ['bp-content-script'].forEach(id => {
         const scriptElement = document.getElementById(id);
         if (scriptElement && document.body.contains(scriptElement)) {

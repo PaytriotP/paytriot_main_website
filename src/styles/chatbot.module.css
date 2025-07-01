@@ -1,154 +1,39 @@
-:root {
-  --paytriot-orange: #f79a20;
-  --paytriot-orange-darker: #e68a1f;
-  --chatbot-light-background: #fefefe;
-  --chatbot-dark-text: #333333;
-  --chatbot-gray-background: #e0e0e0;
-  --chatbot-border-color: rgba(247, 154, 32, 0.2);
-  --chatbot-input-border: #cccccc;
-  --chatbot-placeholder-color: #888888;
-  --chatbot-quick-reply-border: var(--paytriot-orange);
-  --chatbot-scrollbar-track: #f1f1f1;
-  --chatbot-scrollbar-thumb: #888;
-  --chatbot-scrollbar-thumb-hover: #555;
-  --chatbot-header-text: #fefefe;
-  --chatbot-user-bubble-text: #fefefe;
+.chatContainer {
+  width: 500px; /* Desired width for your chat container */
+  height: 500px; /* Desired height for your chat container */
+  border: 1px solid #ccc; /* Optional: for visual debugging of the container */
+  margin: 20px auto; /* Optional: for centering the container */
+  position: relative; /* ESSENTIAL: Allows the iframe to be positioned absolutely within it */
+  overflow: hidden; /* Prevents chat content from spilling out if misaligned */
 }
 
-[data-theme='dark'] {
-  --paytriot-orange: #ffb74d;
-  --paytriot-orange-darker: #ffa726;
-  --chatbot-light-background: #1a1a1a;
-  --chatbot-dark-text: #fefefe;
-  --chatbot-gray-background: #2c2c2c;
-  --chatbot-border-color: rgba(255, 183, 77, 0.2);
-  --chatbot-input-border: #555555;
-  --chatbot-placeholder-color: #aaaaaa;
-  --chatbot-quick-reply-border: var(--paytriot-orange);
-  --chatbot-scrollbar-track: #333333;
-  --chatbot-scrollbar-thumb: #666;
-  --chatbot-scrollbar-thumb-hover: #999;
-  --chatbot-header-text: #333333;
-  --chatbot-user-bubble-text: #333333;
+/* CRITICAL CSS OVERRIDES: These ensure the iframe is visible and correctly positioned */
+.chatContainer iframe {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  z-index: 1000 !important;
 }
 
-.bpw-widget-web {
-  font-family: 'Poppins', sans-serif !important;
-  border-radius: 12px !important;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
-  border: 1px solid var(--chatbot-border-color) !important;
-  overflow: hidden !important;
+/* Hide the default floating chat bubble/button that Botpress might inject */
+/* (This targets the bpFab within your specific container if it somehow appears there) */
+.chatContainer .bpFab {
+  display: none !important;
 }
 
-.bpw-header {
-  background-color: var(--paytriot-orange) !important;
-  color: var(--chatbot-header-text) !important;
-  font-weight: 600 !important;
-  font-size: 1.15rem !important;
-  padding: 1rem 1.25rem !important;
-  border-bottom: none !important;
-  border-radius: 12px 12px 0 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-}
-
-.bpw-header-title {
-  font-size: 1.25rem !important;
-  font-weight: 700 !important;
-}
-
-.bpw-chat-bubble-user {
-  background-color: var(--paytriot-orange) !important;
-  color: var(--chatbot-user-bubble-text) !important;
-  border-radius: 10px 10px 2px 10px !important;
-  padding: 0.75rem 1rem !important;
-  line-height: 1.4 !important;
-  word-wrap: break-word !important;
-}
-
-.bpw-chat-bubble-bot {
-  background-color: var(--chatbot-gray-background) !important;
-  color: var(--chatbot-dark-text) !important;
-  border-radius: 10px 10px 10px 2px !important;
-  padding: 0.75rem 1rem !important;
-  line-height: 1.4 !important;
-  word-wrap: break-word !important;
-}
-
-.bpw-chat-bubble-container {
-  margin-bottom: 10px !important;
-}
-
-.bpw-composer-input-container {
-  background-color: var(--chatbot-light-background) !important;
-  border-top: 1px solid var(--chatbot-gray-background) !important;
-  padding: 0.75rem 1rem !important;
-}
-
-.bpw-composer-input {
-  background-color: var(--chatbot-light-background) !important;
-  border: 1px solid var(--chatbot-input-border) !important;
-  border-radius: 8px !important;
-  padding: 0.75rem 1rem !important;
-  font-size: 0.95rem !important;
-  color: var(--chatbot-dark-text) !important;
-}
-
-.bpw-composer-input::placeholder {
-  color: var(--chatbot-placeholder-color) !important;
-}
-
-.bpw-send-button {
-  background-color: var(--paytriot-orange) !important;
-  color: var(--chatbot-header-text) !important;
-  border-radius: 8px !important;
-  padding: 0.75rem 1rem !important;
-  margin-left: 0.75rem !important;
-  transition: background-color 0.2s ease-in-out !important;
-}
-
-.bpw-send-button:hover {
-  background-color: var(--paytriot-orange-darker) !important;
-}
-
-.bpw-quick-reply-button {
-  background-color: var(--chatbot-light-background) !important;
-  color: var(--paytriot-orange) !important;
-  border: 1px solid var(--chatbot-quick-reply-border) !important;
-  border-radius: 8px !important;
-  padding: 0.05rem 0.5rem !important;
-  margin: 5px !important;
-  font-size: 0.85rem !important;
-  font-weight: 500 !important;
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out !important;
-}
-
-.bpw-quick-reply-button:hover {
-  background-color: var(--paytriot-orange) !important;
-  color: var(--chatbot-header-text) !important;
-}
-
-.bpw-message-list-container::-webkit-scrollbar {
-  width: 8px;
-}
-.bpw-message-list-container::-webkit-scrollbar-track {
-  background: var(--chatbot-scrollbar-track);
-  border-radius: 10px;
-}
-.bpw-message-list-container::-webkit-scrollbar-thumb {
-  background: var(--chatbot-scrollbar-thumb);
-  border-radius: 10px;
-}
-.bpw-message-list-container::-webkit-scrollbar-thumb:hover {
-  background: var(--chatbot-scrollbar-thumb-hover);
-}
-
-.bpw-floating-button {
-  background-color: var(--paytriot-orange) !important;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
-}
-
-.bpw-floating-button:hover {
-  background-color: var(--paytriot-orange-darker) !important;
+/* Adjust .bpWebchat to ensure it properly fills its container without fixed positioning */
+/* (This targets the bpWebchat within your specific container if it needs adjustment) */
+.chatContainer .bpWebchat {
+  position: unset !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  max-width: 100% !important;
 }

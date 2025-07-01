@@ -32,7 +32,22 @@ const BotpressChat: React.FC = () => {
   const { theme } = useTheme();
   const initializedRef = useRef(false);
 
-  // ... (playWelcomeSound function) ...
+  const playWelcomeSound = async () => {
+    if (typeof window.Tone !== 'undefined') {
+      try {
+        if (window.Tone.context.state !== 'running') {
+          await window.Tone.start();
+        }
+        const synth = new window.Tone.Synth().toDestination();
+        synth.triggerAttackRelease("C4", "8n");
+        console.log('[BotpressChat] Welcome sound attempted.');
+      } catch (error) {
+        console.error('[BotpressChat] Error playing welcome sound:', error);
+      }
+    } else {
+      console.warn('[BotpressChat] Tone.js not loaded or not ready. Skipping welcome sound.');
+    }
+  };
 
   useEffect(() => {
     if (typeof window === 'undefined' || initializedRef.current) {

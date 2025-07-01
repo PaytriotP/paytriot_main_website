@@ -5,7 +5,7 @@ import styles from '../../styles/chatbot.module.css';
 
 declare global {
   interface Window {
-    Tone: any; // Tone.js related, removed from usage but type still here for now
+    // Tone type definition removed as Tone.js is no longer used/loaded
     botpress: {
       init: (config: any) => Promise<void>;
       sendEvent: (event: any) => void;
@@ -24,14 +24,11 @@ declare global {
 const BOT_ID = "cb70fa70-47b7-40bb-9347-843e0a92544a";
 const CLIENT_ID = "451136e6-64d4-4f4b-bbaf-5ae20dda4630";
 const BOTPRESS_CONTENT_SCRIPT_URL = 'https://files.bpcontent.cloud/2025/05/13/15/20250513151330-Y0FB3XP6.js';
-// Tone.js script URL can be removed if not needed at all for any future feature
-const TONEJS_SCRIPT_URL = 'https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js'; 
+// TONEJS_SCRIPT_URL constant entirely removed
 
 const BotpressChat: React.FC = () => {
   const { theme } = useTheme();
   const initializedRef = useRef(false);
-
-  // Removed playWelcomeSound and its calls
 
   useEffect(() => {
     if (typeof window === 'undefined' || initializedRef.current) {
@@ -52,7 +49,6 @@ const BotpressChat: React.FC = () => {
         script.src = src;
         script.defer = defer;
         script.onload = () => {
-          // A small delay to ensure the script is fully parsed/ready, if needed
           setTimeout(resolve, 100); 
         };
         script.onerror = () => {
@@ -67,18 +63,15 @@ const BotpressChat: React.FC = () => {
       try {
         await Promise.all([
           loadScript('bp-content-script', BOTPRESS_CONTENT_SCRIPT_URL, true),
-          // Only load Tone.js if you actually plan to use it for *any* sound
-          // Otherwise, remove this line to avoid the "AudioContext" warning
-          loadScript('tonejs-script', TONEJS_SCRIPT_URL, true) 
+          // Removed the line that loads Tone.js
         ]);
 
         initializedRef.current = true;
 
-        // --- Start of User Recognition Logic ---
+        // --- User Recognition Logic ---
         const HAS_VISITED_KEY = 'bp_has_visited_site';
         const hasVisitedBefore = localStorage.getItem(HAS_VISITED_KEY);
 
-        // If 'hasVisitedBefore' is 'true', hide the widget. Otherwise, show it.
         const shouldHideWidget = hasVisitedBefore === 'true';
         // --- End of User Recognition Logic ---
 
@@ -89,7 +82,7 @@ const BotpressChat: React.FC = () => {
               "clientId": CLIENT_ID,
               "selector": "#botpress-chat-container",
               "configuration": {
-                "hideWidget": shouldHideWidget, // <-- THIS IS NOW CONDITIONAL
+                "hideWidget": shouldHideWidget, 
                 "composerPlaceholder": "Chat with bot",
                 "botConversationDescription": "Paytriot Payments Virtual Assistant",
                 "botName": "Paytriot Assistant",
@@ -117,7 +110,6 @@ const BotpressChat: React.FC = () => {
               initPromise.then(() => {
                 (window.botpress as any)._isCustomInitialized = true;
                 
-                // If it's the first visit (and it auto-opened), mark as visited
                 if (!shouldHideWidget) {
                     localStorage.setItem(HAS_VISITED_KEY, 'true');
                 }
@@ -151,7 +143,8 @@ const BotpressChat: React.FC = () => {
       if (webchatReadyInterval) clearInterval(webchatReadyInterval);
       if (initTimeout) clearTimeout(initTimeout);
 
-      ['bp-content-script', 'tonejs-script'].forEach(id => {
+      // Removed 'tonejs-script' from the cleanup array
+      ['bp-content-script'].forEach(id => {
         const scriptElement = document.getElementById(id);
         if (scriptElement && document.body.contains(scriptElement)) {
           document.body.removeChild(scriptElement);
@@ -177,7 +170,6 @@ const BotpressChat: React.FC = () => {
 
   return (
     <div id="botpress-chat-container" className={styles.chatContainer}>
-      {/* These global styles are crucial for embedding and should remain */}
       <style jsx global>{`
         #botpress-chat-container iframe {
           opacity: 1 !important;
@@ -193,7 +185,7 @@ const BotpressChat: React.FC = () => {
           z-index: 1000 !important;
         }
         #botpress-chat-container .bpFab {
-          display: none !important; /* Hides the floating button */
+          display: none !important;
         }
         #botpress-chat-container .bpWebchat {
             position: unset !important;

@@ -15,8 +15,8 @@ declare global {
       _isCustomInitialized?: boolean;
       _hasProactiveActionsRun?: boolean;
       _hasMessageListener?: boolean;
-      config?: { // Added 'config' property
-        configuration: any; // You can refine this type if you want to be more specific
+      config?: { 
+        configuration: any; 
       };
     };
   }
@@ -86,38 +86,38 @@ const BotpressChat: React.FC = () => {
                       "clientId": CLIENT_ID, 
                       "configuration": {
                           "hideWidget": shouldHideWidget, 
-                          "composerPlaceholder": "Ask me anything...", // From Screenshot 2025-07-02 at 12.50.02 PM.png
-                          "botConversationDescription": "A brief description of your chatbot", // From Screenshot 2025-07-02 at 12.50.02 PM.png
-                          "botName": "Paytriot Assistant", // From Screenshot 2025-07-02 at 12.50.02 PM.png
+                          "composerPlaceholder": "Ask me anything...",
+                          "botConversationDescription": "A brief description of your chatbot",
+                          "botName": "Paytriot Assistant",
                           "enableConversationSuggestions": false,
                           "stylesheet": "",
                           "email": {
-                              "title": "info@paytriot.co.uk", // From Screenshot 2025-07-02 at 12.50.02 PM.png
-                              "link": "info@paytriot.co.uk" // From Screenshot 2025-07-02 at 12.50.02 PM.png
+                              "title": "info@paytriot.co.uk",
+                              "link": "info@paytriot.co.uk"
                           },
                           "phone": {
-                              "title": "+44 (0203) 884 1611", // From Screenshot 2025-07-02 at 12.50.02 PM.png
-                              "link": "+44 (0203) 884 1611" // From Screenshot 2025-07-02 at 12.50.02 PM.png
+                              "title": "+44 (0203) 884 1611",
+                              "link": "+44 (0203) 884 1611"
                           },
                           "termsOfService": {
                               "title": "Terms of service",
-                              "link": "https://www.paytriot.co.uk/terms-and-conditions" // From Screenshot 2025-07-02 at 12.50.02 PM.png
+                              "link": "https://www.paytriot.co.uk/terms-and-conditions"
                           },
                           "privacyPolicy": {
                               "title": "Privacy policy",
-                              "link": "https://www.paytriot.co.uk/privacy-policy" // From Screenshot 2025-07-02 at 12.50.02 PM.png
+                              "link": "https://www.paytriot.co.uk/privacy-policy"
                           },
                           "version": "v1",
                           "website": {},
                           "themeMode": theme === 'dark' ? 'dark' : 'light', 
                           "color": theme === 'dark' ? '#f79a20' : '#f79a20',
-                          "variant": "soft", // From Screenshot 2025-07-02 at 12.48.54 PM.png
-                          "headerVariant": "glass", // From Screenshot 2025-07-02 at 12.48.54 PM.png
-                          "fontFamily": "rubik", // From Screenshot 2025-07-02 at 12.48.54 PM.png
-                          "radius": 4, // From Screenshot 2025-07-02 at 12.48.54 PM.png
-                          "feedbackEnabled": false, // From Screenshot 2025-07-02 at 12.50.02 PM.png (Message feedback: Disabled)
-                          "footer": "[⚡ by Botpress](https://botpress.com/?from=webchat)", // From Screenshot 2025-07-02 at 12.50.02 PM.png
-                          "allowUserFileUpload": false // From Screenshot 2025-07-02 at 12.50.02 PM.png (Allow user file upload: Disabled)
+                          "variant": "solid",
+                          "headerVariant": "glass",
+                          "fontFamily": "rubik",
+                          "radius": 4,
+                          "feedbackEnabled": false,
+                          "footer": "[⚡ by Botpress](https://botpress.com/?from=webchat)",
+                          "allowUserFileUpload": false
                       }
                   });
 

@@ -117,7 +117,6 @@ const BotpressChat: React.FC = () => {
                         "fontFamily": "rubik",
                         "radius": 4,
                         "feedbackEnabled": false,
-                        "footer": "[⚡ by Botpress](https://botpress.com/?from=webchat)" 
                     }
                 });
 

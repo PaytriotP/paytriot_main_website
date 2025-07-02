@@ -34,7 +34,7 @@ const BotpressChat: React.FC = () => {
     }
 
     let checkBotpressMethodsInterval: NodeJS.Timeout | undefined; 
-    const HAS_VISITED_KEY = 'bp_has_visited_site'; // Re-enabled localStorage key
+    const HAS_VISITED_KEY = 'bp_has_visited_site'; 
 
     const loadScript = (id: string, src: string, defer: boolean) => {
       return new Promise<void>((resolve, reject) => {
@@ -62,7 +62,7 @@ const BotpressChat: React.FC = () => {
         initializedRef.current = true;
 
         const hasVisitedBefore = localStorage.getItem(HAS_VISITED_KEY);
-        const shouldHideWidget = hasVisitedBefore === 'true'; // Re-enabled based on localStorage
+        const shouldHideWidget = hasVisitedBefore === 'true'; 
 
         checkBotpressMethodsInterval = setInterval(() => {
             if (
@@ -73,7 +73,6 @@ const BotpressChat: React.FC = () => {
                 clearInterval(checkBotpressMethodsInterval);
                 console.log("[Botpress] All core methods (init, on) are ready. Proceeding with setup.");
 
-                // Re-enabled the 'webchat:ready' listener
                 if (!shouldHideWidget) { 
                     window.botpress.on("webchat:ready", () => {
                         console.log("[Botpress] 'webchat:ready' event received, attempting to auto-open for first-time user.");
@@ -91,14 +90,15 @@ const BotpressChat: React.FC = () => {
                 window.botpress.init({
                     "botId": BOT_ID,
                     "clientId": CLIENT_ID, 
-                    "selector": "#botpress-chat-container", 
+                    // REMOVED: "selector": "#botpress-chat-container", 
                     "configuration": {
                         "hideWidget": shouldHideWidget, 
                         "composerPlaceholder": "Chat with bot",
                         "botConversationDescription": "Paytriot Payments Virtual Assistant",
                         "botName": "Paytriot Assistant",
-                        "containerWidth": "350px", 
-                        "containerHeight": "500px", 
+                        // REMOVED containerWidth/Height as they are for selector mode
+                        // "containerWidth": "350px", 
+                        // "containerHeight": "500px", 
                         "enableConversationSuggestions": false,
                         "stylesheet": "",
                         "email": {
@@ -123,15 +123,19 @@ const BotpressChat: React.FC = () => {
 
                 (window.botpress as any)._isCustomInitialized = true;
                 
-                // Fallback: Manually try to open after 1 second if 'webchat:ready' doesn't fire
-                // THIS IS FOR DEBUGGING ONLY - REMOVE LATER IF 'webchat:ready' works
+                if (shouldHideWidget) { 
+                    localStorage.setItem(HAS_VISITED_KEY, 'true'); 
+                }
+
+                // Keep this setTimeout for now, as the 'webchat:ready' timing is still a bit off
+                // We'll remove it once 'webchat:ready' consistently auto-opens.
                 if (!shouldHideWidget) {
                     setTimeout(() => {
                         if (window.botpress && !window.botpress.isWebchatOpen) {
                             console.log("[Botpress] Attempting to force-open webchat after 1 second (debug fallback).");
                             window.botpress.open();
                         }
-                    }, 1000); // Wait 1 second
+                    }, 1000); 
                 }
 
             } else {
@@ -174,35 +178,21 @@ const BotpressChat: React.FC = () => {
   }, [theme]);
 
   return (
-    <div id="botpress-chat-container" className={styles.chatContainer}>
-      {/* Use the exact global CSS you had before, as the div is now found */}
+    // REMOVED the div itself as Botpress will inject into body
+    // We only need the global styles now
+    <>
       <style jsx global>{`
-        #botpress-chat-container iframe {
-          opacity: 1 !important;
-          visibility: visible !important;
-          pointer-events: auto !important;
-          position: absolute !important;
-          top: 0 !important;
-          left: 0 !important;
-          width: 100% !important;
-          height: 100% !important;
-          max-width: 100% !important;
-          max-height: 100% !important;
-          z-index: 1000 !important;
-        }
-        /* Keep this if you want to hide the default fab bubble when chat is closed */
-        #botpress-chat-container .bpFab {
-          display: none !important; 
-        }
-        #botpress-chat-container .bpWebchat {
-            position: unset !important;
-            width: 100% !important;
-            height: 100% !important;
-            max-height: 100% !important;
-            max-width: 100% !important;
+        /* Remove specific #botpress-chat-container rules as it's no longer the parent */
+        /* #botpress-chat-container iframe { ... } */
+        /* #botpress-chat-container .bpWebchat { ... } */
+
+        /* Keep the rule to hide the FAB if you want it initially hidden, otherwise remove it */
+        /* For standard FAB behavior, remove this rule entirely */
+        .bpFab { /* This class is applied directly to the floating bubble */
+          /* display: none !important; */ /* Uncomment this if you want to hide the FAB */
         }
       `}</style>
-    </div>
+    </>
   );
 };
 

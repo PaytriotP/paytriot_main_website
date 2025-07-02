@@ -28,7 +28,7 @@ const BotpressChat: React.FC = () => {
   const initializedRef = useRef(false);
 
   useEffect(() => {
-    if (typeof window === 'undefined' || initializedRef.current) {
+    if (typeof window === 'undefined') {
       return;
     }
 
@@ -55,74 +55,85 @@ const BotpressChat: React.FC = () => {
       try {
         await loadScript('bp-inject-script', BOTPRESS_CDN_INJECT_URL, true);
         
-        initializedRef.current = true;
+        if (!initializedRef.current) {
+          initializedRef.current = true;
 
-        const hasVisitedBefore = localStorage.getItem(HAS_VISITED_KEY);
-        const shouldHideWidget = hasVisitedBefore === 'true'; 
+          const hasVisitedBefore = localStorage.getItem(HAS_VISITED_KEY);
+          const shouldHideWidget = hasVisitedBefore === 'true'; 
 
-        checkBotpressMethodsInterval = setInterval(() => {
-            if (
-                typeof window.botpress !== 'undefined' &&
-                typeof window.botpress.init === 'function' &&
-                typeof window.botpress.on === 'function' 
-            ) {
-                clearInterval(checkBotpressMethodsInterval);
+          checkBotpressMethodsInterval = setInterval(() => {
+              if (
+                  typeof window.botpress !== 'undefined' &&
+                  typeof window.botpress.init === 'function' &&
+                  typeof window.botpress.on === 'function' 
+              ) {
+                  clearInterval(checkBotpressMethodsInterval);
 
-                if (!shouldHideWidget) { 
-                    window.botpress.on("webchat:ready", () => {
-                        if (window.botpress && !window.botpress.isWebchatOpen) { 
-                            window.botpress.open();
-                            localStorage.setItem(HAS_VISITED_KEY, 'true'); 
-                        }
-                    });
-                }
+                  if (!shouldHideWidget) { 
+                      window.botpress.on("webchat:ready", () => {
+                          if (window.botpress && !window.botpress.isWebchatOpen) { 
+                              window.botpress.open();
+                              localStorage.setItem(HAS_VISITED_KEY, 'true'); 
+                          }
+                      });
+                  }
 
-                window.botpress.init({
-                    "botId": BOT_ID,
-                    "clientId": CLIENT_ID, 
-                    "configuration": {
-                        "hideWidget": shouldHideWidget, 
-                        "composerPlaceholder": "Chat with bot",
-                        "botConversationDescription": "Paytriot Payments Virtual Assistant",
-                        "botName": "Paytriot Assistant",
-                        "enableConversationSuggestions": false,
-                        "stylesheet": "",
-                        "email": {
-                            "title": "info@paytriot.co.uk",
-                            "link": "info@paytriot.co.uk"
-                        },
-                        "phone": {},
-                        "termsOfService": {},
-                        "privacyPolicy": {},
-                        "version": "v1",
-                        "website": {},
-                        // === CRUCIAL CHANGE: REMOVE THIS LINE ===
-                        // "color": "#f79a20", 
-                        "variant": "soft",
-                        "headerVariant": "glass",
-                        "fontFamily": "rubik",
-                        "radius": 4,
-                        "feedbackEnabled": false,
-                        "footer": "[⚡ by Botpress](https://botpress.com/?from=webchat)" 
-                    }
-                });
+                  window.botpress.init({
+                      "botId": BOT_ID,
+                      "clientId": CLIENT_ID, 
+                      "configuration": {
+                          "hideWidget": shouldHideWidget, 
+                          "composerPlaceholder": "Ask me anything...",
+                          "botConversationDescription": "A brief description of your chatbot",
+                          "botName": "Paytriot Assistant",
+                          "enableConversationSuggestions": false,
+                          "stylesheet": "",
+                          "email": {
+                              "title": "info@paytriot.co.uk",
+                              "link": "info@paytriot.co.uk"
+                          },
+                          "phone": {
+                              "title": "+44 (0203) 884 1611",
+                              "link": "+44 (0203) 884 1611"
+                          },
+                          "termsOfService": {
+                              "title": "Terms of service",
+                              "link": "https://www.paytriot.co.uk/terms-and-conditions"
+                          },
+                          "privacyPolicy": {
+                              "title": "Privacy policy",
+                              "link": "https://www.paytriot.co.uk/privacy-policy"
+                          },
+                          "version": "v1",
+                          "website": {},
+                          "themeMode": theme === 'dark' ? 'dark' : 'light', 
+                          "color": theme === 'dark' ? '#f79a20' : '#f79a20',
+                          "variant": "soft",
+                          "headerVariant": "glass",
+                          "fontFamily": "rubik",
+                          "radius": 4,
+                          "feedbackEnabled": false,
+                          "footer": "[⚡ by Botpress](https://botpress.com/?from=webchat)",
+                          "allowUserFileUpload": false
+                      }
+                  });
 
-                (window.botpress as any)._isCustomInitialized = true;
-                
-                if (shouldHideWidget) { 
-                    localStorage.setItem(HAS_VISITED_KEY, 'true'); 
-                }
+                  (window.botpress as any)._isCustomInitialized = true;
+                  
+                  if (shouldHideWidget) { 
+                      localStorage.setItem(HAS_VISITED_KEY, 'true'); 
+                  }
 
-                if (!shouldHideWidget) {
-                    setTimeout(() => {
-                        if (window.botpress && !window.botpress.isWebchatOpen) {
-                            window.botpress.open();
-                        }
-                    }, 1000); 
-                }
-
-            }
-        }, 50); 
+                  if (!shouldHideWidget) {
+                      setTimeout(() => {
+                          if (window.botpress && !window.botpress.isWebchatOpen) {
+                              window.botpress.open();
+                          }
+                      }, 1000); 
+                  }
+              }
+          }, 50); 
+        }
 
       } catch (error) {
         console.error('Critical error during script loading or initial setup:', error);
@@ -148,7 +159,7 @@ const BotpressChat: React.FC = () => {
       }
       initializedRef.current = false;
     };
-  }, []); 
+  }, [theme]);
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -156,15 +167,16 @@ const BotpressChat: React.FC = () => {
     } else {
       document.documentElement.removeAttribute('data-theme');
     }
+
+    if (window.botpress && window.botpress.config && window.botpress.config.configuration) {
+        window.botpress.config.configuration.themeMode = theme === 'dark' ? 'dark' : 'light';
+    }
   }, [theme]);
 
   return (
     <>
       <style jsx global>{`
-        /* Remove this rule if you want the default Botpress FAB (bubble) to always be visible. */
-        /* .bpFab { 
-          display: none !important; 
-        } */
+        
       `}</style>
     </>
   );

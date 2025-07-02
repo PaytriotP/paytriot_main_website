@@ -96,10 +96,10 @@ const BotpressChat: React.FC = () => {
                         "privacyPolicy": {},
                         "version": "v1",
                         "website": {},
-                        "color": "#f79a20",
+                        // === CRUCIAL CHANGE: REMOVE THIS LINE ===
+                        // "color": "#f79a20", 
                         "variant": "soft",
                         "headerVariant": "glass",
-                        // Removed themeMode: "light" to allow Botpress to detect from data-theme
                         "fontFamily": "rubik",
                         "radius": 4,
                         "feedbackEnabled": false,
@@ -113,7 +113,6 @@ const BotpressChat: React.FC = () => {
                     localStorage.setItem(HAS_VISITED_KEY, 'true'); 
                 }
 
-                // Fallback auto-open (remove once webchat:ready is reliable)
                 if (!shouldHideWidget) {
                     setTimeout(() => {
                         if (window.botpress && !window.botpress.isWebchatOpen) {

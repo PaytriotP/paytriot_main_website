@@ -1,7 +1,6 @@
 // components/BotpressChat.jsx
 import React, { useEffect, useRef } from 'react';
 import { useTheme } from 'next-themes';
-import styles from '../../styles/chatbot.module.css';
 
 declare global {
   interface Window {
@@ -34,7 +33,7 @@ const BotpressChat: React.FC = () => {
     }
 
     let checkBotpressMethodsInterval: NodeJS.Timeout | undefined; 
-    const HAS_VISITED_KEY = 'bp_has_visited_site'; 
+    const HAS_VISITED_KEY = 'bp_has_visited_site';
 
     const loadScript = (id: string, src: string, defer: boolean) => {
       return new Promise<void>((resolve, reject) => {
@@ -47,10 +46,7 @@ const BotpressChat: React.FC = () => {
         script.src = src;
         script.defer = defer;
         script.onload = () => resolve(); 
-        script.onerror = () => {
-          console.error(`Failed to load script: ${src}`);
-          reject(new Error(`Failed to load script: ${src}`));
-        };
+        script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
         document.body.appendChild(script);
       });
     };
@@ -71,34 +67,24 @@ const BotpressChat: React.FC = () => {
                 typeof window.botpress.on === 'function' 
             ) {
                 clearInterval(checkBotpressMethodsInterval);
-                console.log("[Botpress] All core methods (init, on) are ready. Proceeding with setup.");
 
                 if (!shouldHideWidget) { 
                     window.botpress.on("webchat:ready", () => {
-                        console.log("[Botpress] 'webchat:ready' event received, attempting to auto-open for first-time user.");
                         if (window.botpress && !window.botpress.isWebchatOpen) { 
                             window.botpress.open();
-                            console.log("[Botpress] Webchat auto-opened!");
                             localStorage.setItem(HAS_VISITED_KEY, 'true'); 
                         }
                     });
-                } else {
-                    console.log("[Botpress] User has visited before, chat will remain hidden. To test auto-open, clear localStorage.");
                 }
-
 
                 window.botpress.init({
                     "botId": BOT_ID,
                     "clientId": CLIENT_ID, 
-                    // REMOVED: "selector": "#botpress-chat-container", 
                     "configuration": {
                         "hideWidget": shouldHideWidget, 
                         "composerPlaceholder": "Chat with bot",
                         "botConversationDescription": "Paytriot Payments Virtual Assistant",
                         "botName": "Paytriot Assistant",
-                        // REMOVED containerWidth/Height as they are for selector mode
-                        // "containerWidth": "350px", 
-                        // "containerHeight": "500px", 
                         "enableConversationSuggestions": false,
                         "stylesheet": "",
                         "email": {
@@ -113,10 +99,11 @@ const BotpressChat: React.FC = () => {
                         "color": "#f79a20",
                         "variant": "soft",
                         "headerVariant": "glass",
-                        "themeMode": "light",
+                        // Removed themeMode: "light" to allow Botpress to detect from data-theme
                         "fontFamily": "rubik",
                         "radius": 4,
                         "feedbackEnabled": false,
+                        "footer": "[⚡ by Botpress](https://botpress.com/?from=webchat)" 
                     }
                 });
 
@@ -126,19 +113,15 @@ const BotpressChat: React.FC = () => {
                     localStorage.setItem(HAS_VISITED_KEY, 'true'); 
                 }
 
-                // Keep this setTimeout for now, as the 'webchat:ready' timing is still a bit off
-                // We'll remove it once 'webchat:ready' consistently auto-opens.
+                // Fallback auto-open (remove once webchat:ready is reliable)
                 if (!shouldHideWidget) {
                     setTimeout(() => {
                         if (window.botpress && !window.botpress.isWebchatOpen) {
-                            console.log("[Botpress] Attempting to force-open webchat after 1 second (debug fallback).");
                             window.botpress.open();
                         }
                     }, 1000); 
                 }
 
-            } else {
-                // console.log("[Botpress] Waiting for Botpress core methods (init, on) to be ready...");
             }
         }, 50); 
 
@@ -177,19 +160,12 @@ const BotpressChat: React.FC = () => {
   }, [theme]);
 
   return (
-    // REMOVED the div itself as Botpress will inject into body
-    // We only need the global styles now
     <>
       <style jsx global>{`
-        /* Remove specific #botpress-chat-container rules as it's no longer the parent */
-        /* #botpress-chat-container iframe { ... } */
-        /* #botpress-chat-container .bpWebchat { ... } */
-
-        /* Keep the rule to hide the FAB if you want it initially hidden, otherwise remove it */
-        /* For standard FAB behavior, remove this rule entirely */
-        .bpFab { /* This class is applied directly to the floating bubble */
-          /* display: none !important; */ /* Uncomment this if you want to hide the FAB */
-        }
+        /* Remove this rule if you want the default Botpress FAB (bubble) to always be visible. */
+        /* .bpFab { 
+          display: none !important; 
+        } */
       `}</style>
     </>
   );

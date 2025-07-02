@@ -218,6 +218,18 @@
   border: none;
 }
 
+[data-theme='dark'] .alert-success {
+  background-color: #0b2e13;
+  color: #9ae6b4;
+  border-color: #2f855a;
+}
+
+[data-theme='dark'] .alert-error {
+  background-color: #4a0404;
+  color: #feb2b2;
+  border-color: #c53030;
+}
+
 .checkbox-group {
   display: flex;
   flex-wrap: wrap;

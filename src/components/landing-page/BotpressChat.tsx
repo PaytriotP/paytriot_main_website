@@ -110,13 +110,12 @@ const BotpressChat: React.FC = () => {
                           "version": "v1",
                           "website": {},
                           "themeMode": theme === 'dark' ? 'dark' : 'light', 
-                          "color": theme === 'dark' ? '#f79a1e' : '#f79a1e',
+                          "color": theme === 'dark' ? '#ffa126' : '#ffa126',
                           "variant": "solid",
                           "headerVariant": "glass",
                           "fontFamily": "rubik",
                           "radius": 4,
                           "feedbackEnabled": false,
-                          "footer": "[⚡ by Botpress](https://botpress.com/?from=webchat)",
                           "allowUserFileUpload": false
                       }
                   });

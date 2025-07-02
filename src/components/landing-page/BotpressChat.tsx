@@ -34,7 +34,7 @@ const BotpressChat: React.FC = () => {
     }
 
     let checkBotpressMethodsInterval: NodeJS.Timeout | undefined; 
-    // Removed HAS_VISITED_KEY and related logic for this debugging step
+    const HAS_VISITED_KEY = 'bp_has_visited_site'; // Re-enabled localStorage key
 
     const loadScript = (id: string, src: string, defer: boolean) => {
       return new Promise<void>((resolve, reject) => {
@@ -61,28 +61,39 @@ const BotpressChat: React.FC = () => {
         
         initializedRef.current = true;
 
-        // Force hideWidget to false for debugging
-        const shouldHideWidget = false; // TEMPORARY: FOR DEBUGGING
+        const hasVisitedBefore = localStorage.getItem(HAS_VISITED_KEY);
+        const shouldHideWidget = hasVisitedBefore === 'true'; // Re-enabled based on localStorage
 
         checkBotpressMethodsInterval = setInterval(() => {
             if (
                 typeof window.botpress !== 'undefined' &&
                 typeof window.botpress.init === 'function' &&
-                typeof window.botpress.on === 'function'
+                typeof window.botpress.on === 'function' 
             ) {
                 clearInterval(checkBotpressMethodsInterval);
                 console.log("[Botpress] All core methods (init, on) are ready. Proceeding with setup.");
 
-                // TEMPORARY: Removed auto-open on 'webchat:ready' to debug base visibility
-                // window.botpress.on("webchat:ready", () => { ... });
+                // Re-enabled the 'webchat:ready' listener
+                if (!shouldHideWidget) { 
+                    window.botpress.on("webchat:ready", () => {
+                        console.log("[Botpress] 'webchat:ready' event received, attempting to auto-open for first-time user.");
+                        if (window.botpress && !window.botpress.isWebchatOpen) { 
+                            window.botpress.open();
+                            console.log("[Botpress] Webchat auto-opened!");
+                            localStorage.setItem(HAS_VISITED_KEY, 'true'); 
+                        }
+                    });
+                } else {
+                    console.log("[Botpress] User has visited before, chat will remain hidden. To test auto-open, clear localStorage.");
+                }
 
-                // Initialize Botpress with hideWidget: false
+
                 window.botpress.init({
                     "botId": BOT_ID,
                     "clientId": CLIENT_ID, 
                     "selector": "#botpress-chat-container", 
                     "configuration": {
-                        "hideWidget": shouldHideWidget, // Will be false
+                        "hideWidget": shouldHideWidget, 
                         "composerPlaceholder": "Chat with bot",
                         "botConversationDescription": "Paytriot Payments Virtual Assistant",
                         "botName": "Paytriot Assistant",
@@ -112,7 +123,16 @@ const BotpressChat: React.FC = () => {
 
                 (window.botpress as any)._isCustomInitialized = true;
                 
-                // No localStorage update here for HAS_VISITED_KEY as we are debugging auto-open
+                // Fallback: Manually try to open after 1 second if 'webchat:ready' doesn't fire
+                // THIS IS FOR DEBUGGING ONLY - REMOVE LATER IF 'webchat:ready' works
+                if (!shouldHideWidget) {
+                    setTimeout(() => {
+                        if (window.botpress && !window.botpress.isWebchatOpen) {
+                            console.log("[Botpress] Attempting to force-open webchat after 1 second (debug fallback).");
+                            window.botpress.open();
+                        }
+                    }, 1000); // Wait 1 second
+                }
 
             } else {
                 // console.log("[Botpress] Waiting for Botpress core methods (init, on) to be ready...");
@@ -155,6 +175,7 @@ const BotpressChat: React.FC = () => {
 
   return (
     <div id="botpress-chat-container" className={styles.chatContainer}>
+      {/* Use the exact global CSS you had before, as the div is now found */}
       <style jsx global>{`
         #botpress-chat-container iframe {
           opacity: 1 !important;
@@ -169,6 +190,7 @@ const BotpressChat: React.FC = () => {
           max-height: 100% !important;
           z-index: 1000 !important;
         }
+        /* Keep this if you want to hide the default fab bubble when chat is closed */
         #botpress-chat-container .bpFab {
           display: none !important; 
         }

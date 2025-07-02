@@ -110,7 +110,7 @@ const BotpressChat: React.FC = () => {
                           "version": "v1",
                           "website": {},
                           "themeMode": theme === 'dark' ? 'dark' : 'light', 
-                          "color": theme === 'dark' ? '#f79a20' : '#f79a20',
+                          "color": theme === 'dark' ? '#f79a1e' : '#f79a1e',
                           "variant": "solid",
                           "headerVariant": "glass",
                           "fontFamily": "rubik",

@@ -42,7 +42,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <TrackingScript/>
           <NavigationMenu />
           <Component {...pageProps} />
-{/*           <BotpressChat /> */}
+          <BotpressChat />
           <CallToAction />
           <Footer />
         </main>

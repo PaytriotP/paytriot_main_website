@@ -22,8 +22,8 @@ declare global {
   }
 }
 
-const BOT_ID = "cb70fa70-47b7-40bb-9347-843e0a92544a";
-const CLIENT_ID = "451136e6-64d4-4f4b-bbaf-5ae20dda4630";
+const BOT_ID = "4f12b3b0-c7fb-4ee3-a215-d6d439e02106";
+const CLIENT_ID = "5c80e257-8014-4480-981e-53f9008ace00";
 const BOTPRESS_CDN_INJECT_URL = 'https://cdn.botpress.cloud/webchat/v3.0/inject.js'; 
 
 const BotpressChat: React.FC = () => {

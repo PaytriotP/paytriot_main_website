@@ -67,8 +67,16 @@ export default function CallToAction() {
                 </div>
               </div>
             </div>
-            <div className="col-lg-4 d-flex d-lg-block align-items-start">
-              <Image src={imgBgPaytriotAds} alt="" className="" />
+{/*             <div className="col-lg-4 d-flex d-lg-block align-items-start">
+              <Image src={imgBgPaytriotAds} alt="" className="" /> */}
+             <div className="w-full lg:w-4/12 flex justify-center lg:justify-start relative h-64 md:h-96 mt-8 lg:mt-0">
+              <Image
+                src={imgBgPaytriotAds}
+                alt="Paytriot Ad showing a person holding a phone"
+                fill 
+                style={{ objectFit: 'contain' }} 
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
             </div>
           </div>
         </div>

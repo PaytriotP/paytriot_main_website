@@ -43,6 +43,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <NavigationMenu />
           <Component {...pageProps} />
           <CallToAction />
+          <BotpressChat />
           <Footer />
         </main>
       </NextUIProvider>

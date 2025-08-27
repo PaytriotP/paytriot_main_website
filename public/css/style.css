@@ -1277,7 +1277,23 @@ ul.nav-footer li {
 }
 
 
+/* Custom styles for the Call To Action image on mobile */
+@media (max-width: 991.98px) {
 
+  .cta-image-wrap {
+    /* Set a width that looks good on phones. 80% is a good starting point. */
+    width: 80%;
+
+    /* Optional: Set a max-width to prevent it from getting too large on tablets. */
+    max-width: 380px;
+
+    /* This ensures it stays centered in its column */
+    margin: 0 auto;
+
+    /* Optional: This pulls the image up slightly to reduce the large gap. */
+    margin-top: -20px;
+  }
+}
 
 
 /* // X-Small devices (portrait phones, less than 576px) */
@@ -1431,7 +1447,8 @@ ul.nav-footer li {
     }
 
     section.call-to-action img {
-        width: auto;
+        max-width: 100%;
+        height: auto;
     }
 
     /* section merchant-services  */
@@ -2170,3 +2187,4 @@ ul.nav-footer li {
 .nextui-navbar-toggle-icon {
     /* color: red; */
 }
+

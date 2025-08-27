@@ -110,9 +110,9 @@ export default function Footer() {
                   <li>
                     <Link href="https://www.paytriot.co.uk/about-us">About us</Link>
                   </li>
-                  <li>
+{/*                   <li>
                     <Link href="https://www.paytriot.co.uk/blog">Blog</Link>
-                  </li>
+                  </li> */}
                   <li>
                     <Link href="/">Testimonial</Link>
                   </li>

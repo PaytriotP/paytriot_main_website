@@ -67,8 +67,8 @@ export default function CallToAction() {
                 </div>
               </div>
             </div>
-            <div className="col-lg-4 d-flex d-lg-block align-items-start">
-              <Image src={imgBgPaytriotAds} alt="" className="" />
+            <div className="col-lg-4 d-flex align-items-center justify-content-center">
+              <Image src={imgBgPaytriotAds} alt="Paytriot app on a phone" className="cta-image-wrap" />
             </div>
           </div>
         </div>

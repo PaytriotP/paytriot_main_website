@@ -1375,7 +1375,7 @@ ul.nav-footer li {
 
   .business-tab .row .col-6 .lottie-container {
     width: 100%;
-    max-width: 300px;
+    max-width: 200px;
     height: auto;
     min-height: unset;
     overflow: hidden;
@@ -2290,6 +2290,7 @@ ul.nav-footer li {
 .nextui-navbar-toggle-icon {
     /* color: red; */
 }
+
 
 
 

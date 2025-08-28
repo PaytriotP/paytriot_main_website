@@ -1360,6 +1360,21 @@ ul.nav-footer li {
     min-height: 400px; /* Adjust this value as needed */
   }
 
+  .business-tab .row .col-6.txt-wrap {
+    order: 2;
+  }
+
+  .business-tab .row .col-6 {
+    order: 1;
+    margin-bottom: 2rem;
+  }
+
+  .business-tab .row .col-6 > .lottie-container {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 300px;
+  }
+
 }
 
 /* // Large devices (desktops, 992px and up) */
@@ -2245,6 +2260,7 @@ ul.nav-footer li {
 .nextui-navbar-toggle-icon {
     /* color: red; */
 }
+
 
 
 

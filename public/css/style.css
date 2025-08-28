@@ -1415,6 +1415,23 @@ ul.nav-footer li {
     margin-bottom: 1rem !important;
   }
 
+ .lottie-wrapper {
+    width: 100%;
+    max-width: 200px;
+    height: 0;
+    padding-bottom: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .lottie-wrapper > div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
 }
 
 /* // Large devices (desktops, 992px and up) */
@@ -2300,6 +2317,7 @@ ul.nav-footer li {
 .nextui-navbar-toggle-icon {
     /* color: red; */
 }
+
 
 
 

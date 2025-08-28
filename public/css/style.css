@@ -1356,6 +1356,10 @@ ul.nav-footer li {
     margin-bottom: 1rem;
   }
 
+ .lottie-container {
+    min-height: 400px; /* Adjust this value as needed */
+  }
+
 }
 
 /* // Large devices (desktops, 992px and up) */
@@ -2241,6 +2245,7 @@ ul.nav-footer li {
 .nextui-navbar-toggle-icon {
     /* color: red; */
 }
+
 
 
 

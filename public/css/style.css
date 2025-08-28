@@ -1315,6 +1315,14 @@ ul.nav-footer li {
   margin-bottom: 1rem;
   margin-right: 0 !important;
 }
+
+.about-hero-no-padding.w-100,
+.cust-prof,
+.w-100 {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
 }
 
 /* // Large devices (desktops, 992px and up) */
@@ -2200,6 +2208,7 @@ ul.nav-footer li {
 .nextui-navbar-toggle-icon {
     /* color: red; */
 }
+
 
 
 

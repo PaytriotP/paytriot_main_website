@@ -1329,6 +1329,24 @@ ul.nav-footer li {
     display: block;
     margin: 0 auto;
   }
+    .testi-mobile-carousel.row {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 0 15px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .testi-mobile-carousel.row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .testi-mobile-carousel.row > [class*="col-"] {
+    flex-shrink: 0;
+    width: 90%;
+    margin-right: 20px;
+  }
 
 }
 
@@ -2215,6 +2233,7 @@ ul.nav-footer li {
 .nextui-navbar-toggle-icon {
     /* color: red; */
 }
+
 
 
 

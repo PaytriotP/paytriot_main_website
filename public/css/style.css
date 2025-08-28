@@ -1360,6 +1360,25 @@ ul.nav-footer li {
     min-height: 400px; /* Adjust this value as needed */
   }
 
+  .business-tab {
+    padding: 0 1rem;
+  }
+
+  .business-tab .txt-wrap {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  
+  .business-tab h3,
+  .business-tab p {
+    font-size: 1.25rem;
+    line-height: 1.5;
+  }
+
+  .business-tab h3.fw-bold {
+    margin-bottom: 1rem !important;
+  }
+
   .business-tab .row .col-6.txt-wrap {
     order: 2;
   }
@@ -2260,6 +2279,7 @@ ul.nav-footer li {
 .nextui-navbar-toggle-icon {
     /* color: red; */
 }
+
 
 
 

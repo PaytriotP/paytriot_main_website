@@ -1360,6 +1360,32 @@ ul.nav-footer li {
     min-height: 400px; /* Adjust this value as needed */
   }
 
+.business-tab .row .col-6.txt-wrap {
+    order: 2;
+  }
+
+  .business-tab .row .col-6 {
+    order: 1;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+  }
+
+  .business-tab .row .col-6 .lottie-container {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    min-height: unset;
+    overflow: hidden;
+  }
+
+  .business-tab .row .col-6 .lottie-container > div {
+    width: 100% !important;
+    height: auto !important;
+  }
+
   .business-tab {
     padding: 0 1rem;
   }
@@ -1377,21 +1403,6 @@ ul.nav-footer li {
 
   .business-tab h3.fw-bold {
     margin-bottom: 1rem !important;
-  }
-
-  .business-tab .row .col-6.txt-wrap {
-    order: 2;
-  }
-
-  .business-tab .row .col-6 {
-    order: 1;
-    margin-bottom: 2rem;
-  }
-
-  .business-tab .row .col-6 > .lottie-container {
-    margin: 0 auto;
-    width: 100%;
-    max-width: 300px;
   }
 
 }
@@ -2279,6 +2290,7 @@ ul.nav-footer li {
 .nextui-navbar-toggle-icon {
     /* color: red; */
 }
+
 
 
 

@@ -87,7 +87,7 @@ export default function AboutUs() {
           </div>
         </div>
       </section>
-      <section className="our-story" id="our-story">
+{/*       <section className="our-story" id="our-story">
         <div className="container">
           <h2 className="text-center">Our Story</h2>
           <div className="story-wrapper position-relative">
@@ -242,8 +242,54 @@ export default function AboutUs() {
                 </p>
               </div>
             </div>
+          </div> */}
+      <section className="customer-say" id="customer-say">
+  <div className="container">
+    <h2 className="text-center">What Our Customers Say?</h2>
+    {/* Added testi-mobile-carousel class */}
+    <div className="row testi-mobile-carousel">
+      <div className="col-12 col-md-4">
+        <div className="testi-wrap d-flex flex-column align-items-center">
+          <Image src={imgCustomer2} alt="" className="cust-prof" />
+          <h4 className="mt-4">Bilal Latif</h4>
+          <h5 className="fst-italic">Finance Director</h5>
+          <div className="rating-wrap d-flex my-4">
+            <Image src={imgRatingSvg} alt="" />
           </div>
-
+          <p className="p-16 text-opacity">
+            “A very cost effective solution that simplified our booking system. We can now accept cards from more countries and settle in different currencies. Would recommend Paytriot Payments to any business.”
+          </p>
+        </div>
+      </div>
+      
+      <div className="col-12 col-md-4">
+        <div className="testi-wrap d-flex flex-column align-items-center">
+          <Image src={imgCustomer1} alt="" className="cust-prof" />
+          <h4 className="mt-4">Wendy Young</h4>
+          <h5 className="fst-italic">Director / Hilton</h5>
+          <div className="rating-wrap d-flex my-4">
+            <Image src={imgRatingSvg} alt="" />
+          </div>
+          <p className="p-16 text-opacity">
+            “Paytriot Payments compared rates from multiple acquirers, their gateway is very user friendly and offered us the best solution after a very consultative approach.”
+          </p>
+        </div>
+      </div>
+      
+      <div className="col-12 col-md-4">
+        <div className="testi-wrap d-flex flex-column align-items-center">
+          <Image src={imgCustomer3} alt="" className="cust-prof" />
+          <h4 className="mt-4">Eugene Andrews</h4>
+          <h5 className="fst-italic">Manager / Hampton by Hilton</h5>
+          <div className="rating-wrap d-flex my-4">
+            <Image src={imgRatingSvg} alt="" />
+          </div>
+          <p className="p-16 text-opacity">
+            “Paytriot Payments has integrated a perfect solution for our booking system. The changeover was simple and was extremely impressed with the service.”
+          </p>
+        </div>
+      </div>
+    </div>
           {/* Slider main container */}
           {/* <div className="swiper swipercust">
             {/* Additional required wrapper */}

@@ -1303,9 +1303,15 @@ ul.nav-footer li {
 
 /* // Medium devices (tablets, 768px and up) */
 @media (max-width: 768px) {
-    .cta-wrap {
+.cta-wrap {
   flex-direction: column;
   align-items: center; 
+}
+
+.cta-image-wrap {
+  width: 100%;
+  height: auto;
+  max-width: 400px;
 }
 
 .btn-primary,
@@ -2317,6 +2323,7 @@ ul.nav-footer li {
 .nextui-navbar-toggle-icon {
     /* color: red; */
 }
+
 
 
 

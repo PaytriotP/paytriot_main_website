@@ -146,7 +146,6 @@ export default function WalletPage() {
               {' '}
               <div
                 className="lottie-container position-sticky top-0"
-                style={{ minHeight: '750px' }}
               >
                 <LottiePlayer animationData={walletHeaderSvgJson} />
               </div>

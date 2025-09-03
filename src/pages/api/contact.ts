@@ -158,6 +158,7 @@ import sgMail from "@sendgrid/mail";
 import { NextApiRequest, NextApiResponse } from "next";
 import { google } from "googleapis";
 
+// Load service account credentials from environment variable
 const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS as string);
 const sheetsAuth = new google.auth.GoogleAuth({
   credentials,
@@ -165,13 +166,15 @@ const sheetsAuth = new google.auth.GoogleAuth({
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") return res.status(405).end();
+  if (req.method !== "POST") {
+    res.setHeader("Allow", ["POST"]);
+    return res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
 
   const { emailSubject, emailBody, ...formData } = req.body;
 
   sgMail.setApiKey(process.env.Bearer_Token as string);
 
-  // SendGrid part
   const msg = {
     to: process.env.TWILIO_TO_EMAIL || "info@paytriot.co.uk",
     from: process.env.TWILIO_FROM_EMAIL || "info@paytriot.co.uk",
@@ -182,28 +185,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     await sgMail.send(msg);
 
-    // Google Sheets part (optional, in try-catch)
+  
     try {
       const sheets = google.sheets({ version: "v4", auth: sheetsAuth });
       const spreadsheetId2 = process.env.GOOGLE_SHEET_ID2;
       if (!spreadsheetId2) throw new Error("GOOGLE_SHEET_ID2 not set");
 
-      const businessValues = Object.values(formData);
+      const timestamp = new Date().toISOString();
+      const values = [[timestamp, ...Object.values(formData)]];
+
       await sheets.spreadsheets.values.append({
         spreadsheetId: spreadsheetId2,
         range: "Sheet1!A:Z",
         valueInputOption: "RAW",
         insertDataOption: "INSERT_ROWS",
-        requestBody: { values: [businessValues] },
+        requestBody: { values },
       });
     } catch (sheetErr) {
       console.error("Google Sheets error:", sheetErr);
     }
 
-    res.status(200).json({ message: "Email sent successfully" });
+    return res.status(200).json({ message: "Email sent successfully" });
   } catch (err: any) {
     console.error("SendGrid error:", err.response?.body || err);
-    res.status(500).json({ message: "Error sending message", error: err.message });
+    return res.status(500).json({ message: "Error sending message", error: err.message });
   }
 }
-

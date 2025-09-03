@@ -159,10 +159,6 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { google } from "googleapis";
 
 const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS as string);
-const sheetsAuth = new google.auth.GoogleAuth({
-  credentials,
-  scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-});
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
@@ -184,9 +180,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     await sgMail.send(msg);
 
+    // Google Sheets part
     try {
-      const authClient = await sheetsAuth.getClient();
+      const sheetsAuth = new google.auth.GoogleAuth({
+        credentials,
+        scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+      });
+
+      const authClient = await sheetsAuth.getClient(); // ✅ inside async
       const sheets = google.sheets({ version: "v4", auth: authClient });
+
       const spreadsheetId2 = process.env.GOOGLE_SHEET_ID2;
       if (!spreadsheetId2) throw new Error("GOOGLE_SHEET_ID2 not set");
 
@@ -208,8 +211,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         ]
       ];
 
-      console.log("Appending to Google Sheets:", values);
-
       await sheets.spreadsheets.values.append({
         spreadsheetId: spreadsheetId2,
         range: "Sheet1!A:G",
@@ -227,6 +228,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ message: "Error sending message", error: err.message });
   }
 }
-
-
-

@@ -188,11 +188,9 @@ export default async function handler(
   };
 
   try {
-    // Step 1: Send the email first
     await sgMail.send(msg);
 
-    // Step 2: If the email sends successfully, then update the Google Sheet
-    const authClient = await sheetsAuth.getClient(); // ✅ now inside handler
+    const authClient = (await sheetsAuth.getClient()) as any; 
     const sheets = google.sheets({ version: 'v4', auth: authClient });
     const spreadsheetId2 = process.env.GOOGLE_SHEET_ID2;
 

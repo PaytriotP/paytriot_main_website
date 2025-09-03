@@ -158,7 +158,6 @@ import sgMail from "@sendgrid/mail";
 import { NextApiRequest, NextApiResponse } from "next";
 import { google } from "googleapis";
 
-// Load service account credentials from env
 const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS as string);
 const sheetsAuth = new google.auth.GoogleAuth({
   credentials,
@@ -171,53 +170,48 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 
-  const { emailSubject, emailBody, fullName, phoneNumber, email, website, platforms, description } = req.body;
+  const formData = req.body;
 
   sgMail.setApiKey(process.env.Bearer_Token as string);
 
   const msg = {
     to: process.env.TWILIO_TO_EMAIL || "info@paytriot.co.uk",
     from: process.env.TWILIO_FROM_EMAIL || "info@paytriot.co.uk",
-    subject: emailSubject,
-    html: `<p style="white-space: pre-wrap;">${emailBody}</p>`,
+    subject: formData.emailSubject || "No subject",
+    html: `<p style="white-space: pre-wrap;">${formData.emailBody || ""}</p>`,
   };
 
   try {
-    // 1️⃣ Send email
     await sgMail.send(msg);
 
-    // 2️⃣ Append to Google Sheets
     try {
       const sheets = google.sheets({ version: "v4", auth: sheetsAuth });
       const spreadsheetId2 = process.env.GOOGLE_SHEET_ID2;
       if (!spreadsheetId2) throw new Error("GOOGLE_SHEET_ID2 not set");
 
-      const timestamp = new Date().toISOString();
-
-      // Flatten arrays to strings
       const flattenValue = (val: any) => {
         if (Array.isArray(val)) return val.join(", ");
-        if (val === null || val === undefined) return "";
+        if (!val) return "";
         return String(val);
       };
 
       const values = [
         [
-          timestamp,
-          flattenValue(fullName),
-          flattenValue(phoneNumber),
-          flattenValue(email),
-          flattenValue(website),
-          flattenValue(platforms),
-          flattenValue(description),
-        ],
+          new Date().toISOString(),
+          flattenValue(formData.fullName || formData["Full name"] || ""),
+          flattenValue(formData.phoneNumber || formData["Phone number"] || ""),
+          flattenValue(formData.email || ""),
+          flattenValue(formData.website || formData["webisite"] || ""),
+          flattenValue(formData.platforms || []),
+          flattenValue(formData.description || formData["Description"] || "")
+        ]
       ];
 
-      console.log("Appending to Google Sheets:", values);
+      console.log("Appending values:", values);
 
       await sheets.spreadsheets.values.append({
         spreadsheetId: spreadsheetId2,
-        range: "Sheet1!A:G", // Columns A-G
+        range: "Sheet1!A:G",
         valueInputOption: "RAW",
         insertDataOption: "INSERT_ROWS",
         requestBody: { values },
@@ -232,4 +226,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ message: "Error sending message", error: err.message });
   }
 }
+
 

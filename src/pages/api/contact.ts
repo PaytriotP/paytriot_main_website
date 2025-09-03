@@ -48,8 +48,14 @@
 
 import sgMail from '@sendgrid/mail';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Twilio } from 'twilio'; // Keep if you intend to use Twilio
+import { Twilio } from 'twilio'; 
+import { google } from 'googleapis';
 
+const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS as string);
+const sheetsAuth = new google.auth.GoogleAuth({
+  credentials,
+  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+});
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -73,6 +79,26 @@ export default async function handler(
   };
 
   try {
+     const sheets = google.sheets({ version: 'v4', auth: sheetsAuth });
+
+    const spreadsheetId2 = process.env.GOOGLE_SHEET_ID2;
+
+    if (!spreadsheetId2) {
+      throw new Error('GOOGLE_SHEET_ID2 environment variable is not defined.');
+    }
+
+    // Capture all form data fields for the spreadsheet
+    const businessValues = Object.values(formData);
+    const businessRange = 'Sheet1!A:Z';
+
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: spreadsheetId2,
+      range: businessRange,
+      valueInputOption: 'RAW',
+      insertDataOption: 'INSERT_ROWS',
+      requestBody: { values: [businessValues] },
+    });
+
     await sgMail.send(msg);
 
     // Only enable this if you need SMS alerts and have Twilio configured

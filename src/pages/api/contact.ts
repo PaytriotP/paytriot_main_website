@@ -154,35 +154,27 @@
 
 // }
 
-import sgMail from '@sendgrid/mail';
-import { NextApiRequest, NextApiResponse } from 'next';
-import { Twilio } from 'twilio'; // keep if you intend to use Twilio
-import { google } from 'googleapis';
+import sgMail from "@sendgrid/mail";
+import { NextApiRequest, NextApiResponse } from "next";
+import { google } from "googleapis";
 
 const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS as string);
 const sheetsAuth = new google.auth.GoogleAuth({
   credentials,
-  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  scopes: ["https://www.googleapis.com/auth/spreadsheets"],
 });
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== 'POST') {
-    res.status(405).end();
-    return;
-  }
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== "POST") return res.status(405).end();
 
-  // Destructure the new fields sent from the frontend
-  const { type, emailSubject, emailBody, ...formData } = req.body;
+  const { emailSubject, emailBody, ...formData } = req.body;
 
-  sgMail.setApiKey(`${process.env.Bearer_Token}`);
+  sgMail.setApiKey(process.env.Bearer_Token as string);
 
-  // Construct the email message for SendGrid
+  // SendGrid part
   const msg = {
-    to: process.env.TWILIO_TO_EMAIL || 'info@paytriot.co.uk',
-    from: process.env.TWILIO_FROM_EMAIL || 'info@paytriot.co.uk',
+    to: process.env.TWILIO_TO_EMAIL || "info@paytriot.co.uk",
+    from: process.env.TWILIO_FROM_EMAIL || "info@paytriot.co.uk",
     subject: emailSubject,
     html: `<p style="white-space: pre-wrap;">${emailBody}</p>`,
   };
@@ -190,49 +182,28 @@ export default async function handler(
   try {
     await sgMail.send(msg);
 
-    const authClient = (await sheetsAuth.getClient()) as any; 
-    const sheets = google.sheets({ version: 'v4', auth: authClient });
-    const spreadsheetId2 = process.env.GOOGLE_SHEET_ID2;
+    // Google Sheets part (optional, in try-catch)
+    try {
+      const sheets = google.sheets({ version: "v4", auth: sheetsAuth });
+      const spreadsheetId2 = process.env.GOOGLE_SHEET_ID2;
+      if (!spreadsheetId2) throw new Error("GOOGLE_SHEET_ID2 not set");
 
-    if (!spreadsheetId2) {
-      throw new Error('GOOGLE_SHEET_ID2 environment variable is not defined.');
+      const businessValues = Object.values(formData);
+      await sheets.spreadsheets.values.append({
+        spreadsheetId: spreadsheetId2,
+        range: "Sheet1!A:Z",
+        valueInputOption: "RAW",
+        insertDataOption: "INSERT_ROWS",
+        requestBody: { values: [businessValues] },
+      });
+    } catch (sheetErr) {
+      console.error("Google Sheets error:", sheetErr);
     }
 
-    const businessValues = Object.values(formData);
-    const businessRange = 'Sheet1!A:Z';
-
-    await sheets.spreadsheets.values.append({
-      spreadsheetId: spreadsheetId2,
-      range: businessRange,
-      valueInputOption: 'RAW',
-      insertDataOption: 'INSERT_ROWS',
-      requestBody: { values: [businessValues] },
-    });
-
-    // Twilio logic (still commented out)
-    // const twilioClient = new Twilio(
-    //   process.env.TWILIO_ACCOUNT_SID,
-    //   process.env.TWILIO_AUTH_TOKEN
-    // );
-    // if (type === 'quote' && formData.phone) {
-    //   await twilioClient.messages.create({
-    //     body: `New Quote Request from ${formData.firstName}: Phone: ${formData.phone}, Email: ${formData.email}`,
-    //     from: process.env.FROM_PHONE_NUMBER || '',
-    //     to: process.env.TO_PHONE_NUMBER || ''
-    //   });
-    // } else if (type === 'support' && formData.supportName && formData.supportEmail) {
-    //   await twilioClient.messages.create({
-    //     body: `New Support Request from ${formData.supportName}: Issue: ${formData.issueType}, Priority: ${formData.priority}`,
-    //     from: process.env.FROM_PHONE_NUMBER || '',
-    //     to: process.env.TO_PHONE_NUMBER || ''
-    //   });
-    // }
-
-    res.status(200).json({ message: 'Message sent successfully' });
+    res.status(200).json({ message: "Email sent successfully" });
   } catch (err: any) {
-    console.error('Error sending message:', err.response?.body || err);
-    res
-      .status(500)
-      .json({ message: 'Error sending message', error: err.message });
+    console.error("SendGrid error:", err.response?.body || err);
+    res.status(500).json({ message: "Error sending message", error: err.message });
   }
 }
+

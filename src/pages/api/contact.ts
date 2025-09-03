@@ -158,7 +158,12 @@ import sgMail from "@sendgrid/mail";
 import { NextApiRequest, NextApiResponse } from "next";
 import { google } from "googleapis";
 
+// Load service account credentials from env
 const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS as string);
+const sheetsAuth = new google.auth.GoogleAuth({
+  credentials,
+  scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+});
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
@@ -166,54 +171,53 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 
-  const formData = req.body;
+  const { emailSubject, emailBody, fullName, phoneNumber, email, website, platforms, description } = req.body;
 
   sgMail.setApiKey(process.env.Bearer_Token as string);
 
   const msg = {
     to: process.env.TWILIO_TO_EMAIL || "info@paytriot.co.uk",
     from: process.env.TWILIO_FROM_EMAIL || "info@paytriot.co.uk",
-    subject: formData.emailSubject || "No subject",
-    html: `<p style="white-space: pre-wrap;">${formData.emailBody || ""}</p>`,
+    subject: emailSubject || "No Subject",
+    html: `<p style="white-space: pre-wrap;">${emailBody || ""}</p>`,
   };
 
   try {
+    // 1️⃣ Send email via SendGrid
     await sgMail.send(msg);
 
-    // Google Sheets part
+    // 2️⃣ Append data to Google Sheets
     try {
-      const sheetsAuth = new google.auth.GoogleAuth({
-        credentials,
-        scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-      });
-
-      const authClient = await sheetsAuth.getClient(); // ✅ inside async
-      const sheets = google.sheets({ version: "v4", auth: authClient });
-
+      const sheets = google.sheets({ version: "v4", auth: sheetsAuth });
       const spreadsheetId2 = process.env.GOOGLE_SHEET_ID2;
       if (!spreadsheetId2) throw new Error("GOOGLE_SHEET_ID2 not set");
 
+      // Timestamp for the first column
+      const timestamp = new Date().toISOString();
+
       const flattenValue = (val: any) => {
         if (Array.isArray(val)) return val.join(", ");
-        if (!val) return "";
+        if (val === null || val === undefined) return "";
         return String(val);
       };
 
       const values = [
         [
-          new Date().toISOString(),
-          flattenValue(formData.fullName || formData.name || ""),
-          flattenValue(formData.phoneNumber || formData.phone || ""),
-          flattenValue(formData.email || ""),
-          flattenValue(formData.website || formData.webisite || ""),
-          flattenValue(formData.platforms || []),
-          flattenValue(formData.description || "")
-        ]
+          flattenValue(timestamp),   // Timestamp column
+          flattenValue(fullName),    // Full name
+          flattenValue(phoneNumber), // Phone number
+          flattenValue(email),       // Email
+          flattenValue(website),     // Website
+          flattenValue(platforms),   // Platforms (array converted to string)
+          flattenValue(description), // Description
+        ],
       ];
+
+      console.log("Appending to Google Sheets:", values);
 
       await sheets.spreadsheets.values.append({
         spreadsheetId: spreadsheetId2,
-        range: "Sheet1!A:G",
+        range: "Sheet1!A:G", // Columns A-G
         valueInputOption: "RAW",
         insertDataOption: "INSERT_ROWS",
         requestBody: { values },

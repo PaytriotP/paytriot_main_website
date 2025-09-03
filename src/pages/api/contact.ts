@@ -171,7 +171,38 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 
-  const { emailSubject, emailBody, fullName, phoneNumber, email, website, platforms, description } = req.body;
+  // Map frontend fields to backend fields expected in Sheets
+  const {
+    emailSubject,
+    emailBody,
+    type, // 'quote' or 'support'
+    firstName,
+    phone,
+    email,
+    website,
+    ecommercePlatform,
+    otherPlatformValue,
+    additionalInfo,
+    supportName,
+    supportEmail,
+    message,
+  } = req.body;
+
+  // Determine values for Sheets
+  let fullName = firstName || supportName || "";
+  let phoneNumber = phone || "";
+  let userEmail = email || supportEmail || "";
+  let userWebsite = website || "";
+  let platforms: string[] = [];
+
+  if (Array.isArray(ecommercePlatform)) {
+    platforms = [...ecommercePlatform];
+    if (platforms.includes("Other") && otherPlatformValue) {
+      platforms = [...platforms.filter(p => p !== "Other"), otherPlatformValue];
+    }
+  }
+
+  let description = additionalInfo || message || "";
 
   sgMail.setApiKey(process.env.Bearer_Token as string);
 
@@ -206,8 +237,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           flattenValue(timestamp),   // Timestamp column
           flattenValue(fullName),    // Full name
           flattenValue(phoneNumber), // Phone number
-          flattenValue(email),       // Email
-          flattenValue(website),     // Website
+          flattenValue(userEmail),   // Email
+          flattenValue(userWebsite), // Website
           flattenValue(platforms),   // Platforms (array converted to string)
           flattenValue(description), // Description
         ],

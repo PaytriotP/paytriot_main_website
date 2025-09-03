@@ -156,7 +156,7 @@
 
 import sgMail from '@sendgrid/mail';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Twilio } from 'twilio'; // Keep if you intend to use Twilio
+import { Twilio } from 'twilio'; // keep if you intend to use Twilio
 import { google } from 'googleapis';
 
 const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS as string);
@@ -184,7 +184,7 @@ export default async function handler(
     to: process.env.TWILIO_TO_EMAIL || 'info@paytriot.co.uk',
     from: process.env.TWILIO_FROM_EMAIL || 'info@paytriot.co.uk',
     subject: emailSubject,
-    html: `<p style="white-space: pre-wrap;">${emailBody}</p>`
+    html: `<p style="white-space: pre-wrap;">${emailBody}</p>`,
   };
 
   try {
@@ -192,7 +192,8 @@ export default async function handler(
     await sgMail.send(msg);
 
     // Step 2: If the email sends successfully, then update the Google Sheet
-    const sheets = google.sheets({ version: 'v4', auth: sheetsAuth });
+    const authClient = await sheetsAuth.getClient();
+    const sheets = google.sheets({ version: 'v4', auth: authClient });
     const spreadsheetId2 = process.env.GOOGLE_SHEET_ID2;
 
     if (!spreadsheetId2) {
@@ -210,29 +211,30 @@ export default async function handler(
       requestBody: { values: [businessValues] },
     });
 
-    // The Twilio logic remains commented out as requested
+    // Twilio logic (still commented out)
     // const twilioClient = new Twilio(
-    //    process.env.TWILIO_ACCOUNT_SID,
-    //    process.env.TWILIO_AUTH_TOKEN
+    //   process.env.TWILIO_ACCOUNT_SID,
+    //   process.env.TWILIO_AUTH_TOKEN
     // );
     // if (type === 'quote' && formData.phone) {
-    //    await twilioClient.messages.create({
-    //      body: `New Quote Request from ${formData.firstName}: Phone: ${formData.phone}, Email: ${formData.email}`,
-    //      from: process.env.FROM_PHONE_NUMBER || '',
-    //      to: process.env.TO_PHONE_NUMBER || ''
-    //    });
+    //   await twilioClient.messages.create({
+    //     body: `New Quote Request from ${formData.firstName}: Phone: ${formData.phone}, Email: ${formData.email}`,
+    //     from: process.env.FROM_PHONE_NUMBER || '',
+    //     to: process.env.TO_PHONE_NUMBER || ''
+    //   });
     // } else if (type === 'support' && formData.supportName && formData.supportEmail) {
-    //    await twilioClient.messages.create({
-    //      body: `New Support Request from ${formData.supportName}: Issue: ${formData.issueType}, Priority: ${formData.priority}`,
-    //      from: process.env.FROM_PHONE_NUMBER || '',
-    //      to: process.env.TO_PHONE_NUMBER || ''
-    //    });
+    //   await twilioClient.messages.create({
+    //     body: `New Support Request from ${formData.supportName}: Issue: ${formData.issueType}, Priority: ${formData.priority}`,
+    //     from: process.env.FROM_PHONE_NUMBER || '',
+    //     to: process.env.TO_PHONE_NUMBER || ''
+    //   });
     // }
 
     res.status(200).json({ message: 'Message sent successfully' });
   } catch (err: any) {
     console.error('Error sending message:', err.response?.body || err);
-    res.status(500).json({ message: 'Error sending message', error: err.message });
+    res
+      .status(500)
+      .json({ message: 'Error sending message', error: err.message });
   }
 }
-

@@ -158,7 +158,7 @@ import sgMail from "@sendgrid/mail";
 import { NextApiRequest, NextApiResponse } from "next";
 import { google } from "googleapis";
 
-// Load service account credentials from environment variable
+// Load service account credentials from env
 const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS as string);
 const sheetsAuth = new google.auth.GoogleAuth({
   credentials,
@@ -171,7 +171,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 
-  const { emailSubject, emailBody, ...formData } = req.body;
+  const { emailSubject, emailBody, fullName, phoneNumber, email, website, platforms, description } = req.body;
 
   sgMail.setApiKey(process.env.Bearer_Token as string);
 
@@ -183,20 +183,41 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   };
 
   try {
+    // 1️⃣ Send email
     await sgMail.send(msg);
 
-  
+    // 2️⃣ Append to Google Sheets
     try {
       const sheets = google.sheets({ version: "v4", auth: sheetsAuth });
       const spreadsheetId2 = process.env.GOOGLE_SHEET_ID2;
       if (!spreadsheetId2) throw new Error("GOOGLE_SHEET_ID2 not set");
 
       const timestamp = new Date().toISOString();
-      const values = [[timestamp, ...Object.values(formData)]];
+
+      // Flatten arrays to strings
+      const flattenValue = (val: any) => {
+        if (Array.isArray(val)) return val.join(", ");
+        if (val === null || val === undefined) return "";
+        return String(val);
+      };
+
+      const values = [
+        [
+          timestamp,
+          flattenValue(fullName),
+          flattenValue(phoneNumber),
+          flattenValue(email),
+          flattenValue(website),
+          flattenValue(platforms),
+          flattenValue(description),
+        ],
+      ];
+
+      console.log("Appending to Google Sheets:", values);
 
       await sheets.spreadsheets.values.append({
         spreadsheetId: spreadsheetId2,
-        range: "Sheet1!A:Z",
+        range: "Sheet1!A:G", // Columns A-G
         valueInputOption: "RAW",
         insertDataOption: "INSERT_ROWS",
         requestBody: { values },
@@ -205,9 +226,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error("Google Sheets error:", sheetErr);
     }
 
-    return res.status(200).json({ message: "Email sent successfully" });
+    return res.status(200).json({ message: "Email sent and data saved successfully" });
   } catch (err: any) {
     console.error("SendGrid error:", err.response?.body || err);
     return res.status(500).json({ message: "Error sending message", error: err.message });
   }
 }
+

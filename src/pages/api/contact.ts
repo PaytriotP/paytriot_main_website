@@ -185,7 +185,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await sgMail.send(msg);
 
     try {
-      const sheets = google.sheets({ version: "v4", auth: sheetsAuth });
+      const authClient = await sheetsAuth.getClient();
+      const sheets = google.sheets({ version: "v4", auth: authClient });
       const spreadsheetId2 = process.env.GOOGLE_SHEET_ID2;
       if (!spreadsheetId2) throw new Error("GOOGLE_SHEET_ID2 not set");
 
@@ -198,16 +199,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const values = [
         [
           new Date().toISOString(),
-          flattenValue(formData.fullName || formData["Full name"] || ""),
-          flattenValue(formData.phoneNumber || formData["Phone number"] || ""),
+          flattenValue(formData.fullName || formData.name || ""),
+          flattenValue(formData.phoneNumber || formData.phone || ""),
           flattenValue(formData.email || ""),
-          flattenValue(formData.website || formData["webisite"] || ""),
+          flattenValue(formData.website || formData.webisite || ""),
           flattenValue(formData.platforms || []),
-          flattenValue(formData.description || formData["Description"] || "")
+          flattenValue(formData.description || "")
         ]
       ];
 
-      console.log("Appending values:", values);
+      console.log("Appending to Google Sheets:", values);
 
       await sheets.spreadsheets.values.append({
         spreadsheetId: spreadsheetId2,
@@ -226,5 +227,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ message: "Error sending message", error: err.message });
   }
 }
+
 
 

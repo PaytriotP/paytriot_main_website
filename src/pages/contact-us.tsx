@@ -147,12 +147,10 @@ export default function ContactUs() {
                     <div className={styles['testimonial-col']}>
                       <div className={styles['testimonial-stars']}>★★★★★</div>
                       <p className={styles['testimonial-text']}>
-                        "Paytriot approved our high-risk gaming business when 3
-                        other providers rejected us. Apple Pay integration was
-                        seamless and our conversion rates increased by 35%."
+                        "Very good company. Easy to deal with and go out of their way to help you quickly."
                       </p>
                       <div className={styles['testimonial-author']}>
-                        Marcus Green
+                        Peter F
                       </div>
                       <div className={styles['testimonial-role']}>
                         CEO, Gaming Solutions Ltd

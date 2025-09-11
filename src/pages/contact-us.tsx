@@ -152,9 +152,9 @@ export default function ContactUs() {
                       <div className={styles['testimonial-author']}>
                         Peter F
                       </div>
-                      <div className={styles['testimonial-role']}>
+{/*                       <div className={styles['testimonial-role']}>
                         CEO, Gaming Solutions Ltd
-                      </div>
+                      </div> */}
                     </div>
                     <div className={styles['testimonial-col']}>
                       <div className={styles['testimonial-stars']}>★★★★★</div>

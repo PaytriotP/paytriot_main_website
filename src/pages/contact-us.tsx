@@ -97,10 +97,10 @@ export default function ContactUs() {
           <div className={styles.container}>
             <div className={styles.subtitle}>Get in touch with us</div>
             <h1 className={styles.title}>
-              Powering Payments for Every Business — Talk to a Specialist Today
+             UK & EU Payment Gateway | High-Risk Approved
             </h1>
             <div className={styles.description}>
-              Supporting hard-to-place industries with fast setup and expert
+              Get approved in 24 hours. Apple Pay, Google Pay ready.
               help
             </div>
             <div className={styles.stats}>
@@ -129,11 +129,10 @@ export default function ContactUs() {
                   {/* Best Form Header */}
                   <div className={styles['contact-form-header']}>
                     <div className={styles['contact-form-title']}>
-                      Let's Set Up Your Payments — Fast, Simple, Done!
+                        Get Your Payment Gateway Approved in 24 Hours
                     </div>
                     <div className={styles['contact-form-subtitle']}>
-                      Fill in your details and we'll be in touch within 24 hours
-                      to get you fully set up.
+                       High-risk businesses welcome. Apple Pay & Google Pay included.
                     </div>
                   </div>
                   <ContactForm />

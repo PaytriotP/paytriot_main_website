@@ -161,105 +161,116 @@ import { google } from "googleapis";
 // Load service account credentials from env
 const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS as string);
 const sheetsAuth = new google.auth.GoogleAuth({
-  credentials,
-  scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+  credentials,
+  scopes: ["https://www.googleapis.com/auth/spreadsheets"],
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") {
-    res.setHeader("Allow", ["POST"]);
-    return res.status(405).end(`Method ${req.method} Not Allowed`);
-  }
+  // 1. Check for POST Method
+  if (req.method !== "POST") {
+    res.setHeader("Allow", ["POST"]);
+    return res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
 
-  // Map frontend fields to backend fields expected in Sheets
-  const {
-    emailSubject,
-    emailBody,
-    type, // 'quote' or 'support'
-    firstName,
-    phone,
-    email,
-    website,
-    ecommercePlatform,
-    otherPlatformValue,
-    additionalInfo,
-    supportName,
-    supportEmail,
-    message,
-  } = req.body;
+  if (Array.isArray(req.body)) {
+    console.log(`SendGrid Webhook event detected. Responding immediately with 200 OK.`);
 
-  // Determine values for Sheets
-  let fullName = firstName || supportName || "";
-  let phoneNumber = phone || "";
-  let userEmail = email || supportEmail || "";
-  let userWebsite = website || "";
-  let platforms: string[] = [];
+    return res.status(200).json({ status: "received" });
+  }
 
-  if (Array.isArray(ecommercePlatform)) {
-    platforms = [...ecommercePlatform];
-    if (platforms.includes("Other") && otherPlatformValue) {
-      platforms = [...platforms.filter(p => p !== "Other"), otherPlatformValue];
-    }
-  }
+  // --- START: Original Form Submission Logic ---
 
-  let description = additionalInfo || message || "";
+  const {
+    emailSubject,
+    emailBody,
+    type, // 'quote' or 'support'
+    firstName,
+    phone,
+    email,
+    website,
+    ecommercePlatform,
+    otherPlatformValue,
+    additionalInfo,
+    supportName,
+    supportEmail,
+    message,
+  } = req.body;
 
-  sgMail.setApiKey(process.env.Bearer_Token as string);
+  // 3. Determine values for Sheets
+  let fullName = firstName || supportName || "";
+  let phoneNumber = phone || "";
+  let userEmail = email || supportEmail || "";
+  let userWebsite = website || "";
+  let platforms: string[] = [];
 
-  const msg = {
-    to: process.env.TWILIO_TO_EMAIL || "info@paytriot.co.uk",
-    from: process.env.TWILIO_FROM_EMAIL || "info@paytriot.co.uk",
-    subject: emailSubject || "No Subject",
-    html: `<p style="white-space: pre-wrap;">${emailBody || ""}</p>`,
-  };
+  if (Array.isArray(ecommercePlatform)) {
+    platforms = [...ecommercePlatform];
+    if (platforms.includes("Other") && otherPlatformValue) {
+      platforms = [...platforms.filter(p => p !== "Other"), otherPlatformValue];
+    }
+  }
 
-  try {
-    // 1️⃣ Send email via SendGrid
-    await sgMail.send(msg);
+  let description = additionalInfo || message || "";
 
-    // 2️⃣ Append data to Google Sheets
-    try {
-      const sheets = google.sheets({ version: "v4", auth: sheetsAuth });
-      const spreadsheetId2 = process.env.GOOGLE_SHEET_ID2;
-      if (!spreadsheetId2) throw new Error("GOOGLE_SHEET_ID2 not set");
+  // 4. Configure SendGrid Email
+  sgMail.setApiKey(process.env.Bearer_Token as string);
 
-      // Timestamp for the first column
-      const timestamp = new Date().toISOString();
+  const msg = {
+    to: process.env.TWILIO_TO_EMAIL || "info@paytriot.co.uk",
+    from: process.env.TWILIO_FROM_EMAIL || "info@paytriot.co.uk",
+    subject: emailSubject || "No Subject",
+    html: `<p style="white-space: pre-wrap;">${emailBody || ""}</p>`,
+  };
 
-      const flattenValue = (val: any) => {
-        if (Array.isArray(val)) return val.join(", ");
-        if (val === null || val === undefined) return "";
-        return String(val);
-      };
+  try {
+    // 5. Send email via SendGrid (External API Call)
+    await sgMail.send(msg);
 
-      const values = [
-        [
-          flattenValue(timestamp),   // Timestamp column
-          flattenValue(fullName),    // Full name
-          flattenValue(phoneNumber), // Phone number
-          flattenValue(userEmail),   // Email
-          flattenValue(userWebsite), // Website
-          flattenValue(platforms),   // Platforms (array converted to string)
-          flattenValue(description), // Description
-        ],
-      ];
+    // 6. Append data to Google Sheets (External API Call)
+    try {
+      const sheets = google.sheets({ version: "v4", auth: sheetsAuth });
+      const spreadsheetId2 = process.env.GOOGLE_SHEET_ID2;
+      if (!spreadsheetId2) throw new Error("GOOGLE_SHEET_ID2 not set");
 
-      console.log("Appending to Google Sheets:", values);
+      // Timestamp for the first column
+      const timestamp = new Date().toISOString();
 
-      await sheets.spreadsheets.values.append({
-        spreadsheetId: spreadsheetId2,
-        range: "Sheet1!A:G", // Columns A-G
-        valueInputOption: "RAW",
-        insertDataOption: "INSERT_ROWS",
-        requestBody: { values },
-      });
-    } catch (sheetErr) {
-      console.error("Google Sheets error:", sheetErr);
-    }
+      const flattenValue = (val: any) => {
+        if (Array.isArray(val)) return val.join(", ");
+        if (val === null || val === undefined) return "";
+        return String(val);
+      };
 
-    return res.status(200).json({ message: "Email sent and data saved successfully" });
-  } catch (err: any) {
-    console.error("SendGrid error:", err.response?.body || err);
-    return res.status(500).json({ message: "Error sending message", error: err.message });
-  }
+      const values = [
+        [
+          flattenValue(timestamp),   // Timestamp column
+          flattenValue(fullName),    // Full name
+          flattenValue(phoneNumber), // Phone number
+          flattenValue(userEmail),   // Email
+          flattenValue(userWebsite), // Website
+          flattenValue(platforms),   // Platforms (array converted to string)
+          flattenValue(description), // Description
+        ],
+      ];
+
+      console.log("Appending to Google Sheets:", values);
+
+      await sheets.spreadsheets.values.append({
+        spreadsheetId: spreadsheetId2,
+        range: "Sheet1!A:G", // Columns A-G
+        valueInputOption: "RAW",
+        insertDataOption: "INSERT_ROWS",
+        requestBody: { values },
+      });
+    } catch (sheetErr) {
+      console.error("Google Sheets error:", sheetErr);
+    }
+
+    // 7. Successful Response to Client
+    return res.status(200).json({ message: "Email sent and data saved successfully" });
+  } catch (err: any) {
+    // 8. Error Response to Client
+    console.error("SendGrid error:", err.response?.body || err);
+    return res.status(500).json({ message: "Error sending message", error: err.message });
+  }
 }

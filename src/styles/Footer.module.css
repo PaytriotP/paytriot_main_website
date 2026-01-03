@@ -22,24 +22,45 @@
 } */
 
 .footer {
+
   background-color: var(--color-foreground);
+
   color: var(--color-background);
-  padding: 2rem 2rem 1rem;
+
+  padding: 2rem 2rem 0.5rem !important;
+
   margin-top: 2rem;
+
   border-top: 0.5rem solid var(--color-tertiary);
+
   display: flex;
+
   flex-direction: column;
+
 }
 
+
+
 .footer__copyright {
+
   font-size: 1.2rem;
+
   line-height: 1.6;
+
   font-weight: var(--font-weight-bold);
+
   font-family: var(--font-family-main);
+
   color: var(--footer-copyright-color);
+
   display: flex;
+
   justify-content: space-between;
+
   align-items: center;
-  margin-bottom: 0;
+
+  margin-bottom: 0 !important;
+
   text-align: center;
+
 }

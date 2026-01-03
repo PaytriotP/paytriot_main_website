@@ -24,32 +24,22 @@
 .footer {
   background-color: var(--color-foreground);
   color: var(--color-background);
-  padding: 4rem 2rem 2rem;
+  padding: 2rem 2rem 4rem;
   margin-top: 2rem;
   border-top: 0.5rem solid var(--color-tertiary);
-
-  /* LAYOUT UPDATES */
   display: flex;
-  flex-direction: row;      /* Aligns the Logo, Links, and Contact columns side-by-side */
-  flex-wrap: wrap;          /* Essential: Allows the copyright to wrap to a new line at the bottom */
-  justify-content: space-between; /* Spreads the columns out across the screen */
-  align-items: flex-start;  /* Aligns content to the top */
-  gap: 2rem;                /* Adds spacing between the columns */
+  flex-direction: column;
 }
 
-.footer__copyright {
+.footer__copyright {.footer__copyright {
   font-size: 1.2rem;
   line-height: 1.6;
   font-weight: var(--font-weight-bold);
   font-family: var(--font-family-main);
-  color: var(--footer-copyright-color);
-
-  /* LAYOUT UPDATES */
-  width: 100%;              /* Forces this element to take the full bottom row */
-  margin-top: 3rem;         /* Adds space between the columns and the copyright line */
+  color: var(--footer-copyright-color);  color: var(--footer-copyright-color);
   display: flex;
-  justify-content: space-between; /* Pushes copyright text to left, payment icons to right */
-  align-items: center;
-  text-align: left;
+  justify-content: center;
+  align-content: center;
+  margin-bottom: 2rem;
+  text-align: center;
 }
-

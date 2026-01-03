@@ -1,4 +1,4 @@
-/* .footer {
+.footer {
   background-color: var(--color-foreground);
   color: var(--color-background);
   padding: 2rem 2rem 4rem;
@@ -19,9 +19,9 @@
   align-content: center;
   margin-bottom: 2rem;
   text-align: center;
-} */
+}
 
-.footer {
+/* .footer {
 
   background-color: var(--color-foreground);
 
@@ -63,4 +63,4 @@
 
   text-align: center;
 
-}
+} */

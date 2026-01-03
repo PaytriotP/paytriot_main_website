@@ -1172,7 +1172,130 @@ section.tabs-container .txt-wrap {
 
 /* section footer  */
 section.footer {
-    padding: 100px 0;
+    padding: 2rem 0 1rem 0 !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 1rem !important;
+}
+
+section.footer:last-child {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+/* Override Bootstrap container padding in footer */
+section.footer .container {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+}
+
+section.footer .row {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+section.footer .trademarks {
+    margin-top: 2rem;
+    margin-bottom: 1rem !important;
+    padding-bottom: 1rem !important;
+    padding-top: 0 !important;
+    align-items: center;
+}
+
+/* Ensure proper spacing after trademarks - the last element */
+section.footer .trademarks:last-child {
+    margin-bottom: 1rem !important;
+    padding-bottom: 1rem !important;
+}
+
+section.footer > .container > .trademarks:last-child {
+    margin-bottom: 1rem !important;
+    padding-bottom: 1rem !important;
+}
+
+/* Ensure container has small bottom padding */
+section.footer > .container:last-child {
+    padding-bottom: 1rem !important;
+    margin-bottom: 0 !important;
+}
+
+/* Target the exact structure - container > trademarks */
+section.footer .container > .trademarks {
+    margin-bottom: 1rem !important;
+    padding-bottom: 1rem !important;
+}
+
+/* Style for copyright text to align properly */
+section.footer .copyright-text {
+    line-height: 1.6 !important;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Style for copyright text to align properly with Terms & Conditions */
+section.footer .copyright-text {
+    line-height: 1.6 !important;
+    display: inline-block;
+    vertical-align: middle;
+    text-decoration: none;
+}
+
+section.footer .trademarks .label-10 {
+    line-height: 1.6 !important;
+}
+
+/* Remove any pseudo-elements that might add space */
+section.footer::after {
+    display: none !important;
+    content: "" !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Aggressive rule to remove ALL bottom spacing from footer */
+section.footer,
+section.footer *,
+section.footer *::before,
+section.footer *::after {
+    box-sizing: border-box;
+}
+
+/* Ensure proper spacing for the last trademarks section */
+section.footer .container:last-child > .trademarks:last-child {
+    margin-bottom: 1rem !important;
+    padding-bottom: 1rem !important;
+}
+
+/* Ensure the footer section ends exactly at the bottom of its content */
+section.footer {
+    overflow: hidden;
+}
+
+main > section.footer:last-child {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+main {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+main > *:last-child {
+    margin-bottom: 0 !important;
+}
+
+body {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+html {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
 }
 
 .logo-footer {
@@ -1239,7 +1362,10 @@ section.footer a {
 }
 
 .trademarks {
-    margin-top: 90px;
+    margin-top: 2rem;
+    margin-bottom: 1rem !important;
+    padding-bottom: 1rem !important;
+    padding-top: 0 !important;
 }
 
 ul.nav-footer li {
@@ -1265,15 +1391,32 @@ ul.nav-footer li {
 }
 
 .supportedby.logo1 {
-    background: url('../images/logo-onthelist.svg');
+    background: url('../images/logonewOlist.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 80px;
+    height: 40px;
+    margin-right: 2rem;
 }
 
 .supportedby.logo2 {
     background: url('../images/logo-mastercard.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 80px;
+    height: 40px;
+    margin-right: 2rem;
 }
 
 .supportedby.logo3 {
     background: url('../images/logo-visa.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 80px;
+    height: 40px;
 }
 
 
@@ -2258,12 +2401,12 @@ ul.nav-footer li {
 }
 
 .gradient-text {
-    /* Fallback: Set a background color. */
+
     background-color: red;
     font-size: 70px;
     
 
-    /* Create the gradient. */
+ 
     background-image: linear-gradient(330deg,
             hsl(0deg 100% 57%) 0%,
             hsl(4deg 100% 56%) 5%,
@@ -2289,12 +2432,9 @@ ul.nav-footer li {
             hsl(37deg 98% 50%) 100%);
     ;
 
-    /* Set the background size and repeat properties. */
+
     background-size: 100%;
     background-repeat: repeat;
-
-    /* Use the text as a mask for the background. */
-    /* This will show the gradient as a text color rather than element bg. */
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     -moz-background-clip: text;

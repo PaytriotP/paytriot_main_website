@@ -8,7 +8,7 @@ import iconTwitterSvg from 'public/images/icon-twitter.svg';
 import iconYoutubeSvg from 'public/images/icon-youtube.svg';
 import logoSvg from 'public/images/img-logo.svg';
 import logoMasterCardSvg from 'public/images/logo-mastercard.svg';
-import logoOthelistSvg from 'public/images/logo-onthelist 1.png';
+import logoOthelistPng from 'public/images/logo-onthelist.png'; 
 import logoVisaSvg from 'public/images/logo-visa.svg';
 
 export default function Footer() {
@@ -91,7 +91,7 @@ export default function Footer() {
             </div>
             <div className="logo-payment d-flex align-items-center ps-lg-4">
               <div className="supportedby logo1">
-                <Image src={logoOthelistSvg} alt="" className="img-logo me-5" />
+                <Image src={logoOthelistPng} alt="" className="img-logo me-5" />
               </div>
               <div className="supportedby logo2">
                 <Image src={logoMasterCardSvg} alt="" className="img-logo me-5" />

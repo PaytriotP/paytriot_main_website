@@ -24,7 +24,7 @@
 .footer {
   background-color: var(--color-foreground);
   color: var(--color-background);
-  padding: 2rem 2rem 4rem;
+  padding: 2rem 2rem 1.5rem;
   margin-top: 2rem;
   border-top: 0.5rem solid var(--color-tertiary);
   display: flex;

@@ -1,14 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import 'src/styles/Footer.module.css';
 import icoEmailSvg from 'public/images/icon-email.svg';
 import iconFacebookSvg from 'public/images/icon-facebook.svg';
 import iconLinkedInSvg from 'public/images/icon-linkedin.svg';
 import iconTwitterSvg from 'public/images/icon-twitter.svg';
 import iconYoutubeSvg from 'public/images/icon-youtube.svg';
 import logoSvg from 'public/images/img-logo.svg';
-import logoMasterCardSvg from 'public/images/logo-mastercard.svg';
-import logoOthelistSvg from 'public/images/logonewOlist.svg';
-import logoVisaSvg from 'public/images/logo-visa.svg';
 
 export default function Footer() {
   return (
@@ -154,20 +152,36 @@ export default function Footer() {
               <div className="logo-payment d-flex align-items-center ps-lg-4">
                 <div className="supportedby logo1">
                   <Image
-                    src={logoOthelistSvg}
-                    alt=""
+                    src="/images/logonewOlist.svg"
+                    alt="Olist logo"
                     className="img-logo me-5"
+                    width={80}
+                    height={40}
+                    style={{ objectFit: 'contain' }}
+                    unoptimized
                   />
                 </div>
                 <div className="supportedby logo2">
                   <Image
-                    src={logoMasterCardSvg}
-                    alt=""
+                    src="/images/logo-mastercard.svg"
+                    alt="Mastercard logo"
                     className="img-logo me-5"
+                    width={80}
+                    height={40}
+                    style={{ objectFit: 'contain' }}
+                    unoptimized
                   />
                 </div>
                 <div className="supportedby logo3">
-                  <Image src={logoVisaSvg} alt="" className="img-logo" />
+                  <Image 
+                    src="/images/logo-visa.svg" 
+                    alt="Visa logo" 
+                    className="img-logo"
+                    width={80}
+                    height={40}
+                    style={{ objectFit: 'contain' }}
+                    unoptimized
+                  />
                 </div>
               </div>
               <div className="terms-policy d-block d-lg-none mt-4">
@@ -182,11 +196,7 @@ export default function Footer() {
           </div>
           <div className="trademarks d-lg-flex justify-content-between d-none">
             <Link href={'#'} className="label-10 me-3">
-              {/*               @ 2024 Paytriot Ltd is a registered company headquartered at               
-              The Charter Building, Charter Place, Uxbridge in the United Kingdom, number 09910014.<br/>              
-              Paytriot Ltd (Firm reference number 902060) is an agent of               
-              PayrNet Ltd which is an Electronic Money Institution authorised by the FCA <br/
-              >under the Electronic Money Regulations 2011 (EMR's) with Firm Reference Number 900594. */}
+              {/*               @ 2024 Paytriot Ltd is a registered company headquartered at               The Charter Building, Charter Place, Uxbridge in the United Kingdom, number 09910014.<br/>              Paytriot Ltd (Firm reference number 902060) is an agent of               PayrNet Ltd which is an Electronic Money Institution authorised by the FCA <br/>under the Electronic Money Regulations 2011 (EMR's) with Firm Reference Number 900594. */}
               @ 2025 Paytriot Ltd is a registered company headquartered at
               Eagle Court, Vine Street, Uxbridge in the United Kingdom, number 09910014.
             </Link>

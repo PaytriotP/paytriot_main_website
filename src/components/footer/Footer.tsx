@@ -162,8 +162,6 @@ export default function Footer() {
                     className="img-logo me-5"
                   />
                 </div>
-
-so there is extra white space below footer can you reduce this in the code attached screenshot as welll
                 <div className="supportedby logo2">
                   <Image
                     src={logoMasterCardSvg}

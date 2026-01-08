@@ -65,7 +65,7 @@ export default function AboutUs() {
             <div className="col-lg-6 ps-lg-5 d-flex flex-column justify-content-center align-items-start">
               <h1 className="mb-lg-5">Who Are We</h1>
               <p className="p-18 mb-lg-5">
-                Paytriot Payment has been established for 7 years helping online businesses accept payments. 
+                Paytriot Payment has been established for 10 years helping online businesses accept payments. 
                 We are now revolutionising the payment industry by charging a monthly flat fee for smaller businesses allowing them to accept Credit and Debit Cards without taking a percentage of their profits allowing them to scale. 
               </p>
               <Link

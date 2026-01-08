@@ -251,7 +251,7 @@ export default function AboutUs() {
       <div className="col-12 col-md-4">
         <div className="testi-wrap d-flex flex-column align-items-center">
           <Image src={imgCustomer2} alt="" className="cust-prof" />
-          <h4 className="mt-4">Bilal Latif</h4>
+          <h4 className="mt-4">Matt Hunter</h4>
           <h5 className="fst-italic">Finance Director</h5>
           <div className="rating-wrap d-flex my-4">
             <Image src={imgRatingSvg} alt="" />
@@ -279,7 +279,7 @@ export default function AboutUs() {
       <div className="col-12 col-md-4">
         <div className="testi-wrap d-flex flex-column align-items-center">
           <Image src={imgCustomer3} alt="" className="cust-prof" />
-          <h4 className="mt-4">Eugene Andrews</h4>
+          <h4 className="mt-4">Eugena Andrews</h4>
           <h5 className="fst-italic">Manager / Hampton by Hilton</h5>
           <div className="rating-wrap d-flex my-4">
             <Image src={imgRatingSvg} alt="" />
@@ -401,7 +401,7 @@ export default function AboutUs() {
               <div className="wedo-wrap">
                 <h2 className="mb-5">What We Do</h2>
                 <p className="p-18 mb-5">
-                  Payriot Payments has many years experience in all aspects of
+                  Paytriot Payments has many years experience in all aspects of
                   the International and online financial world. This allows us
                   to offer the best solution, one which is tailored to the exact
                   requirements of your business.

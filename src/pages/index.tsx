@@ -38,6 +38,9 @@ export default function Home() {
         <meta property="og:description" content="Discover secure payment solutions and affordable merchant services designed to help your business grow. Fast, reliable, and tailored to your needs." />
         <meta property="og:url" content="https://www.paytriot.co.uk/" />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://www.paytriot.co.uk/images/img-logo.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
         
         {/* Twitter Card (Twitter Preview) */}
         <meta name="twitter:card" content="summary" />

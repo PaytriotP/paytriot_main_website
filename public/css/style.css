@@ -1417,7 +1417,6 @@ ul.nav-footer li {
     background-position: center;
     width: 80px;
     height: 40px;
-    flex-shrink: 0;
 }
 
 
@@ -2268,6 +2267,9 @@ ul.nav-footer li {
 .bg-dark,
 [data-theme="dark"] .supportedby.logo3 {
     background: url('../images/logo-visa-dark.svg');
+    background-size: 90% auto; 
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 @keyframes backgroundColorPalette {

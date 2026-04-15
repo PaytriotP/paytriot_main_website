@@ -8,7 +8,7 @@ import iconTwitterSvg from 'public/images/icon-twitter.svg';
 import iconYoutubeSvg from 'public/images/icon-youtube.svg';
 import logoSvg from 'public/images/img-logo.svg';
 import logoMasterCardSvg from 'public/images/logo-mastercard.svg';
-import logoOthelistSvg from 'public/images/logonewOlist.svg';
+import logoOthelistSvg from 'public/images/logonewOlist_2026.png';
 import logoVisaSvg from 'public/images/logo-visa.svg';
 
 export default function Footer() {

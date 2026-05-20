@@ -19,16 +19,16 @@ export default function PostList(props) {
         {posts.map(post => (
           <li key={post.sys.id}>
             <article className={ContentListStyles.contentList__post}>
-              {/* <div className={ContentListStyles.contentList__img}>
-                <Image
-                  src="https://via.placeholder.com/300"
-                  alt=""
-                  width={300}
-                  height={300}
+              <div className={ContentListStyles.contentList__thumbnail}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/img-logo.svg"
+                  alt="Paytriot Logo"
+                  className={ContentListStyles.contentList__thumbnailImg}
                 />
-              </div> */}
-              <div>
-                {post.tags !== null && <Tags tags={post.tags} />}
+              </div>
+              <div className={ContentListStyles.contentList__content}>
+                {post.tags !== null && <Tags tags={post.tags} limit={3} />}
                 <Link
                   href={`/blog/${post.slug}`}
                   className={ContentListStyles.contentList__titleLink}

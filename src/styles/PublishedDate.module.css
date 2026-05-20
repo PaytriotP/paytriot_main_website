@@ -1,9 +1,13 @@
 .publishedDate {
-  font-size: 1rem;
+  font-size: 0.85rem;
   line-height: 1.4;
-  margin-bottom: 2rem;
-  font-weight: var(--font-weight-normal);
+  font-weight: 500;
   font-family: var(--font-family-main);
-  color: var(--color-foreground);
-  display: flex;
+  color: #6b7280;
+  display: block;
+  margin-top: 1rem;
+}
+
+[data-theme='dark'] .publishedDate {
+  color: #9ca3af;
 }

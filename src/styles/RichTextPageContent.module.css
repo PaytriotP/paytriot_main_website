@@ -1,6 +1,8 @@
 .page {
+  max-width: 800px;
   margin-left: auto;
   margin-right: auto;
+  padding: 0 1.5rem;
 }
 
 .page__content {
@@ -20,114 +22,135 @@
 }
 
 .page__headerLink {
-  color: var(--color-primary);
+  color: #cbd5e1;
   margin-left: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.2s ease, color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.page__linkedHeaderContainer:hover .page__headerLink {
+  opacity: 1;
+}
+
+.page__headerLink:hover {
+  color: #f79a1e;
 }
 
 .page__hr {
   margin-bottom: 2rem;
   margin-top: 2rem;
-  border-color: transparent;
-  border-bottom: 0.25rem solid var(--color-primary);
+  border: none;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .page__ul {
   display: block;
   list-style-type: disc;
-  margin-block-start: 3rem;
-  margin-block-end: 3rem;
-  margin-inline-start: 0;
-  margin-inline-end: 0;
-  padding-inline-start: 4rem;
+  margin-block-start: 1.5rem;
+  margin-block-end: 1.5rem;
+  padding-inline-start: 2rem;
 }
 
 .page__ol {
   display: block;
   list-style-type: decimal;
-  margin-block-start: 3rem;
-  margin-block-end: 3rem;
-  margin-inline-start: 0;
-  margin-inline-end: 0;
-  padding-inline-start: 4rem;
+  margin-block-start: 1.5rem;
+  margin-block-end: 1.5rem;
+  padding-inline-start: 2rem;
 }
 
 .page__li {
-  font-size: 1.2rem;
-  line-height: 1.6rem;
-  margin-bottom: 1rem;
-  font-weight: var(--font-weight-light);
+  font-size: 1.125rem;
+  line-height: 1.8;
+  margin-bottom: 0.5rem;
+  font-weight: 400;
   font-family: var(--font-family-main);
-  color: var(--color-foreground);
+  color: #1f2937;
 }
 
 .page__imgContainer {
   width: 100%;
   height: auto;
-  margin: 1rem 0 2rem 0;
+  margin: 2.5rem 0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.page__imgContainer img {
+  border-radius: 16px;
+  width: 100% !important;
+  height: auto !important;
 }
 
 /* CTA Section Styles */
 .ctaSection {
-  background-color: #f8f9fa; /* Light gray background matching the image */
+  background: linear-gradient(135deg, #021639 0%, #0a2455 100%);
+  border-radius: 24px;
+  padding: 3.5rem 2.5rem;
   text-align: center;
-  padding: 60px 30px; /* More padding for better spacing */
-  margin: 60px auto;
-  border-radius: 12px; /* Softer edges */
-  max-width: 1200px;
+  color: #ffffff;
+  margin-top: 5rem;
+  box-shadow: 0 20px 40px rgba(2, 22, 57, 0.15);
+  max-width: 100%;
 }
 
 .ctaSection h2 {
-  font-size: 32px; /* Larger heading */
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #0a1736; /* Dark navy color matching Paytriot branding */
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #ffffff !important;
 }
 
 .ctaSection p {
-  font-size: 18px; /* Bigger text for readability */
-  color: #555;
-  margin-bottom: 30px;
-  max-width: 700px;
+  color: #e5e7eb;
+  font-size: 1.1rem;
+  max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 2rem;
 }
 
 .ctaButton {
   display: inline-block;
-  background-color: #f79a1e; /* Updated to the specified color */
-  color: white;
-  padding: 16px 32px; /* Bigger button */
-  font-size: 18px;
-  font-weight: bold;
-  border-radius: 50px; /* Fully rounded button like in the image */
+  background-color: #f79a1e;
+  color: #ffffff !important;
+  font-weight: 700;
+  padding: 14px 36px;
+  border-radius: 50px;
   text-decoration: none;
-  transition: all 0.2s ease-in-out;
+  font-size: 1.1rem;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
   border: none;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 14px rgba(247, 154, 30, 0.4);
+  cursor: pointer;
 }
 
 .ctaButton:hover {
-  background-color: #e09620; /* Slightly darker on hover */
-  color: white; /* Ensure text stays white on hover */
+  background-color: #e08b1a;
   transform: translateY(-2px);
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 20px rgba(247, 154, 30, 0.6);
 }
 
-/* Pop animation on click */
 .ctaButton:active {
   transform: scale(0.98);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  color: white; /* Ensure text stays white when active */
 }
 
-/* Override any default link styling */
-.ctaButton:link,
-.ctaButton:visited,
-.ctaButton:hover,
-.ctaButton:active {
-  color: white;
-  text-decoration: none;
+/* Dark Mode support overrides */
+[data-theme='dark'] .page__li {
+  color: #d1d5db;
 }
 
+[data-theme='dark'] .page__hr {
+  border-bottom-color: #1e293b;
+}
 
+[data-theme='dark'] .page__headerLink {
+  color: #374151;
+}
 
+[data-theme='dark'] .page__headerLink:hover {
+  color: #f79a1e;
+}

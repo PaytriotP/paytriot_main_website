@@ -47,8 +47,12 @@ export default function PostList(props) {
                     {post.excerpt}
                   </ReactMarkdown>
                 </div>
-                <PublishedDate date={post.date} />
-                {/* <ReadMoreButton /> */}
+                <div className={ContentListStyles.contentList__footer}>
+                  <PublishedDate date={post.date} />
+                  <span className={ContentListStyles.contentList__readMore}>
+                    Read Article &rarr;
+                  </span>
+                </div>
               </div>
             </article>
           </li>

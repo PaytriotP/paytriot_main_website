@@ -38,9 +38,9 @@ export default function BlogIndexPage(props: any) {
       <ContentWrapper>
         <div className={ContentListStyles.blogHeader}>
           <h1 className={ContentListStyles.blogHeader__title}>Latest Insights</h1>
-          <p className={ContentListStyles.blogHeader__description}>
-            {pageDescription}
-          </p>
+          {pageContent?.body && (
+            <RichTextPageContent richTextBodyField={pageContent.body} />
+          )}
         </div>
         <PostList
           posts={postSummaries}

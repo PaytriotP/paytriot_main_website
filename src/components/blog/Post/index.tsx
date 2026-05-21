@@ -2,7 +2,7 @@ import PublishedDate from '@/components/blog/Post/PublishedDate';
 import ExternalUrl from '@/components/blog/Post/ExternalUrl';
 import RichTextPageContent from '@/components/blog/RichTextPageContent';
 import Link from 'next/link';
-import MockBlogStyles from '@/styles/MockBlog.module.css';
+import RichTextPageContentStyles from '@/styles/RichTextPageContent.module.css';
 
 export default function Post(props: any) {
   const { post } = props;
@@ -19,33 +19,33 @@ export default function Post(props: any) {
   const readTime = Math.max(1, Math.ceil(wordCount / 200));
 
   return (
-    <article className={MockBlogStyles.articleWrapper}>
+    <article className={RichTextPageContentStyles.page}>
       {/* Dynamic Originally published banner */}
       {post.externalUrl && <ExternalUrl url={post.externalUrl} />}
 
-      <header className={MockBlogStyles.postHeader}>
+      <header className={RichTextPageContentStyles.postHeader}>
         {/* Date */}
-        <span className={MockBlogStyles.postDate}>
+        <span className={RichTextPageContentStyles.postDate}>
           <PublishedDate date={post.date} />
         </span>
 
         {/* Title */}
-        <h1 className={MockBlogStyles.postTitle}>{post.title}</h1>
+        <h1 className={RichTextPageContentStyles.postTitle}>{post.title}</h1>
 
         {/* Author Meta Bar */}
         {post.author && (
-          <div className={MockBlogStyles.metaBar}>
+          <div className={RichTextPageContentStyles.metaBar}>
             {post.author.image?.url && (
-              <div className={MockBlogStyles.authorAvatar}>
+              <div className={RichTextPageContentStyles.authorAvatar}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={post.author.image.url} alt={post.author.name} />
               </div>
             )}
-            <div className={MockBlogStyles.metaInfo}>
-              <span className={MockBlogStyles.authorName}>
+            <div className={RichTextPageContentStyles.metaInfo}>
+              <span className={RichTextPageContentStyles.authorName}>
                 {post.author.name} • Paytriot Insights
               </span>
-              <span className={MockBlogStyles.readTime}>
+              <span className={RichTextPageContentStyles.readTime}>
                 {readTime} min read • {post.author.description || 'Fintech Analyst'}
               </span>
             </div>
@@ -54,12 +54,12 @@ export default function Post(props: any) {
 
         {/* Tags */}
         {post.tags && post.tags.length > 0 && (
-          <div className={MockBlogStyles.tagGroup}>
+          <div className={RichTextPageContentStyles.tagGroup}>
             {post.tags.map((tag: string, index: number) => (
               <span
                 key={tag}
-                className={`${MockBlogStyles.tagPill} ${
-                  index === 0 ? MockBlogStyles.tagPillBrand : ''
+                className={`${RichTextPageContentStyles.tagPill} ${
+                  index === 0 ? RichTextPageContentStyles.tagPillBrand : ''
                 }`}
               >
                 {tag}
@@ -71,10 +71,10 @@ export default function Post(props: any) {
 
       {/* Featured Cover Image */}
       {firstImage && (
-        <div className={MockBlogStyles.heroImageContainer}>
+        <div className={RichTextPageContentStyles.heroImageContainer}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            className={MockBlogStyles.heroImage}
+            className={RichTextPageContentStyles.heroImage}
             src={firstImage.url}
             alt={firstImage.title || post.title}
           />
@@ -82,18 +82,18 @@ export default function Post(props: any) {
       )}
 
       {/* Content Body */}
-      <section className={MockBlogStyles.postContent}>
+      <section className={RichTextPageContentStyles.page__content}>
         <RichTextPageContent richTextBodyField={post.body} renderH2Links={true} />
       </section>
 
       {/* CTA Box */}
-      <div className={MockBlogStyles.ctaBox}>
-        <h3>Ready to accept Crypto Payments?</h3>
+      <div className={RichTextPageContentStyles.ctaSection}>
+        <h2>Ready to accept Crypto Payments?</h2>
         <p>
           Join thousands of UK and European merchants using Paytriot to power their online checkouts. Get set up with a merchant account in 24 hours.
         </p>
         <Link href="/signup-form" passHref legacyBehavior>
-          <a className={MockBlogStyles.ctaButton}>Get Started Now</a>
+          <a className={RichTextPageContentStyles.ctaButton}>Get Started Now</a>
         </Link>
       </div>
     </article>

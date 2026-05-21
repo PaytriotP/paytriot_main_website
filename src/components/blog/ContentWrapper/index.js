@@ -1,6 +1,6 @@
 import ContentWrapperStyles from '@/styles/ContentWrapper.module.css';
 
-export default function ContentWrapper({ children, large }) {
+export default function ContentWrapper({ children, large = false }) {
   return (
     <div
       className={

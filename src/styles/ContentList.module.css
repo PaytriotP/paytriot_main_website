@@ -3,9 +3,9 @@
   padding-inline-start: 0;
   margin-top: 2rem;
   margin-bottom: 2rem;
-  max-width: var(--wrapper-max-width);
+  max-width: 1200px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 2.5rem;
 }
 
@@ -142,6 +142,12 @@
 
 .contentList__post:hover .contentList__readMore svg {
   transform: translateX(4px);
+}
+
+@media (max-width: 1024px) {
+  .contentList {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 640px) {

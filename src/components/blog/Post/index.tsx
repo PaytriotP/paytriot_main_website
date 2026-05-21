@@ -83,7 +83,12 @@ export default function Post(props: any) {
 
       {/* Content Body */}
       <section className={RichTextPageContentStyles.page__content}>
-        <RichTextPageContent richTextBodyField={post.body} renderH2Links={true} />
+        <RichTextPageContent
+          richTextBodyField={post.body}
+          renderH2Links={true}
+          omitFirstImage={true}
+          firstImageId={firstImage?.sys?.id}
+        />
       </section>
 
       {/* CTA Box */}

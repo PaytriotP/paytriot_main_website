@@ -29,7 +29,7 @@ const DynamicCodeBlock = dynamic(() => import('./CodeBlock'));
 const DynamicVideoEmbed = dynamic(() => import('./VideoEmbed'));
 
 export function getRichTextRenderOptions(links, options) {
-  const { renderH2Links, renderNativeImg } = options;
+  const { renderH2Links, renderNativeImg, omitFirstImage, firstImageId } = options;
 
   const assetBlockMap = new Map(
     links?.assets?.block?.map(asset => [asset.sys.id, asset])
@@ -171,9 +171,14 @@ export function getRichTextRenderOptions(links, options) {
         }
       },
       [BLOCKS.EMBEDDED_ASSET]: (node, next) => {
-        const { title, url, height, width, description } = assetBlockMap.get(
-          node.data.target.sys.id
-        );
+        const assetId = node.data.target.sys.id;
+        if (omitFirstImage && assetId === firstImageId) {
+          return null;
+        }
+
+        const asset = assetBlockMap.get(assetId);
+        if (!asset) return null;
+        const { title, url, height, width, description } = asset;
 
         if (renderNativeImg) {
           return (
@@ -206,13 +211,13 @@ export function getRichTextRenderOptions(links, options) {
 }
 
 export default function RichTextPageContent(props) {
-  const { richTextBodyField, renderH2Links } = props;
+  const { richTextBodyField, renderH2Links, omitFirstImage, firstImageId } = props;
 
   return (
     <div className={RichTextPageContentStyles.page__content}>
       {documentToReactComponents(
         richTextBodyField.json,
-        getRichTextRenderOptions(richTextBodyField.links, { renderH2Links })
+        getRichTextRenderOptions(richTextBodyField.links, { renderH2Links, omitFirstImage, firstImageId })
       )}
     </div>
   );

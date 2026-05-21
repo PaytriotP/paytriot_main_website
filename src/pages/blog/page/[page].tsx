@@ -35,7 +35,7 @@ export default function BlogIndexPage(props: any) {
         <HeroBanner data={pageContent?.heroBanner} />
       )}
 
-      <ContentWrapper>
+      <ContentWrapper large>
         <div className={ContentListStyles.blogHeader}>
           <h1 className={ContentListStyles.blogHeader__title}>Latest Insights</h1>
           {pageContent?.body && (

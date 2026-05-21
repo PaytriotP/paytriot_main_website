@@ -16,18 +16,31 @@ export default function PostList(props) {
   return (
     <>
       <ol className={ContentListStyles.contentList}>
-        {posts.map(post => (
-          <li key={post.sys.id}>
-            <article className={ContentListStyles.contentList__post}>
-              <div className={ContentListStyles.contentList__thumbnail}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/images/img-logo.svg"
-                  alt="Paytriot Logo"
-                  className={ContentListStyles.contentList__thumbnailImg}
-                />
-              </div>
-              <div className={ContentListStyles.contentList__content}>
+         {posts.map(post => {
+            const bodyAssets = post.body?.links?.assets?.block || [];
+            const firstImage = bodyAssets.find(asset => asset && asset.url);
+
+            return (
+              <li key={post.sys.id}>
+                <article className={ContentListStyles.contentList__post}>
+                  <div className={ContentListStyles.contentList__thumbnail}>
+                    {firstImage ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        src={firstImage.url}
+                        alt={firstImage.title || post.title}
+                        className={ContentListStyles.contentList__thumbnailImgCover}
+                      />
+                    ) : (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        src="/images/img-logo.svg"
+                        alt="Paytriot Logo"
+                        className={ContentListStyles.contentList__thumbnailImgLogo}
+                      />
+                    )}
+                  </div>
+                  <div className={ContentListStyles.contentList__content}>
                 {post.tags !== null && <Tags tags={post.tags} limit={3} />}
                 <Link
                   href={`/blog/${post.slug}`}
@@ -56,7 +69,8 @@ export default function PostList(props) {
               </div>
             </article>
           </li>
-        ))}
+        );
+      })}
       </ol>
 
       <Pagination

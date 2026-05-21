@@ -8,6 +8,8 @@ import ContentWrapper from '@/components/blog/ContentWrapper';
 import PageContentWrapper from '@/components/blog/PageContentWrapper';
 import HeroBanner from '@/components/blog/HeroBanner';
 
+import ContentListStyles from '@/styles/ContentList.module.css';
+
 export default function BlogIndex(props: any) {
   const { postSummaries, currentPage, totalPages, pageContent, preview } =
     props;
@@ -19,7 +21,7 @@ export default function BlogIndex(props: any) {
   const pageTitle = pageContent ? pageContent.title : 'Paytriot Blog';
   const pageDescription = pageContent
     ? pageContent.description
-    : 'Articles | blog starter';
+    : 'Sectors that Paytriot works with and the services we can provide them. Find out how crypto payment rails are shaping the future of global transactions.';
 
   return (
     <MainLayout preview={preview}>
@@ -34,11 +36,12 @@ export default function BlogIndex(props: any) {
       )}
 
       <ContentWrapper>
-        {pageContent?.body && (
-          <PageContentWrapper>
-            <RichTextPageContent richTextBodyField={pageContent.body} />
-          </PageContentWrapper>
-        )}
+        <div className={ContentListStyles.blogHeader}>
+          <h1 className={ContentListStyles.blogHeader__title}>Latest Insights</h1>
+          <p className={ContentListStyles.blogHeader__description}>
+            {pageDescription}
+          </p>
+        </div>
         <PostList
           posts={postSummaries}
           totalPages={totalPages}

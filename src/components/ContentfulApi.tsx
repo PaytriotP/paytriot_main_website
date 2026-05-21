@@ -477,6 +477,22 @@ export default class ContentfulApi {
             slug
             excerpt
             tags
+            body {
+              links {
+                assets {
+                  block {
+                    sys {
+                      id
+                    }
+                    url
+                    title
+                    width
+                    height
+                    description
+                  }
+                }
+              }
+            }
           }
         }
       }`;

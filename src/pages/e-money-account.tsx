@@ -1,4 +1,3 @@
-import dynamic from 'next/dynamic';
 import LottiePlayer from '@/components/LottiePlayer';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -14,11 +13,6 @@ import iconCurrencySvg from 'public/images/icon-currency.svg';
 import iconRatesSvg from 'public/images/icon-rates.svg';
 import iconWalletSvg from 'public/images/icon-wallet.svg';
 
-const DynamicLottiePlayer = dynamic(
-  () => import('@/components/LottiePlayer'), 
-  { ssr: false }
-);
-
 export default function BankAccount() {
   return (
     <>
@@ -26,7 +20,7 @@ export default function BankAccount() {
         {/* Required meta tags */}
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="Paytriot Payments Bank Account"/>
+        <meta name="description" content="Paytriot Payments Bank Account" />
 
         <title>E-Money Account | Paytriot</title>
       </Head>

@@ -1,7 +1,7 @@
-// component/ lottiePlayer.tsx
-
+import dynamic from 'next/dynamic';
 import { CSSProperties } from 'react';
-import Lottie from 'react-lottie';
+
+const Lottie = dynamic(() => import('react-lottie'), { ssr: false });
 
 interface LottiePlayerProps {
   animationData: any;
@@ -11,7 +11,7 @@ interface LottiePlayerProps {
 }
 
 export default function LottiePlayer(Props: LottiePlayerProps) {
-  const { animationData, style } = Props;
+  const { animationData, style, height, width } = Props;
 
   const defaultOptions = {
     loop: true,
@@ -22,5 +22,5 @@ export default function LottiePlayer(Props: LottiePlayerProps) {
     }
   };
 
-  return <Lottie options={defaultOptions} style={style} />;
+  return <Lottie options={defaultOptions} style={style} height={height} width={width} />;
 }

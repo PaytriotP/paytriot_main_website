@@ -55,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       insertDataOption: 'INSERT_ROWS',
       requestBody: {
         // SECURITY: passwords still stored in plain text here (existing behaviour). See review notes.
-        values: [[formattedDate, cell(fullName), cell(phoneNumber), cell(email), cell(website), cell(password), cell(repeatPassword), ip]],
+        values: [[formattedDate, cell(fullName), phoneNumber /* validated digits only; cell() would add a visible ' before +44 */, cell(email), cell(website), cell(password), cell(repeatPassword), ip]],
       },
     });
 

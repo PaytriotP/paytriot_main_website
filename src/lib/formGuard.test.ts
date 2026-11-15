@@ -9,8 +9,25 @@ test('the spam record that got through is now rejected', async () => {
   expect(await emailReal('spam@test.com')).toBe(false);
 });
 
+test('well-formed but obviously fake data is rejected', () => {
+  expect(isName('xx')).toBe(false);
+  expect(isPhone('+448888888888')).toBe(false);
+  expect(isEmail('x@x.com')).toBe(false);
+  expect(isWebsite('www.test.com')).toBe(false);
+  expect(isWebsite('https://yourwebsite.com/')).toBe(false);
+  expect(isName('asdfgh')).toBe(false);
+  expect(isName('test user')).toBe(false);
+  expect(isName('kjhgfd')).toBe(false);
+  expect(isEmail('asdf@gmail.com')).toBe(false);
+  expect(isEmail('test@gmail.com')).toBe(false);
+});
+
 test('real data passes', () => {
   expect(isName('John Smith')).toBe(true);
+  expect(isName('Mary-Ann O\'Neil')).toBe(true);
+  expect(isName('Lynn Smyth')).toBe(true);
+  expect(isName('Ng Wei')).toBe(true);
+  expect(isEmail('john.smith@gmail.com')).toBe(true);
   expect(isPhone('+44 (0)20 1234 5678')).toBe(true);
   expect(isEmail('a.b@paytriot.co.uk')).toBe(true);
   expect(isWebsite('https://www.paytriot.co.uk/x')).toBe(true);

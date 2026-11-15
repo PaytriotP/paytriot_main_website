@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { Input, Button, Loading } from "@nextui-org/react"
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { useTheme } from 'next-themes';
+import Turnstile, { turnstileToken, resetTurnstile } from '../components/Turnstile';
 
 
 
@@ -15,6 +16,7 @@ type FormValues = {
   password: string
   repeatPassword: string
   phoneNumber: string
+  hp?: string // honeypot, must stay empty
 }
 
 export default function SignupForm() {
@@ -92,6 +94,8 @@ const onSubmit = async (data: FormValues) => {
         website: data.website,
         password: data.password,
         repeatPassword: data.repeatPassword,
+        hp: data.hp,
+        turnstileToken: turnstileToken(),
       }),
     });
 
@@ -145,6 +149,7 @@ const onSubmit = async (data: FormValues) => {
   } catch (error: any) {
     setSubmissionError(error.message);
   } finally {
+    resetTurnstile(); // tokens are single-use
     setIsSubmitting(false);
   }
 };
@@ -233,7 +238,7 @@ const onSubmit = async (data: FormValues) => {
                {...register("phoneNumber", {
                  required: "Phone number is required",
                  pattern: {
-                   value: /^\+\d{5,15}$/,
+                   value: /^\+\d{7,15}$/,
                    message: "Phone number must start with + and contain only digits (no spaces or dashes)",
                  },
                  validate: (value) => {
@@ -335,6 +340,17 @@ const onSubmit = async (data: FormValues) => {
                 {submissionError}
               </div>
             )}
+
+            {/* Honeypot: hidden from people and screen readers, bots fill it */}
+            <input
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              style={{ position: "absolute", left: "-9999px", opacity: 0 }}
+              {...register("hp")}
+            />
+            <Turnstile />
 
             <div className="d-flex flex-column align-items-center">
               <Button rounded size="xl" color="warning" type="submit" disabled={isSubmitting} className="w-100 mb-4">

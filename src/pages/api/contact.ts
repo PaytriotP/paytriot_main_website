@@ -2,7 +2,7 @@ import sgMail from '@sendgrid/mail';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { google } from 'googleapis';
 import { isName, isPhone, isEmail, isWebsite } from '../../lib/validate';
-import { clean, esc, cell, clientIp, sameOrigin, limited, humanOk, emailReal, linkCount } from '../../lib/formGuard';
+import { clean, esc, cell, clientIp, sameOrigin, limited, bodyHasAttack, humanOk, emailReal, linkCount } from '../../lib/formGuard';
 
 export const config = { api: { bodyParser: { sizeLimit: '20kb' } } };
 
@@ -34,6 +34,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   };
 
   if (clean(b.hp)) return res.status(200).json({ message: 'Message sent successfully' }); // honeypot
+  if (bodyHasAttack(b)) {
+    console.warn('contact attack payload', ip, JSON.stringify(b).slice(0, 500));
+    return bad();
+  }
   if (limited(`contact:${ip}`)) return res.status(429).json({ message: 'Too many requests. Please try again later.' });
   if (!(await humanOk(b.turnstileToken, ip))) return bad('Verification failed. Please refresh and try again.');
 
@@ -100,7 +104,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         range: 'Sheet1!A:H', // H = sender IP, to trace spam
         valueInputOption: 'RAW',
         insertDataOption: 'INSERT_ROWS',
-        requestBody: { values: [[new Date().toISOString(), ...row, ip]] },
+        requestBody: { values: [[new Date().toISOString(), ...row, cell(ip)]] },
       });
     } catch (sheetErr) {
       console.error('Google Sheets error:', sheetErr);

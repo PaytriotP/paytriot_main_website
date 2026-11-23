@@ -17,16 +17,20 @@ export const esc = (s: string) =>
 // Stop spreadsheet formula injection if a sheet is ever exported/opened in Excel.
 export const cell = (v: string) => (/^[=+\-@]/.test(v) ? `'${v}` : v);
 
+// Vercel sets x-real-ip itself; a client-sent x-forwarded-for value could otherwise spoof the IP.
 export function clientIp(req: NextApiRequest): string {
+  const real = req.headers['x-real-ip'];
+  if (typeof real === 'string' && real) return real.trim();
   const xff = req.headers['x-forwarded-for'];
   const first = (Array.isArray(xff) ? xff[0] : xff || '').split(',')[0].trim();
   return first || req.socket.remoteAddress || 'unknown';
 }
 
-// Browser posts only come from our own site. (Forgeable by scripts; this is CSRF hygiene, not bot defence.)
+// Browser posts only come from our own site, as JSON. Browsers always send Origin on POST, so a
+// missing one means a script. (Scripts can forge both; this is CSRF hygiene, Turnstile is the bot defence.)
 export function sameOrigin(req: NextApiRequest): boolean {
   const origin = req.headers.origin;
-  if (!origin) return true;
+  if (!origin || !String(req.headers['content-type']).startsWith('application/json')) return false;
   try {
     return new URL(origin).host === req.headers.host;
   } catch {
@@ -47,12 +51,12 @@ export function limited(ip: string, max = 5, windowMs = 10 * 60 * 1000): boolean
 }
 
 // Cloudflare Turnstile. This is the check that stops scripts posting straight to the API.
-// ponytail: fails open only while TURNSTILE_SECRET_KEY is unset, so the site keeps working until keys are added.
+// Fails closed in production: if the key ever goes missing, forms stop rather than open up to bots.
 export async function humanOk(token: unknown, ip: string): Promise<boolean> {
   const secret = process.env.TURNSTILE_SECRET_KEY;
   if (!secret) {
-    console.warn('TURNSTILE_SECRET_KEY not set: bot check is NOT enforced');
-    return true;
+    console.error('TURNSTILE_SECRET_KEY not set: bot check is NOT enforced');
+    return process.env.VERCEL_ENV !== 'production';
   }
   if (typeof token !== 'string' || !token) return false;
   try {
@@ -60,7 +64,9 @@ export async function humanOk(token: unknown, ip: string): Promise<boolean> {
       method: 'POST',
       body: new URLSearchParams({ secret, response: token, remoteip: ip }),
     });
-    return !!(await r.json()).success;
+    const out = await r.json();
+    // Token must have been solved on our own site, not harvested from another one.
+    return !!out.success && /(^|\.)paytriot\.co\.uk$/.test(out.hostname || '');
   } catch {
     return false;
   }
@@ -88,3 +94,23 @@ export async function emailReal(email: string): Promise<boolean> {
 }
 
 export const linkCount = (s: string) => (s.match(/https?:\/\/|www\./gi) || []).length;
+
+// Known attack payloads: SQL injection timing/union probes, HTML/script injection, template
+// injection, path traversal. Real enquiries never contain these, so any hit rejects the whole post.
+const ATTACK = [
+  /<[a-z!\/?]/i, // any HTML tag: <svg, <script, <!--, </p  ("fees < 2%" still fine)
+  /\bon(load|error|focus|blur|click|begin|toggle|start|mouse\w*|key\w*|pointer\w*|animation\w*)\s*=/i,
+  /javascript\s*:|vbscript\s*:|data\s*:\s*text\/html/i,
+  /\b(sleep|pg_sleep|benchmark)\s*\(|waitfor\s+delay|\bunion\b.{0,20}\bselect\b|information_schema|\bxp_cmdshell\b/i,
+  /'\s*(or|and)\s+('|\(|\d+\s*[=<>])|'\s*;|'\s*\|\||'\s*--|'\s*#/i, // x' OR 1=1, x';, x'||, x'--, x'#
+  /\$\{|\{\{|<%|\$\(/, // ${...}, {{...}}, <%...%>, $(...)
+  /\.\.[\/\\]|%2e%2e|%00|\u0000/i,
+];
+export const isAttack = (s: string) => ATTACK.some(r => r.test(s));
+
+// Every string anywhere in the posted body, so fields we don't read are checked too.
+export function bodyHasAttack(v: unknown, depth = 0): boolean {
+  if (typeof v === 'string') return isAttack(v);
+  if (depth > 3 || !v || typeof v !== 'object') return false;
+  return Object.entries(v).some(([k, x]) => isAttack(k) || bodyHasAttack(x, depth + 1));
+}

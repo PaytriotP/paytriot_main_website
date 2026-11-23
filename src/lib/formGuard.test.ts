@@ -57,3 +57,13 @@ test('contact form SQL injection probes are rejected', () => {
   expect(isEmail("QA'")).toBe(false);
   expect(isName("Mary-Ann O'Neil")).toBe(true);
 });
+
+test('22 Nov 2026 scanner rows (sqlmap, SSRF callback, XSS) are rejected', () => {
+  expect(isName("x' AND SLEEP(5)#")).toBe(false);
+  expect(isName("x' AND (SELECT SLEEP(5))-- -")).toBe(false);
+  expect(isName('ptx7"><svg onload=alert(1)>')).toBe(false);
+  expect(isName('QA Probe')).toBe(false);
+  expect(isWebsite('http://103.145.60.218:18088/i13650c1795387273')).toBe(false);
+  expect(isEmail('not-an-email')).toBe(false);
+  expect(isPhone('1')).toBe(false);
+});

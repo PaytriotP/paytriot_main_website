@@ -207,7 +207,7 @@ import type React from 'react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styles from '../../styles/contact-form.module.css';
-import Turnstile, { turnstileToken, resetTurnstile } from '../Turnstile';
+import Turnstile, { turnstileOn, resetTurnstile } from '../Turnstile';
 
 interface FormData {
   // Quote fields
@@ -258,6 +258,7 @@ const ContactForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const [token, setToken] = useState(''); // Turnstile
   const [formData, setFormData] = useState<FormData>(initialFormData);
 
   const {
@@ -307,13 +308,14 @@ const ContactForm: React.FC = () => {
     setLoading(true);
     setSuccess('');
     setError('');
+    setToken('');
 
     try {
       // Server builds the email from these fields; it no longer trusts a client-made subject/body.
       const payload = {
         type: activeTab,
         ...data,
-        turnstileToken: turnstileToken()
+        turnstileToken: token
       };
       const endpoint = '/api/contact';
 
@@ -353,13 +355,19 @@ const ContactForm: React.FC = () => {
         }
       } else {
         const body = await res.json().catch(() => ({}));
-        setError(body.message || 'Oops! Something went wrong.');
+        setError(
+          body.message ||
+            ([403, 429].includes(res.status)
+              ? 'Our security check blocked this request. Please refresh the page and try again.'
+              : 'Something went wrong sending your message. Please try again, or email info@paytriot.co.uk.')
+        );
       }
     } catch (err) {
-      setError('Oops! Something went wrong.');
+      setError('Could not reach our server. Check your connection and try again.');
     } finally {
       setLoading(false);
       resetTurnstile(); // tokens are single-use
+      setToken('');
     }
   };
 
@@ -552,11 +560,12 @@ const ContactForm: React.FC = () => {
                 ></textarea>
               </div>
 
+              <Turnstile onToken={setToken} />
               <div className={styles['button-group']}>
                 <button
                   type="submit"
                   className={styles['submit-button']}
-                  disabled={loading}
+                  disabled={loading || (turnstileOn && !token)}
                 >
                   {loading ? 'Submitting...' : 'Finish & Request My Setup Call'}
                 </button>
@@ -676,11 +685,12 @@ const ContactForm: React.FC = () => {
               )}
             </div>
 
+            <Turnstile onToken={setToken} />
             <div className={styles['button-group']}>
               <button
                 type="submit"
                 className={`${styles['submit-button']} ${styles.fullWidth}`}
-                disabled={loading}
+                disabled={loading || (turnstileOn && !token)}
               >
                 {loading ? 'Submitting...' : 'Submit Request'}
               </button>
@@ -696,7 +706,12 @@ const ContactForm: React.FC = () => {
           style={{ position: 'absolute', left: '-9999px' }}
           {...register('hp')}
         />
-        <Turnstile />
+
+        {turnstileOn && !token && !loading && (
+          <p className={styles['optional-text']} style={{ marginTop: 8 }}>
+            Complete the &quot;Verify you are human&quot; check above to enable the button.
+          </p>
+        )}
         {loading && (
           <div className={styles['loading-overlay']}>
             <div className={styles['loading-spinner']}></div>

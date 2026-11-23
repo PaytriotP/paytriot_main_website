@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { Input, Button, Loading } from "@nextui-org/react"
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { useTheme } from 'next-themes';
-import Turnstile, { turnstileToken, resetTurnstile } from '../components/Turnstile';
+import Turnstile, { turnstileOn, resetTurnstile } from '../components/Turnstile';
 
 
 
@@ -22,6 +22,7 @@ type FormValues = {
 export default function SignupForm() {
   const { theme } = useTheme();
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [token, setToken] = useState('') // Turnstile
   const [isSuccess, setIsSuccess] = useState(false)
   const [submissionError, setSubmissionError] = useState<string | null>(null)
   const [passwordStrength, setPasswordStrength] = useState(0)
@@ -95,7 +96,7 @@ const onSubmit = async (data: FormValues) => {
         password: data.password,
         repeatPassword: data.repeatPassword,
         hp: data.hp,
-        turnstileToken: turnstileToken(),
+        turnstileToken: token,
       }),
     });
 
@@ -142,14 +143,16 @@ const onSubmit = async (data: FormValues) => {
         window.location.href = "/";
       }, 5000);
     } else {
-      const resData = await response.json();
-      throw new Error(resData.message || 'Failed to submit form');
+      // Firewall/challenge pages are HTML, not JSON: show a useful message instead of a parse error.
+      const resData = await response.json().catch(() => ({}));
+      throw new Error(resData.message || 'Our security check blocked this request. Please refresh the page and try again.');
     }
 
   } catch (error: any) {
     setSubmissionError(error.message);
   } finally {
     resetTurnstile(); // tokens are single-use
+    setToken('');
     setIsSubmitting(false);
   }
 };
@@ -350,10 +353,10 @@ const onSubmit = async (data: FormValues) => {
               style={{ position: "absolute", left: "-9999px", opacity: 0 }}
               {...register("hp")}
             />
-            <Turnstile />
+            <Turnstile onToken={setToken} />
 
             <div className="d-flex flex-column align-items-center">
-              <Button rounded size="xl" color="warning" type="submit" disabled={isSubmitting} className="w-100 mb-4">
+              <Button rounded size="xl" color="warning" type="submit" disabled={isSubmitting || (turnstileOn && !token)} className="w-100 mb-4">
                 {!isSubmitting ? "Sign Up" : <Loading color="currentColor" size="md" />}
               </Button>
 

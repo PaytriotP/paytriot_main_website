@@ -48,3 +48,12 @@ test('rate limit trips after 5, bot check fails closed once keyed', async () => 
   expect(await humanOk('', '1.1.1.1')).toBe(false);
   delete process.env.TURNSTILE_SECRET_KEY;
 });
+
+test('contact form SQL injection probes are rejected', () => {
+  for (const n of [
+    "QA';WAITFOR DELAY '0:0:5'--", "QA'", "QA' AND '1'='1", "QA' AND SLEEP(5)-- -", "QA'||pg_sleep(5)||'", 'QA',
+  ]) expect(isName(n)).toBe(false);
+  expect(isPhone('440000000000')).toBe(false);
+  expect(isEmail("QA'")).toBe(false);
+  expect(isName("Mary-Ann O'Neil")).toBe(true);
+});

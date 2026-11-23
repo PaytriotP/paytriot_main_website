@@ -207,6 +207,7 @@ import type React from 'react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styles from '../../styles/contact-form.module.css';
+import Turnstile, { turnstileToken, resetTurnstile } from '../Turnstile';
 
 interface FormData {
   // Quote fields
@@ -223,6 +224,7 @@ interface FormData {
   issueType: string;
   priority: string;
   message: string;
+  hp?: string; // honeypot, must stay empty
 }
 
 // Extend Window interface for gtag
@@ -307,60 +309,14 @@ const ContactForm: React.FC = () => {
     setError('');
 
     try {
-      let payload: any = {};
-      let emailSubject = '';
-      let emailBody = '';
-      const endpoint = '/api/contact'; // This endpoint will handle sending the email
+      // Server builds the email from these fields; it no longer trusts a client-made subject/body.
+      const payload = {
+        type: activeTab,
+        ...data,
+        turnstileToken: turnstileToken()
+      };
+      const endpoint = '/api/contact';
 
-      if (activeTab === 'quote') {
-        emailSubject = 'New Enquiry for Paytriot Payments - Setup Call';
-        emailBody = `
-          New customer enquiry for a setup call:
-          
-          Name: ${data.firstName}
-          Email: ${data.email}
-          Phone: ${data.phone}
-          Website: ${data.website || 'N/A'}
-          E-commerce Platform: ${
-            data.ecommercePlatform.length > 0
-              ? data.ecommercePlatform.join(', ')
-              : 'N/A'
-          }
-          ${
-            data.ecommercePlatform.includes('Other') && data.otherPlatformValue
-              ? `Other Platform Specified: ${data.otherPlatformValue}`
-              : ''
-          }
-          Additional Information: ${data.additionalInfo || 'N/A'}
-        `;
-
-        payload = {
-          type: 'quote',
-          emailSubject: emailSubject,
-          emailBody: emailBody,
-          ...data
-        };
-      } else {
-        emailSubject = `New Support Request from ${data.supportName} - ${data.issueType}`;
-        emailBody = `
-          New support request:
-
-          Name: ${data.supportName}
-          Email: ${data.supportEmail}
-          Issue Type: ${data.issueType}
-          Priority: ${data.priority}
-          Message: ${data.message}
-        `;
-
-        payload = {
-          type: 'support',
-          emailSubject: emailSubject,
-          emailBody: emailBody,
-          ...data
-        };
-      }
-
-      // Send form data to your API endpoint
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -396,12 +352,14 @@ const ContactForm: React.FC = () => {
           sessionStorage.setItem('hasTrackedContactConversion', 'true');
         }
       } else {
-        setError('Oops! Something went wrong.');
+        const body = await res.json().catch(() => ({}));
+        setError(body.message || 'Oops! Something went wrong.');
       }
     } catch (err) {
       setError('Oops! Something went wrong.');
     } finally {
       setLoading(false);
+      resetTurnstile(); // tokens are single-use
     }
   };
 
@@ -730,6 +688,15 @@ const ContactForm: React.FC = () => {
           </>
         )}
 
+        <input
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          style={{ position: 'absolute', left: '-9999px' }}
+          {...register('hp')}
+        />
+        <Turnstile />
         {loading && (
           <div className={styles['loading-overlay']}>
             <div className={styles['loading-spinner']}></div>

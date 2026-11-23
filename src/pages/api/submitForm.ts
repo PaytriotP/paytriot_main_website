@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const b = req.body && typeof req.body === 'object' ? req.body : {};
   const ip = clientIp(req);
   const bad = (m = 'Please check your details and try again.') => {
-    console.warn('submitForm rejected', ip, req.headers['user-agent']); // shows in Vercel logs
+    console.warn('submitForm rejected:', m, ip, req.headers['user-agent']); // shows in Vercel logs
     return res.status(400).json({ message: m });
   };
 
@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { password: _p, repeatPassword: _r, ...scan } = b; // passwords may legitimately contain <, ${, ' etc.
   if (bodyHasAttack(scan)) {
     console.warn('submitForm attack payload', ip, JSON.stringify(scan).slice(0, 500));
-    return bad();
+    return bad('Please remove symbols such as < > { } ; = from your details and try again.');
   }
   if (limited(ip)) return res.status(429).json({ message: 'Too many requests. Please try again later.' });
   if (!(await humanOk(b.turnstileToken, ip))) return bad('Verification failed. Please refresh and try again.');
@@ -42,8 +42,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const password = clean(b.password, 128);
   const repeatPassword = clean(b.repeatPassword, 128);
 
-  if (!isName(fullName) || !isPhone(phoneNumber) || !isEmail(email) || !isWebsite(website)) return bad();
-  if (password.length < 8 || password !== repeatPassword) return bad();
+  if (!isName(fullName)) return bad('Please enter your real full name (letters only, e.g. Jane Smith).');
+  if (!isPhone(phoneNumber)) return bad('Please enter a valid phone number with country code, e.g. +44 7700 900123.');
+  if (!isEmail(email)) return bad('Please enter a valid email address.');
+  if (!isWebsite(website)) return bad('Please enter your business website, e.g. www.yourshop.co.uk.');
+  if (password.length < 8 || password !== repeatPassword) return bad('Passwords must match and be at least 8 characters.');
   if (!(await emailReal(email))) return bad('Please enter a real email address.');
 
   try {

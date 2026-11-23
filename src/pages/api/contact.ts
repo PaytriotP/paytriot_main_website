@@ -1,276 +1,118 @@
-// import sgMail from '@sendgrid/mail';
-// import { NextApiRequest, NextApiResponse } from 'next';
-// import { Twilio } from 'twilio';
+import sgMail from '@sendgrid/mail';
+import { NextApiRequest, NextApiResponse } from 'next';
+import { google } from 'googleapis';
+import { isName, isPhone, isEmail, isWebsite } from '../../lib/validate';
+import { clean, esc, cell, clientIp, sameOrigin, limited, bodyHasAttack, humanOk, emailReal, linkCount } from '../../lib/formGuard';
 
-// export default async function handler(
-//   req: NextApiRequest,
-//   res: NextApiResponse
-// ) {
-//   if (req.method !== 'POST') {
-//     res.status(405).end();
-//     return;
-//   }
+export const config = { api: { bodyParser: { sizeLimit: '20kb' } } };
 
-//   const { name, email, phone, website, message, subject } = req.body;
-
-//   sgMail.setApiKey(`${process.env.Bearer_Token}`);
-
-
-//   const msg = {
-//     to: process.env.TWILIO_TO_EMAIL || '',
-//     from: process.env.TWILIO_FROM_EMAIL || '',
-//     subject: `New Contact Form Submission ${subject} from ${name}`,
-//     html: `
-//       <p><strong>Subject:</strong> ${subject}</p>
-//       <p>Name: ${name}</p>
-//       <p>Email: ${email}</p>
-//       <p>Website: ${website}</p>
-//       <p>Phone: ${phone}</p>
-//       <p>Message: ${message}</p>
-//     `
-//   };
-
-//   try {
-//     await sgMail.send(msg);
-
-//     // Only enable this if you need SMS alersts
-//     // await twilio.messages.create({
-//     //   body: `New Contact Form Submission from ${name}: ${message}`,
-//     //   from: process.env.FROM_PHONE_NUMBER || '',
-//     //   to: process.env.TO_PHONE_NUMBER || ''
-//     // });
-
-//     res.status(200).json({ message: 'Message sent successfully' });
-//   } catch (err) {
-//     res.status(500).json({ message: 'Error sending message' });
-//   }
-// }
-
-// import sgMail from '@sendgrid/mail';
-
-// import { NextApiRequest, NextApiResponse } from 'next';
-
-// import { Twilio } from 'twilio'; // Keep if you intend to use Twilio
-
-
-
-// export default async function handler(
-
-//   req: NextApiRequest,
-
-//   res: NextApiResponse
-
-// ) {
-
-//   if (req.method !== 'POST') {
-
-//     res.status(405).end();
-
-//     return;
-
-//   }
-
-
-
-//   // Destructure the new fields sent from the frontend
-
-//   const { type, emailSubject, emailBody, ...formData } = req.body;
-
-
-
-//   sgMail.setApiKey(`${process.env.Bearer_Token}`);
-
-
-
-//   // Construct the email message for SendGrid
-
-//   const msg = {
-
-//     to: process.env.TWILIO_TO_EMAIL || 'info@paytriot.co.uk', // Ensure this is your receiving email
-
-//     from: process.env.TWILIO_FROM_EMAIL || 'info@paytriot.co.uk', // Ensure this is a verified SendGrid sender
-
-//     subject: emailSubject, // Use the subject passed from the frontend
-
-//     html: `<p style="white-space: pre-wrap;">${emailBody}</p>` // Use the body passed from the frontend, pre-wrap to preserve formatting
-
-//   };
-
-
-
-//   try {
-
-//     await sgMail.send(msg);
-
-
-
-//     // Only enable this if you need SMS alerts and have Twilio configured
-
-//     // const twilioClient = new Twilio(
-
-//     //   process.env.TWILIO_ACCOUNT_SID,
-
-//     //   process.env.TWILIO_AUTH_TOKEN
-
-//     // );
-
-//     // if (type === 'quote' && formData.phone) {
-
-//     //   await twilioClient.messages.create({
-
-//     //     body: `New Quote Request from ${formData.firstName}: Phone: ${formData.phone}, Email: ${formData.email}`,
-
-//     //     from: process.env.FROM_PHONE_NUMBER || '', // Your Twilio phone number
-
-//     //     to: process.env.TO_PHONE_NUMBER || '' // The recipient phone number for SMS alerts
-
-//     //   });
-
-//     // } else if (type === 'support' && formData.supportName && formData.supportEmail) {
-
-//     //   await twilioClient.messages.create({
-
-//     //     body: `New Support Request from ${formData.supportName}: Issue: ${formData.issueType}, Priority: ${formData.priority}`,
-
-//     //     from: process.env.FROM_PHONE_NUMBER || '',
-
-//     //     to: process.env.TO_PHONE_NUMBER || ''
-
-//     //   });
-
-//     // }
-
-
-
-//     res.status(200).json({ message: 'Message sent successfully' });
-
-//   } catch (err: any) {
-
-//     console.error('Error sending message:', err.response?.body || err);
-
-//     res.status(500).json({ message: 'Error sending message', error: err.message });
-
-//   }
-
-// }
-
-import sgMail from "@sendgrid/mail";
-import { NextApiRequest, NextApiResponse } from "next";
-import { google } from "googleapis";
-
-// Load service account credentials from env
 const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS as string);
 const sheetsAuth = new google.auth.GoogleAuth({
-  credentials,
-  scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+  credentials,
+  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
+const PLATFORMS = ['WooCommerce', 'Shopify', 'Magento', 'PrestaShop', 'EKM', 'None', 'Other'];
+const ISSUES = ['onboarding', 'technical', 'billing', 'other'];
+const PRIORITIES = ['low', 'medium', 'high'];
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // 1. Check for POST Method
-  if (req.method !== "POST") {
-    res.setHeader("Allow", ["POST"]);
-    return res.status(405).end(`Method ${req.method} Not Allowed`);
-  }
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', ['POST']);
+    return res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
+  // SendGrid event webhook posts arrays here; acknowledge and do nothing.
+  if (Array.isArray(req.body)) return res.status(200).json({ status: 'received' });
 
-  if (Array.isArray(req.body)) {
-    console.log(`SendGrid Webhook event detected. Responding immediately with 200 OK.`);
+  if (!sameOrigin(req)) return res.status(403).json({ message: 'Forbidden' });
 
-    return res.status(200).json({ status: "received" });
-  }
+  const b = req.body && typeof req.body === 'object' ? req.body : {};
+  const ip = clientIp(req);
+  const bad = (m = 'Please check your details and try again.') => {
+    console.warn('contact rejected', ip, req.headers['user-agent']); // shows in Vercel logs
+    return res.status(400).json({ message: m });
+  };
 
-  // --- START: Original Form Submission Logic ---
+  if (clean(b.hp)) return res.status(200).json({ message: 'Message sent successfully' }); // honeypot
+  if (bodyHasAttack(b)) {
+    console.warn('contact attack payload', ip, JSON.stringify(b).slice(0, 500));
+    return bad();
+  }
+  if (limited(`contact:${ip}`)) return res.status(429).json({ message: 'Too many requests. Please try again later.' });
+  if (!(await humanOk(b.turnstileToken, ip))) return bad('Verification failed. Please refresh and try again.');
 
-  const {
-    emailSubject,
-    emailBody,
-    type, // 'quote' or 'support'
-    firstName,
-    phone,
-    email,
-    website,
-    ecommercePlatform,
-    otherPlatformValue,
-    additionalInfo,
-    supportName,
-    supportEmail,
-    message,
-  } = req.body;
+  // Subject and body are built here from validated fields. The browser used to send ready-made
+  // HTML, which let anyone mail arbitrary content to info@ from our SendGrid sender.
+  let row: string[];
+  let subject: string;
+  let lines: [string, string][];
 
-  // 3. Determine values for Sheets
-  let fullName = firstName || supportName || "";
-  let phoneNumber = phone || "";
-  let userEmail = email || supportEmail || "";
-  let userWebsite = website || "";
-  let platforms: string[] = [];
+  if (b.type === 'quote') {
+    const name = clean(b.firstName, 80);
+    const phone = clean(b.phone, 25);
+    const email = clean(b.email, 254).toLowerCase();
+    const website = clean(b.website, 200);
+    const platforms = (Array.isArray(b.ecommercePlatform) ? b.ecommercePlatform : []).filter((p: unknown) =>
+      PLATFORMS.includes(p as string)
+    ) as string[];
+    const other = platforms.includes('Other') ? clean(b.otherPlatformValue, 60) : '';
+    const info = clean(b.additionalInfo, 3000, true);
 
-  if (Array.isArray(ecommercePlatform)) {
-    platforms = [...ecommercePlatform];
-    if (platforms.includes("Other") && otherPlatformValue) {
-      platforms = [...platforms.filter(p => p !== "Other"), otherPlatformValue];
-    }
-  }
+    if (!isName(name) || !isPhone(phone) || !isEmail(email) || !isWebsite(website)) return bad();
+    if (linkCount(info) > 2 || linkCount(other) > 0) return bad();
+    if (!(await emailReal(email))) return bad('Please enter a real email address.');
 
-  let description = additionalInfo || message || "";
+    const plats = [...platforms.filter(p => p !== 'Other'), ...(other ? [other] : [])].join(', ');
+    subject = 'New Enquiry for Paytriot Payments - Setup Call';
+    lines = [
+      ['Name', name], ['Email', email], ['Phone', phone], ['Website', website],
+      ['E-commerce Platform', plats || 'N/A'], ['Additional Information', info || 'N/A'],
+    ];
+    row = [cell(name), phone, cell(email), cell(website), cell(plats), cell(info)];
+  } else if (b.type === 'support') {
+    const name = clean(b.supportName, 80);
+    const email = clean(b.supportEmail, 254).toLowerCase();
+    const issue = clean(b.issueType, 20);
+    const priority = clean(b.priority, 10);
+    const message = clean(b.message, 3000, true);
 
-  // 4. Configure SendGrid Email
-  sgMail.setApiKey(process.env.Bearer_Token as string);
+    if (!isName(name) || !isEmail(email) || !ISSUES.includes(issue) || !PRIORITIES.includes(priority)) return bad();
+    if (message.length < 10 || linkCount(message) > 2) return bad();
+    if (!(await emailReal(email))) return bad('Please enter a real email address.');
 
-  const msg = {
-    to: process.env.TWILIO_TO_EMAIL || "info@paytriot.co.uk",
-    from: process.env.TWILIO_FROM_EMAIL || "info@paytriot.co.uk",
-    subject: emailSubject || "No Subject",
-    html: `<p style="white-space: pre-wrap;">${emailBody || ""}</p>`,
-  };
+    subject = `New Support Request from ${name} - ${issue}`; // clean() already stripped newlines
+    lines = [['Name', name], ['Email', email], ['Issue Type', issue], ['Priority', priority], ['Message', message]];
+    row = [cell(name), '', cell(email), '', '', cell(message)];
+  } else {
+    return bad();
+  }
 
-  try {
-    // 5. Send email via SendGrid (External API Call)
-    await sgMail.send(msg);
+  try {
+    sgMail.setApiKey(process.env.Bearer_Token as string);
+    await sgMail.send({
+      to: process.env.TWILIO_TO_EMAIL || 'info@paytriot.co.uk',
+      from: process.env.TWILIO_FROM_EMAIL || 'info@paytriot.co.uk',
+      subject,
+      html: `<p style="white-space: pre-wrap;">${lines.map(([k, v]) => `${k}: ${esc(v)}`).join('\n')}</p>`,
+    });
 
-    // 6. Append data to Google Sheets (External API Call)
-    try {
-      const sheets = google.sheets({ version: "v4", auth: sheetsAuth });
-      const spreadsheetId2 = process.env.GOOGLE_SHEET_ID2;
-      if (!spreadsheetId2) throw new Error("GOOGLE_SHEET_ID2 not set");
+    try {
+      const spreadsheetId = process.env.GOOGLE_SHEET_ID2;
+      if (!spreadsheetId) throw new Error('GOOGLE_SHEET_ID2 not set');
+      await google.sheets({ version: 'v4', auth: sheetsAuth }).spreadsheets.values.append({
+        spreadsheetId,
+        range: 'Sheet1!A:H', // H = sender IP, to trace spam
+        valueInputOption: 'RAW',
+        insertDataOption: 'INSERT_ROWS',
+        requestBody: { values: [[new Date().toISOString(), ...row, cell(ip)]] },
+      });
+    } catch (sheetErr) {
+      console.error('Google Sheets error:', sheetErr);
+    }
 
-      // Timestamp for the first column
-      const timestamp = new Date().toISOString();
-
-      const flattenValue = (val: any) => {
-        if (Array.isArray(val)) return val.join(", ");
-        if (val === null || val === undefined) return "";
-        return String(val);
-      };
-
-      const values = [
-        [
-          flattenValue(timestamp),   // Timestamp column
-          flattenValue(fullName),    // Full name
-          flattenValue(phoneNumber), // Phone number
-          flattenValue(userEmail),   // Email
-          flattenValue(userWebsite), // Website
-          flattenValue(platforms),   // Platforms (array converted to string)
-          flattenValue(description), // Description
-        ],
-      ];
-
-      console.log("Appending to Google Sheets:", values);
-
-      await sheets.spreadsheets.values.append({
-        spreadsheetId: spreadsheetId2,
-        range: "Sheet1!A:G", // Columns A-G
-        valueInputOption: "RAW",
-        insertDataOption: "INSERT_ROWS",
-        requestBody: { values },
-      });
-    } catch (sheetErr) {
-      console.error("Google Sheets error:", sheetErr);
-    }
-
-    // 7. Successful Response to Client
-    return res.status(200).json({ message: "Email sent and data saved successfully" });
-  } catch (err: any) {
-    // 8. Error Response to Client
-    console.error("SendGrid error:", err.response?.body || err);
-    return res.status(500).json({ message: "Error sending message", error: err.message });
-  }
+    return res.status(200).json({ message: 'Message sent successfully' });
+  } catch (err: any) {
+    console.error('SendGrid error:', err.response?.body || err);
+    return res.status(500).json({ message: 'Error sending message' }); // no err.message leak
+  }
 }

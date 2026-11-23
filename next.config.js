@@ -466,30 +466,24 @@ const nextConfig = {
     return config;
   },
 
+  // SendGrid key (Bearer_Token) removed from here: `env` can inline values into browser JS.
+  // API routes read it from the server environment directly.
   env: {
-    Bearer_Token: process.env.Bearer_Token,
     CONTENTFUL_SPACE_ID: process.env.CONTENTFUL_SPACE_ID,
     CONTENTFUL_ACCESS_TOKEN: process.env.CONTENTFUL_ACCESS_TOKEN
   },
 
-  
+  // The old wildcard CORS headers on /api let any website call the form APIs from a visitor's browser.
+  // Forms are same-site only, so no CORS headers are needed.
   async headers() {
     return [
       {
-        // matching all API routes
-        source: "/api(.*)",
+        source: "/:path*",
         headers: [
-          { key: "Access-Control-Allow-Credentials", value: "true" },
-          { key: "Access-Control-Allow-Origin", value: "*" },
-          {
-            key: "Access-Control-Allow-Methods",
-            value: "GET,OPTIONS,PATCH,DELETE,POST,PUT",
-          },
-          {
-            key: "Access-Control-Allow-Headers",
-            value:
-              "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
-          },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" }, // blocks clickjacking the forms in a hidden iframe
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
         ],
       },
     ]

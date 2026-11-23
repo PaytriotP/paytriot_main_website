@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { google } from 'googleapis';
 import { isName, isPhone, isEmail, isWebsite } from '../../lib/validate';
-import { clean, cell, clientIp, sameOrigin, limited, humanOk, emailReal } from '../../lib/formGuard';
+import { clean, cell, clientIp, sameOrigin, limited, bodyHasAttack, humanOk, emailReal } from '../../lib/formGuard';
 
 export const config = { api: { bodyParser: { sizeLimit: '20kb' } } };
 
@@ -27,6 +27,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   };
 
   if (clean(b.hp)) return res.status(200).json({ message: 'Form submitted successfully' }); // honeypot
+  const { password: _p, repeatPassword: _r, ...scan } = b; // passwords may legitimately contain <, ${, ' etc.
+  if (bodyHasAttack(scan)) {
+    console.warn('submitForm attack payload', ip, JSON.stringify(scan).slice(0, 500));
+    return bad();
+  }
   if (limited(ip)) return res.status(429).json({ message: 'Too many requests. Please try again later.' });
   if (!(await humanOk(b.turnstileToken, ip))) return bad('Verification failed. Please refresh and try again.');
 
@@ -55,7 +60,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       insertDataOption: 'INSERT_ROWS',
       requestBody: {
         // SECURITY: passwords still stored in plain text here (existing behaviour). See review notes.
-        values: [[formattedDate, cell(fullName), phoneNumber /* validated digits only; cell() would add a visible ' before +44 */, cell(email), cell(website), cell(password), cell(repeatPassword), ip]],
+        values: [[formattedDate, cell(fullName), phoneNumber /* validated digits only; cell() would add a visible ' before +44 */, cell(email), cell(website), cell(password), cell(repeatPassword), cell(ip)]],
       },
     });
 

@@ -1,13 +1,14 @@
 // Shared by browser (UX hints) and API routes (the real check). Keep it pure: no node imports.
 
 // Keyboard-mash / placeholder words people type into required fields.
-const JUNK = /^(test|testing|tester|asdf|asdfg|asdfgh|qwe|qwer|qwerty|zxcv|abc|abcd|abcde|dummy|fake|sample|name|none|null|na|spam|random|xyz|aaa|bbb)$/i;
-const junkWord = (s: string) => s.split(/[\s._\-+]+/).some(w => JUNK.test(w));
+const JUNK = /^(qa|test|testing|tester|asdf|asdfg|asdfgh|qwe|qwer|qwerty|zxcv|abc|abcd|abcde|dummy|fake|sample|name|none|null|na|spam|random|xyz|aaa|bbb)$/i;
+const junkWord = (s: string) => s.split(/[\s._\-+']+/).some(w => JUNK.test(w));
 
 const LETTER = /[A-Za-zÀ-ɏͰ-ӿ]/g;
 
 export const isName = (s: string) =>
-  /^[^<>]{2,80}$/.test(s) &&
+  /^[^<>;=|(){}\[\]*`"\\]{2,80}$/.test(s) &&
+  !/--|\/\*|''/.test(s) && // SQL probe chars, e.g. QA';WAITFOR DELAY '0:0:5'--
   (s.match(LETTER) || []).length >= 2 &&
   !/^(.)\1+$/i.test(s.replace(/[\s.\-']/g, '')) &&
   !junkWord(s) &&

@@ -29,14 +29,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const b = req.body && typeof req.body === 'object' ? req.body : {};
   const ip = clientIp(req);
   const bad = (m = 'Please check your details and try again.') => {
-    console.warn('contact rejected', ip, req.headers['user-agent']); // shows in Vercel logs
+    console.warn('contact rejected:', m, ip, req.headers['user-agent']); // shows in Vercel logs
     return res.status(400).json({ message: m });
   };
 
   if (clean(b.hp)) return res.status(200).json({ message: 'Message sent successfully' }); // honeypot
   if (bodyHasAttack(b)) {
     console.warn('contact attack payload', ip, JSON.stringify(b).slice(0, 500));
-    return bad();
+    return bad('Please remove symbols such as < > { } ; = from your details and try again.');
   }
   if (limited(`contact:${ip}`)) return res.status(429).json({ message: 'Too many requests. Please try again later.' });
   if (!(await humanOk(b.turnstileToken, ip))) return bad('Verification failed. Please refresh and try again.');
@@ -58,8 +58,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const other = platforms.includes('Other') ? clean(b.otherPlatformValue, 60) : '';
     const info = clean(b.additionalInfo, 3000, true);
 
-    if (!isName(name) || !isPhone(phone) || !isEmail(email) || !isWebsite(website)) return bad();
-    if (linkCount(info) > 2 || linkCount(other) > 0) return bad();
+    if (!isName(name)) return bad('Please enter your real full name (letters only, e.g. Jane Smith).');
+    if (!isPhone(phone)) return bad('Please enter a valid phone number with country code, e.g. +44 7700 900123.');
+    if (!isEmail(email)) return bad('Please enter a valid email address.');
+    if (!isWebsite(website)) return bad('Please enter your business website, e.g. www.yourshop.co.uk.');
+    if (linkCount(info) > 2 || linkCount(other) > 0) return bad('Please include no more than 2 links.');
     if (!(await emailReal(email))) return bad('Please enter a real email address.');
 
     const plats = [...platforms.filter(p => p !== 'Other'), ...(other ? [other] : [])].join(', ');
@@ -76,8 +79,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const priority = clean(b.priority, 10);
     const message = clean(b.message, 3000, true);
 
-    if (!isName(name) || !isEmail(email) || !ISSUES.includes(issue) || !PRIORITIES.includes(priority)) return bad();
-    if (message.length < 10 || linkCount(message) > 2) return bad();
+    if (!isName(name)) return bad('Please enter your real full name (letters only, e.g. Jane Smith).');
+    if (!isEmail(email)) return bad('Please enter a valid email address.');
+    if (!ISSUES.includes(issue) || !PRIORITIES.includes(priority)) return bad('Please choose an issue type and priority.');
+    if (message.length < 10) return bad('Please describe your question in at least 10 characters.');
+    if (linkCount(message) > 2) return bad('Please include no more than 2 links.');
     if (!(await emailReal(email))) return bad('Please enter a real email address.');
 
     subject = `New Support Request from ${name} - ${issue}`; // clean() already stripped newlines
